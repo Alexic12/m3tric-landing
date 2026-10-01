@@ -206,7 +206,7 @@ src/
 
 ## Documentación
 
-- `docs/SPEC-landing-v2.md` — especificación completa (ref para manuales)
+- `docs/SPEC.md` — especificación completa (ref para manuales)
 - `docs/CONTENIDOS.md` — guía de actualización de textos, imágenes, contacto
 - `docs/OPERACION.md` — procedimiento de publicación (S3 + CloudFront)
 - `docs/ASSETS.md` — inventario de activos y licencias
@@ -225,7 +225,7 @@ Ver `docs/ASSETS.md` para inventario completo con orígenes y dimensiones.
 
 ## Soporte
 
-- **Spec técnica**: `docs/SPEC-landing-v2.md`
+- **Spec técnica**: `docs/SPEC.md`
 - **Actualización de contenidos**: `docs/CONTENIDOS.md`
 - **Publicación a producción**: `docs/OPERACION.md`
 - **Release gate**: `npm run release` (falla si hay problemas)

@@ -54,17 +54,42 @@ function checkUrl(name, value, { originOnly }) {
   return problems;
 }
 
-/** Pure validation of the public release configuration. Returns a list of problems (empty = valid). */
+export const PROFILES = ["staging", "production"];
+// Same alphabet as the CDK ReleaseId context, so the id travels unchanged to tags, meta and manifest.
+export const RELEASE_ID_PATTERN = /^[A-Za-z0-9._-]{1,64}$/;
+
+/**
+ * Pure validation of the public release configuration. Returns a list of problems (empty = valid).
+ * The profile (ADR-003) decides what is mandatory: staging has no approved contact email yet.
+ */
 export function validate(env) {
   const get = (key) => (env[key] ?? "").trim();
-  const problems = [
+  const problems = [];
+
+  const profile = get("RELEASE_PROFILE");
+  if (!PROFILES.includes(profile)) {
+    problems.push(`RELEASE_PROFILE: debe ser ${PROFILES.join(" o ")} / must be ${PROFILES.join(" or ")} ("${profile}")`);
+  } else if (get("NEXT_PUBLIC_RELEASE_PROFILE") !== profile) {
+    problems.push(
+      `NEXT_PUBLIC_RELEASE_PROFILE: debe ser igual a RELEASE_PROFILE / must equal RELEASE_PROFILE ` +
+        `("${get("NEXT_PUBLIC_RELEASE_PROFILE")}" != "${profile}")`,
+    );
+  }
+
+  const releaseId = get("NEXT_PUBLIC_RELEASE_ID");
+  if (releaseId && !RELEASE_ID_PATTERN.test(releaseId)) {
+    problems.push(`NEXT_PUBLIC_RELEASE_ID: formato inválido / invalid format ("${releaseId}")`);
+  }
+
+  problems.push(
     ...checkUrl("NEXT_PUBLIC_SITE_URL", get("NEXT_PUBLIC_SITE_URL"), { originOnly: true }),
     ...checkUrl("NEXT_PUBLIC_PLATFORM_URL", get("NEXT_PUBLIC_PLATFORM_URL"), { originOnly: false }),
-  ];
+  );
 
+  // Optional in staging, but a value that is present is still validated: it ends up in a mailto: link.
   const email = get("NEXT_PUBLIC_CONTACT_EMAIL");
   if (!email) {
-    problems.push("NEXT_PUBLIC_CONTACT_EMAIL: falta / missing (obligatoria / required)");
+    if (profile !== "staging") problems.push("NEXT_PUBLIC_CONTACT_EMAIL: falta / missing (obligatoria en production / required in production)");
   } else if (!STRICT_EMAIL.test(email)) {
     problems.push(`NEXT_PUBLIC_CONTACT_EMAIL: correo inválido / invalid email ("${email}")`);
   } else if (BLOCKED_MAIL_DOMAIN.test(email.split("@")[1])) {

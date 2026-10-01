@@ -11,9 +11,89 @@ test.describe("content and metadata", () => {
     await expect(page.locator("h1")).toHaveCount(1);
   });
 
-  test("all nine sections exist with their anchor ids", async ({ page }) => {
+  test("all nine sections exist with their anchor ids, in the v3 order", async ({ page }) => {
     for (const id of SECTION_IDS) {
       await expect(page.locator(`section#${id}`), `section#${id}`).toHaveCount(1);
+    }
+    const order = await page.evaluate(() => Array.from(document.querySelectorAll("main > section")).map((s) => s.id));
+    expect(order).toEqual([...SECTION_IDS]);
+  });
+
+  test("value zone comes first: the technical zone sits after the FAQ and before the contact", async ({ page }) => {
+    const y = (id: string) => page.locator(`#${id}`).evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
+    const [beneficios, preguntas, tecnico, contacto] = await Promise.all(["beneficios", "preguntas", "tecnico", "contacto"].map(y));
+    expect(beneficios).toBeLessThan(preguntas);
+    expect(preguntas).toBeLessThan(tecnico);
+    expect(tecnico).toBeLessThan(contacto);
+  });
+
+  test("hero states the outcomes: three of them, each with a label and one line", async ({ page }) => {
+    const outcomes = page.locator("#inicio ul[aria-label='Lo que obtiene con M3TRIC'] > li");
+    await expect(outcomes).toHaveCount(3);
+    await expect(outcomes.nth(0)).toContainText("Avisos a tiempo");
+    await expect(outcomes.nth(1)).toContainText("Un mapa claro de su terreno");
+    await expect(outcomes.nth(2)).toContainText("Reportes para decidir");
+  });
+
+  test("benefits: three outcome cards, each with its deliverables and an honest status", async ({ page }) => {
+    const cards = page.locator("#beneficios ul > li > [data-reveal] > div");
+    await expect(cards).toHaveCount(3);
+    await expect(cards.nth(0).locator("h3")).toHaveText("Vigilancia continua de su terreno");
+    await expect(cards.nth(1).locator("h3")).toHaveText("Avisos cuando importa");
+    await expect(cards.nth(2).locator("h3")).toHaveText("Reportes para decidir");
+    for (let i = 0; i < 3; i++) {
+      await expect(cards.nth(i).getByText("Lo que recibe"), `card ${i} deliverables label`).toHaveCount(1);
+      await expect(cards.nth(i).getByText("Disponible", { exact: true })).toHaveCount(1);
+    }
+    await expect(cards.nth(2).locator("ul > li")).toHaveCount(5);
+    await expect(page.locator("#beneficios").getByText("En evolución", { exact: true })).toHaveCount(1);
+  });
+
+  test("use cases: four cases, each split into the situation and what the user obtains", async ({ page }) => {
+    const cases = page.locator("#casos ul > li");
+    await expect(cases).toHaveCount(4);
+    await expect(page.locator("#casos").getByText("La situación", { exact: true })).toHaveCount(4);
+    await expect(page.locator("#casos").getByText("Lo que obtiene", { exact: true })).toHaveCount(4);
+  });
+
+  test("how it works: four ordered steps and the illustrative product view", async ({ page }) => {
+    const steps = page.locator("#como-funciona ol > li");
+    await expect(steps).toHaveCount(4);
+    await expect(steps.locator("h3")).toHaveText(["Medimos", "Revisamos y organizamos", "Le avisamos", "Usted decide"]);
+    await expect(page.locator("#como-funciona figure svg[role='img']")).toHaveCount(1);
+    await expect(page.locator("#como-funciona figcaption")).toHaveText("Vista ilustrativa de la plataforma");
+  });
+
+  test("scale tabs carry the plain-language labels", async ({ page }) => {
+    await expect(page.locator("#escala-tab-m1")).toHaveText("M1 · Punto");
+    await expect(page.locator("#escala-tab-m2")).toHaveText("M2 · Zona");
+    await expect(page.locator("#escala-tab-m3")).toHaveText("M3 · Territorio");
+  });
+
+  test("why M3TRIC: the three brand values", async ({ page }) => {
+    await expect(page.locator("#por-que h3")).toHaveText(["Rigor técnico", "Precisión", "Confiabilidad"]);
+  });
+
+  test("technical zone: the three spec-sheet blocks with honest availability", async ({ page }) => {
+    const zone = page.locator("#tecnico");
+    await expect(zone.locator("h3")).toHaveText(["Capacidades", "Flujo de datos", "Tecnología y seguridad"]);
+    await expect(zone.getByRole("heading", { level: 4 })).toHaveText(["Disponible hoy", "En evolución"]);
+    await expect(zone.locator("ol > li")).toHaveCount(5);
+    await expect(zone.getByText("PostGIS 3.4", { exact: true })).toBeVisible();
+    for (const level of ["Atención", "Alerta", "Crítico"]) {
+      await expect(zone.getByText(level, { exact: true })).toBeVisible();
+    }
+  });
+
+  test("the value zone avoids unexplained jargon (spec section 2)", async ({ page }) => {
+    const text = await page.evaluate(() =>
+      Array.from(document.querySelectorAll("#inicio, #beneficios, #casos, #como-funciona, #escalas, #por-que, #preguntas, #contacto"))
+        .map((s) => s.textContent ?? "")
+        .join(" "),
+    );
+    // Hero image alt aside, none of these terms may appear above the technical zone. "AWS" is allowed: the FAQ spells it out.
+    for (const term of [/\bAPI\b/, /\bIoT\b/, /PostGIS/, /\bCDK\b/, /\bGIS\b/, /FastAPI/, /\bIA\b/, /tiempo real/i]) {
+      expect(text, `jargon in the value zone: ${term}`).not.toMatch(term);
     }
   });
 
@@ -26,7 +106,7 @@ test.describe("content and metadata", () => {
         return { section: s.id, tag: target?.tagName ?? null, text: target?.textContent?.trim() ?? "" };
       }),
     );
-    expect(results.length).toBeGreaterThanOrEqual(SECTION_IDS.length);
+    expect(results.length).toBe(SECTION_IDS.length);
     for (const r of results) {
       expect(r.tag, `section#${r.section}`).not.toBeNull();
       expect(r.text.length, `section#${r.section} heading text`).toBeGreaterThan(0);
@@ -83,16 +163,27 @@ test.describe("content and metadata", () => {
     expect(body.readUInt32BE(20), "png height").toBe(630);
   });
 
-  test("JSON-LD parses and declares M3TRIC / Metric", async ({ page }) => {
+  test("JSON-LD parses; Organization and WebSite declare M3TRIC / Metric; FAQPage mirrors the visible FAQ", async ({ page }) => {
     const raw = await page.locator('script[type="application/ld+json"]').first().textContent();
     const data = JSON.parse(raw ?? "");
     const nodes: Array<Record<string, unknown>> = data["@graph"] ?? [data];
     expect(nodes.length).toBeGreaterThan(0);
-    for (const node of nodes) {
+    const identity = nodes.filter((n) => n["@type"] === "Organization" || n["@type"] === "WebSite");
+    expect(identity.map((n) => n["@type"]).sort()).toEqual(["Organization", "WebSite"]);
+    for (const node of identity) {
       expect(node.name).toBe("M3TRIC");
       expect(node.alternateName).toBe("Metric");
       expect(String(node.url).startsWith(SITE_URL)).toBe(true);
     }
+    const faqNode = nodes.find((n) => n["@type"] === "FAQPage") as { mainEntity: Array<{ name: string; acceptedAnswer: { text: string } }> };
+    expect(faqNode, "FAQPage node").toBeTruthy();
+    const visible = await page.evaluate(() =>
+      Array.from(document.querySelectorAll("#preguntas details")).map((d) => ({
+        question: (d.querySelector("summary h3")?.textContent ?? "").trim(),
+        answer: (d.querySelector("p")?.textContent ?? "").trim(),
+      })),
+    );
+    expect(faqNode.mainEntity.map((q) => ({ question: q.name, answer: q.acceptedAnswer.text }))).toEqual(visible);
   });
 
   test("rendered text contains no forbidden strings", async ({ page }) => {

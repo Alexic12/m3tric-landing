@@ -1,15 +1,15 @@
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { SkipLink } from "@/components/layout/SkipLink";
-import { Capabilities } from "@/components/sections/Capabilities";
+import { Benefits } from "@/components/sections/Benefits";
 import { Contact } from "@/components/sections/Contact";
+import { Faq } from "@/components/sections/Faq";
 import { Hero } from "@/components/sections/Hero";
-import { Platform } from "@/components/sections/Platform";
-import { Products } from "@/components/sections/Products";
-import { Proposal } from "@/components/sections/Proposal";
+import { HowItWorks } from "@/components/sections/HowItWorks";
 import { Scales } from "@/components/sections/Scales";
-import { Technology } from "@/components/sections/Technology";
+import { TechnicalZone } from "@/components/sections/TechnicalZone";
 import { UseCases } from "@/components/sections/UseCases";
+import { WhyM3tric } from "@/components/sections/WhyM3tric";
 
 export default function Home() {
   return (
@@ -18,13 +18,13 @@ export default function Home() {
       <Header />
       <main id="contenido" tabIndex={-1} className="outline-none">
         <Hero />
-        <Proposal />
-        <Platform />
-        <Scales />
-        <Products />
-        <Capabilities />
-        <Technology />
+        <Benefits />
         <UseCases />
+        <HowItWorks />
+        <Scales />
+        <WhyM3tric />
+        <Faq />
+        <TechnicalZone />
         <Contact />
       </main>
       <Footer />

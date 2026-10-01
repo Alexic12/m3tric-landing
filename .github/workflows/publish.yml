@@ -1,0 +1,154 @@
+name: Publish site
+
+# Reusable: builds the given ref with the staging profile, publishes it, invalidates, smokes and records
+# the manifest. Called by deploy.yml (after cdk deploy) and rollback.yml. No concurrency block here: the
+# callers serialize the whole run on the group landing-staging, and a nested group would deadlock.
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: Commit to build and publish
+        type: string
+        required: true
+      bucket:
+        type: string
+        required: true
+      distribution_id:
+        type: string
+        required: true
+      site_url:
+        type: string
+        required: true
+      release_id:
+        type: string
+        required: true
+      reason:
+        type: string
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: 24.19.0
+  STACK_NAME: m3tric-staging-LandingSiteStack
+
+jobs:
+  publish:
+    name: Publish ${{ inputs.release_id }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: landing-staging
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      BUCKET_NAME: ${{ inputs.bucket }}
+      DISTRIBUTION_ID: ${{ inputs.distribution_id }}
+      SITE_URL: ${{ inputs.site_url }}
+      RELEASE_ID: ${{ inputs.release_id }}
+      REASON: ${{ inputs.reason }}
+      PLATFORM_URL: ${{ vars.PLATFORM_URL }}
+      SMOKE_OUT: smoke-result.json
+      MANIFEST_OUT: deploy-manifest.json
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref }}
+          persist-credentials: false
+
+      - name: Resolve commit and check the ref carries the pipeline
+        run: |
+          set -euo pipefail
+          echo "COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          # A rollback target older than this pipeline cannot be built or published with it.
+          for f in scripts/deploy/publish.sh scripts/deploy/smoke.mjs scripts/deploy/manifest.mjs scripts/deploy/upload-manifest.sh; do
+            test -f "$f" || { echo "::error::$f missing at $(git rev-parse HEAD): cannot publish this ref"; exit 1; }
+          done
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      # Build before taking AWS credentials: the role is only held while it is needed.
+      - name: Release build (staging profile)
+        run: npm run release
+        env:
+          RELEASE_PROFILE: staging
+          NEXT_PUBLIC_RELEASE_PROFILE: staging
+          NEXT_PUBLIC_SITE_URL: ${{ inputs.site_url }}
+          NEXT_PUBLIC_PLATFORM_URL: ${{ vars.PLATFORM_URL }}
+          NEXT_PUBLIC_RELEASE_ID: ${{ inputs.release_id }}
+          NEXT_PUBLIC_CONTACT_EMAIL: ${{ vars.CONTACT_EMAIL }}
+          NEXT_PUBLIC_CONTACT_PHONE: ${{ vars.CONTACT_PHONE }}
+
+      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-session-name: landing-publish-${{ github.run_id }}
+
+      - name: Publish to S3 and invalidate CloudFront
+        id: publish
+        run: bash scripts/deploy/publish.sh "$BUCKET_NAME" "$DISTRIBUTION_ID"
+
+      - name: Smoke
+        id: smoke
+        run: node scripts/deploy/smoke.mjs
+        env:
+          EXPECT_PROFILE: staging
+          EXPECT_RELEASE_ID: ${{ inputs.release_id }}
+
+      # Recorded even when the smoke failed: the version is live either way, and the manifest says whether it passed.
+      - name: Deploy manifest
+        id: manifest
+        if: ${{ !cancelled() && steps.publish.outcome == 'success' }}
+        run: node scripts/deploy/manifest.mjs
+        env:
+          RELEASE_PROFILE: staging
+
+      - name: Upload manifest to the bucket (_deploy/manifest.json)
+        if: ${{ !cancelled() && steps.manifest.outcome == 'success' }}
+        run: bash scripts/deploy/upload-manifest.sh "$BUCKET_NAME" "$MANIFEST_OUT"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: ${{ !cancelled() }}
+        with:
+          name: deploy-manifest-${{ inputs.release_id }}
+          path: |
+            deploy-manifest.json
+            smoke-result.json
+          retention-days: 90
+          if-no-files-found: warn
+
+      - name: Summary
+        if: ${{ !cancelled() }}
+        run: |
+          set -euo pipefail
+          {
+            echo "## Deploy $RELEASE_ID"
+            echo
+            echo "| | |"
+            echo "|---|---|"
+            echo "| URL | $SITE_URL |"
+            echo "| Commit | \`${COMMIT:-unknown}\` |"
+            echo "| Release id | \`$RELEASE_ID\` |"
+            echo "| Profile | staging |"
+            echo "| Reason | $(printf '%s' "$REASON" | tr -d '\r\n|' | cut -c1-200) |"
+            echo "| Run | $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID |"
+            echo
+            if [ -f "$SMOKE_OUT" ]; then
+              echo "### Smoke (passed: $(jq -r .passed "$SMOKE_OUT"))"
+              echo
+              echo "| Check | Result | Detail |"
+              echo "|---|---|---|"
+              jq -r '.checks[] | "| \(.name) | \(.status) | \(.detail | gsub("[|\n]"; " ")) |"' "$SMOKE_OUT"
+            else
+              echo "Smoke did not run (publish failed)."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

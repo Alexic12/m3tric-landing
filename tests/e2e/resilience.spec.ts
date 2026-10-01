@@ -49,10 +49,10 @@ test.describe("reveal layer (R13)", () => {
     expect(props.filter((p) => !p.includes("opacity") || !p.includes("transform"))).toEqual([]);
   });
 
-  test("Products card hover transition animates border-color and changes it", async ({ page }) => {
+  test("Benefits card hover transition animates border-color and changes it", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto("/");
-    const card = page.locator("#productos ul > li > [data-reveal] > div").first();
+    const card = page.locator("#beneficios ul > li > [data-reveal] > div").first();
     await card.scrollIntoViewIfNeeded();
     await expect(card).toBeVisible();
     const transition = await card.evaluate((el) => getComputedStyle(el).transitionProperty);

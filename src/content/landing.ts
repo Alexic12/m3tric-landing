@@ -1,21 +1,23 @@
 /**
  * Single source of truth for every user-facing string of the landing.
  * Claims are limited to what the README and Anexo 1 support (spec §5).
+ * Everything above the technical zone is written for non-technical readers (spec §2).
  */
 import type { ScaleId } from "@/types";
 
-export type ProductIcon = "sensors" | "analytics" | "map";
+export type BenefitIcon = "monitor" | "alerts" | "reports";
+export type OutcomeIcon = "alerts" | "map" | "reports";
 export type CaseIcon = "risk" | "agro" | "infra" | "environment";
+export type SecurityIcon = "roles" | "encryption" | "code";
 export type Status = "available" | "evolving";
 
 export const navItems = [
-  { id: "propuesta", label: "Propuesta" },
-  { id: "plataforma", label: "Plataforma" },
-  { id: "escalas", label: "Escalas" },
-  { id: "productos", label: "Productos" },
-  { id: "capacidades", label: "Capacidades" },
-  { id: "tecnologia", label: "Tecnología" },
+  { id: "beneficios", label: "Beneficios" },
   { id: "casos", label: "Casos de uso" },
+  { id: "como-funciona", label: "Cómo funciona" },
+  { id: "escalas", label: "Escalas" },
+  { id: "preguntas", label: "Preguntas" },
+  { id: "tecnico", label: "Técnico" },
   { id: "contacto", label: "Contacto" },
 ] as const;
 
@@ -28,7 +30,7 @@ export const a11y = {
   closeMenu: "Cerrar menú",
   menuDialog: "Menú de navegación",
   footerNav: "Navegación del pie de página",
-  layers: "Las tres capas de información de M3TRIC",
+  outcomes: "Lo que obtiene con M3TRIC",
   scaleTabs: "Escalas de lectura del territorio",
   platformIllustrationAlt:
     "Ilustración de la interfaz de la plataforma: mapa con sensores, serie temporal y lista de alertas por nivel",
@@ -36,13 +38,15 @@ export const a11y = {
 
 const PLATFORM_VERB = "Abrir";
 const PLATFORM_NOUN = "plataforma";
+const TEAM_VERB = "Hablar";
+const TEAM_REST = "con el equipo";
 
 export const cta = {
   platform: `${PLATFORM_VERB} ${PLATFORM_NOUN}`,
-  /** Split form for the compact header button, where the verb is visually hidden on narrow screens. */
-  platformVerb: PLATFORM_VERB,
-  platformNoun: PLATFORM_NOUN,
-  team: "Hablar con el equipo",
+  team: `${TEAM_VERB} ${TEAM_REST}`,
+  /** Split form for the compact header button, where the tail is visually hidden on narrow screens. */
+  teamVerb: TEAM_VERB,
+  teamRest: TEAM_REST,
   writeTeam: "Escribir al equipo",
   mailSubject: "Contacto desde el sitio M3TRIC",
 } as const;
@@ -69,100 +73,163 @@ export const notFound = {
 } as const;
 
 export const hero = {
-  meta: "Lectura multiescala del territorio",
+  meta: "Monitoreo del territorio",
   titleBold: "Entender el territorio",
   titleLight: "para anticipar el riesgo.",
-  lead: "M3TRIC está diseñado para integrar sensores en campo, observación aérea e información satelital con modelos analíticos, y ofrecer una lectura integral del comportamiento del terreno.",
+  lead: "M3TRIC reúne en un solo lugar la información de los sensores instalados en su terreno, le avisa cuando algo cambia y le entrega reportes claros para decidir a tiempo.",
   imageAlt: "",
-  layers: [
-    { label: "Sensores en campo", active: 1 },
-    { label: "Drones", active: 2 },
-    { label: "Información satelital", active: 3 },
-  ],
+  outcomes: [
+    {
+      icon: "alerts",
+      label: "Avisos a tiempo",
+      text: "Alertas por niveles cuando una medición cruza su límite.",
+    },
+    {
+      icon: "map",
+      label: "Un mapa claro de su terreno",
+      text: "Sus sensores y su última lectura, en un solo lugar.",
+    },
+    {
+      icon: "reports",
+      label: "Reportes para decidir",
+      text: "Resúmenes y datos descargables para su equipo.",
+    },
+  ] satisfies ReadonlyArray<{ icon: OutcomeIcon; label: string; text: string }>,
 } as const;
 
-export const proposal = {
+export const benefits = {
   index: "01",
-  kicker: "Propuesta de valor",
-  statement: [
-    { text: "La lectura multiescala", bold: true },
-    { text: " del territorio, basada en la integración de datos, es el núcleo de ", bold: false },
-    { text: "nuestra solución.", bold: true },
-  ],
-  paragraphs: [
-    "En territorios complejos, el problema no es la falta de datos, sino la dificultad para integrarlos y convertirlos en decisiones oportunas.",
-    "M3TRIC responde a esta brecha: combina sensores en campo, drones e información satelital con modelos analíticos en un solo sistema, para interpretar variables del terreno en distintos niveles.",
-  ],
-  globeAlt: "Globo terráqueo nocturno atravesado por líneas de conexión entre regiones",
-  values: [
+  kicker: "Lo que usted obtiene",
+  title: "Información clara para decidir, no más datos sueltos.",
+  deliverablesLabel: "Lo que recibe",
+  items: [
     {
-      title: "Rigor técnico",
-      text: "Soluciones basadas en evidencia, modelos analíticos y validación en campo.",
+      icon: "monitor",
+      title: "Vigilancia continua de su terreno",
+      text: "Sus sensores en campo envían datos que M3TRIC recibe, revisa y organiza. Usted ve la última lectura de cada punto y si algún sensor dejó de reportar.",
+      deliverables: ["Tablero de sensores", "Estado y última lectura", "Historial de mediciones"],
+      status: "available",
     },
     {
-      title: "Precisión",
-      text: "Información confiable y detallada para decisiones críticas, gracias a la conexión de múltiples fuentes.",
+      icon: "alerts",
+      title: "Avisos cuando importa",
+      text: "Usted define los límites aceptables. Cuando una medición los cruza, M3TRIC genera una alerta con su nivel: Atención, Alerta o Crítico.",
+      deliverables: ["Alertas por niveles", "Registro de eventos", "Sin avisos duplicados"],
+      status: "available",
     },
     {
-      title: "Confiabilidad",
-      text: "Consistencia en la información que soporta decisiones críticas.",
+      icon: "reports",
+      title: "Reportes para decidir",
+      text: "Tendencias, comparaciones por zona y reportes listos para comités, entes de control o su equipo.",
+      deliverables: [
+        "Resumen ambiental",
+        "Salud de sensores",
+        "Reporte de alertas",
+        "Análisis espacial",
+        "Exportación CSV",
+      ],
+      status: "available",
     },
-  ],
+  ] satisfies ReadonlyArray<{
+    icon: BenefitIcon;
+    title: string;
+    text: string;
+    deliverables: readonly string[];
+    status: Status;
+  }>,
+  evolvingNote: "Integración de drones e imágenes satelitales para leer zonas y regiones completas.",
 } as const;
 
-export const platform = {
+export const useCases = {
   index: "02",
-  kicker: "Plataforma",
-  title: "¿Cómo lo hacemos?",
-  lead: "Del dato disperso a la decisión oportuna, en cuatro pasos.",
+  kicker: "Para quién es",
+  title: "Un mismo método para cuatro frentes.",
+  imageAlt: "Vista aérea de una ladera cultivada con una red de puntos y líneas superpuesta",
+  situationLabel: "La situación",
+  givesLabel: "Lo que obtiene",
+  items: [
+    {
+      icon: "risk",
+      title: "Gestión del riesgo",
+      scope: "Deslizamientos y movimientos en masa",
+      situation: "El comportamiento del terreno empieza mucho antes de que sea visible.",
+      gives: "Seguimiento continuo de los puntos críticos y avisos cuando una medición cambia.",
+    },
+    {
+      icon: "agro",
+      title: "Agricultura",
+      scope: "Variabilidad del suelo",
+      situation: "El suelo no se comporta igual en toda la extensión de un cultivo.",
+      gives: "Lecturas por punto para entender dónde y cuándo actuar.",
+    },
+    {
+      icon: "infra",
+      title: "Infraestructura",
+      scope: "Obras y activos",
+      // Pendiente de aprobación editorial (ronda de ajustes 1)
+      situation: "Una obra depende de la estabilidad del terreno que la rodea.",
+      gives: "Mediciones periódicas del entorno y alertas ante cambios.",
+    },
+    {
+      icon: "environment",
+      title: "Ambiente",
+      scope: "Variables hídricas, climáticas y ambientales",
+      // Pendiente de aprobación editorial (ronda de ajustes 1)
+      situation: "Las variables del ambiente cambian a distintas escalas.",
+      gives: "Registro ordenado de las mediciones y reportes para su seguimiento.",
+    },
+  ] satisfies ReadonlyArray<{
+    icon: CaseIcon;
+    title: string;
+    scope: string;
+    situation: string;
+    gives: string;
+  }>,
+  band: {
+    title: "¿Su caso es uno de estos? Hablemos.",
+  },
+} as const;
+
+export const howItWorks = {
+  index: "03",
+  kicker: "Cómo funciona",
+  title: "De la medición en campo a la decisión, en cuatro pasos.",
   steps: [
-    {
-      title: "Capturamos información",
-      text: "Integramos datos de sensores en campo y, progresivamente, imágenes aéreas y satelitales.",
-    },
-    {
-      title: "Analizamos el terreno",
-      text: "Aplicamos modelos para interpretar las condiciones del suelo en diferentes escalas.",
-    },
-    {
-      title: "Identificamos zonas clave",
-      text: "Detectamos áreas de riesgo o potencial productivo.",
-    },
-    {
-      title: "Entregamos decisiones",
-      text: "Indicadores y alertas accionables para la toma de decisiones.",
-    },
+    { title: "Medimos", text: "Los sensores en su terreno registran las variables que importan." },
+    { title: "Revisamos y organizamos", text: "M3TRIC valida cada dato y lo ubica en el mapa." },
+    { title: "Le avisamos", text: "Si algo cruza el límite definido, usted recibe una alerta con su nivel." },
+    { title: "Usted decide", text: "Con el historial y los reportes, decide con evidencia." },
   ],
   mockCaption: "Vista ilustrativa de la plataforma",
 } as const;
 
 export const scales = {
-  index: "03",
+  index: "04",
   kicker: "Escalas",
-  title: "El comportamiento del territorio no ocurre en un solo nivel.",
-  lead: "M3TRIC lo lee en tres escalas que se complementan.",
+  title: "El territorio no se entiende desde un solo punto.",
+  lead: "M3TRIC organiza la información en tres escalas que se complementan.",
   items: [
     {
       id: "m1",
       code: "M1",
-      name: "Micro",
-      reads: "Observaciones y estado de sensores en puntos específicos.",
+      name: "Punto",
+      reads: "Lo que pasa en cada sensor, en detalle.",
       source: "Sensores en campo",
       status: "available",
     },
     {
       id: "m2",
       code: "M2",
-      name: "Meso",
-      reads: "Agregaciones, tendencias y patrones en zonas y cuencas.",
-      source: "Drones y agregación regional",
+      name: "Zona",
+      reads: "Cómo se comporta un sector completo.",
+      source: "Drones y agregación por zonas",
       status: "evolving",
     },
     {
       id: "m3",
       code: "M3",
-      name: "Macro",
-      reads: "Visión territorial para decisiones estratégicas.",
+      name: "Territorio",
+      reads: "La visión de conjunto para decisiones estratégicas.",
       source: "Información satelital",
       status: "evolving",
     },
@@ -174,81 +241,135 @@ export const scales = {
     source: string;
     status: Status;
   }>,
-  labels: { reads: "Qué lee", source: "Fuente principal" },
+  labels: { reads: "Qué le muestra", source: "De dónde viene" },
 } as const;
 
-export const products = {
-  index: "04",
-  kicker: "Productos",
-  title: "Tres líneas de producto, una sola lectura.",
+export const whyM3tric = {
+  index: "05",
+  kicker: "Por qué M3TRIC",
+  statement: [
+    { text: "La lectura del territorio", bold: true },
+    { text: " basada en la integración de datos es el ", bold: false },
+    { text: "núcleo de lo que hacemos.", bold: true },
+  ],
+  paragraph:
+    "En territorios complejos, el problema no es la falta de datos, sino convertirlos en decisiones a tiempo. M3TRIC reúne la información de sus sensores en un solo lugar. Así usted ve lo que importa y actúa con evidencia.",
+  globeAlt: "Globo terráqueo nocturno atravesado por líneas de conexión entre regiones",
+  values: [
+    {
+      title: "Rigor técnico",
+      text: "Soluciones basadas en evidencia, modelos analíticos y validación en campo.",
+    },
+    {
+      title: "Precisión",
+      text: "Información confiable y detallada para decisiones críticas.",
+    },
+    {
+      title: "Confiabilidad",
+      text: "Consistencia en la información que soporta decisiones críticas.",
+    },
+  ],
+} as const;
+
+/** Shape is a contract with layout.tsx, which builds the FAQPage JSON-LD from `items`. */
+export const faq: {
+  index: string;
+  kicker: string;
+  title: string;
+  items: { question: string; answer: string }[];
+} = {
+  index: "06",
+  kicker: "Preguntas frecuentes",
+  title: "Lo que suele preguntarse antes de empezar.",
   items: [
     {
-      icon: "sensors",
-      title: "Sensórica e integración",
-      text: "Las observaciones de sensores en campo entran al sistema ordenadas, normalizadas y validadas.",
-      bullets: ["Ingesta individual y por lotes", "Normalización de datos", "Validación de observaciones"],
-      status: "available",
+      question: "¿Qué necesito para empezar?",
+      answer:
+        "Una conversación con nuestro equipo para entender su terreno y qué necesita medir. A partir de ahí definimos juntos la puesta en marcha.",
     },
     {
-      icon: "analytics",
-      title: "Analítica territorial",
-      text: "Estadísticas, tendencias, agrupamiento espacial y consultas geográficas.",
-      bullets: ["Estadísticas y tendencias", "Agrupamiento espacial", "Consultas geográficas"],
-      status: "available",
+      question: "¿Qué información integra hoy M3TRIC?",
+      answer:
+        "Mediciones de sensores en campo. La integración de drones e imágenes satelitales está en evolución.",
     },
     {
-      icon: "map",
-      title: "Visualización y alertas",
-      text: "Lo que miden los sensores, visible en un mapa y comunicado como alertas y reportes.",
-      bullets: [
-        "Mapa de sensores con última lectura",
-        "Alertas por cruce de umbral",
-        "Reportes: CSV, resumen ambiental, salud de sensores, alertas y análisis espacial",
-      ],
-      status: "available",
+      question: "¿Cómo me entero si algo cambia?",
+      answer:
+        "En la plataforma, con alertas por niveles (Atención, Alerta, Crítico) cuando una medición cruza el límite definido.",
     },
-  ] satisfies ReadonlyArray<{
-    icon: ProductIcon;
-    title: string;
-    text: string;
-    bullets: readonly string[];
-    status: Status;
-  }>,
-  evolvingNote: {
-    text: "Integración de drones e información satelital a escala meso y macro; modelos predictivos.",
-  },
-} as const;
+    {
+      question: "¿Puedo usar la información fuera de la plataforma?",
+      answer: "Sí. Puede descargar reportes y exportar los datos en formato CSV.",
+    },
+    {
+      question: "¿Quién puede ver la información?",
+      answer:
+        "Solo las personas autorizadas. El acceso es con usuario y contraseña, y cada persona tiene un rol: administración, operación o consulta.",
+    },
+    {
+      question: "¿Dónde se aloja la plataforma?",
+      answer: "En infraestructura en la nube de Amazon Web Services (AWS), definida como código.",
+    },
+  ],
+};
 
-export const capabilities = {
-  index: "05",
-  kicker: "Capacidades",
-  title: "Lo que existe hoy y hacia dónde vamos.",
-  lead: "Distinguimos con claridad lo que la plataforma ya hace de lo que está en desarrollo.",
-  available: {
-    title: "Disponible hoy",
-    items: [
-      "API de datos con autenticación y roles",
-      "Gestión de localizaciones, sensores y observaciones",
-      "Ingesta individual y por lotes con validación",
-      "Alertas deduplicadas por cruce de umbral",
-      "Estadísticas, tendencias y análisis espacial",
-      "Mapa de sensores con última lectura",
-      "Reportes exportables",
-      "Infraestructura como código en AWS",
+export const technical = {
+  index: "07",
+  kicker: "Para equipos técnicos",
+  title: "El detalle, para quien lo necesita.",
+  lead: "Capacidades, flujo de datos y tecnología de la plataforma, separando lo que existe hoy de lo que está en evolución.",
+  capabilities: {
+    label: "Capacidades",
+    available: {
+      title: "Disponible hoy",
+      items: [
+        "API de datos con autenticación y roles",
+        "Gestión de localizaciones, sensores y observaciones",
+        "Ingesta individual y por lotes con validación",
+        "Alertas deduplicadas por cruce de umbral",
+        "Estadísticas, tendencias y análisis espacial",
+        "Mapa de sensores con última lectura",
+        "Reportes exportables",
+        "Infraestructura como código en AWS",
+      ],
+    },
+    evolving: {
+      title: "En evolución",
+      items: [
+        "Lectura meso y macro (drones y satélite)",
+        "Detección general de anomalías",
+        "Procesamiento asíncrono y reportes en la nube",
+        "Modelos predictivos",
+      ],
+    },
+  },
+  flow: {
+    label: "Flujo de datos",
+    steps: [
+      { title: "Captura", detail: "Sensores en campo" },
+      { title: "Ingesta y validación", detail: "Individual y por lotes" },
+      { title: "Almacenamiento geoespacial", detail: "PostgreSQL con PostGIS" },
+      { title: "Análisis", detail: "Estadísticas, tendencias y espacial" },
+      { title: "Visualización y alertas", detail: "Mapa, umbrales y reportes" },
     ],
   },
-  evolving: {
-    title: "En evolución",
-    items: [
-      "Lectura meso y macro (drones y satélite)",
-      "Detección general de anomalías",
-      "Procesamiento asíncrono y reportes en la nube",
-      "Modelos predictivos",
+  stack: {
+    label: "Tecnología y seguridad",
+    groups: [
+      { group: "Datos y API", items: ["Python 3.11", "FastAPI", "SQLAlchemy"] },
+      { group: "Geoespacial", items: ["PostgreSQL 16", "PostGIS 3.4"] },
+      { group: "Interfaz", items: ["React", "TypeScript", "Next.js (este sitio)"] },
+      { group: "Nube", items: ["AWS CDK"] },
     ],
+    security: [
+      { icon: "roles", text: "Acceso con roles: administración, operación y consulta." },
+      { icon: "encryption", text: "Tráfico cifrado (HTTPS)." },
+      { icon: "code", text: "Infraestructura versionada como código." },
+    ] satisfies ReadonlyArray<{ icon: SecurityIcon; text: string }>,
   },
   legend: {
     title: "Escala de interpretación",
-    text: "La plataforma comunica el nivel de cada alerta con tres niveles, siempre acompañados de su nombre.",
+    text: "Cada alerta se comunica con uno de tres niveles, siempre acompañado de su nombre.",
     levels: [
       { label: "Atención", swatch: "bg-m3-yellow" },
       { label: "Alerta", swatch: "bg-m3-orange" },
@@ -257,74 +378,14 @@ export const capabilities = {
   },
 } as const;
 
-export const technology = {
-  index: "06",
-  kicker: "Tecnología",
-  title: "Del dato en campo a la decisión.",
-  lead: "Un flujo de datos de extremo a extremo, construido sobre tecnologías de código abierto y servicios en la nube.",
-  flow: [
-    "Captura",
-    "Ingesta y validación",
-    "Almacenamiento geoespacial",
-    "Análisis",
-    "Visualización y alertas",
-  ],
-  stack: [
-    { group: "Datos y API", items: ["Python 3.11", "FastAPI", "SQLAlchemy"] },
-    { group: "Geoespacial", items: ["PostgreSQL 16", "PostGIS 3.4"] },
-    { group: "Interfaz", items: ["React", "TypeScript", "Next.js"] },
-    { group: "Nube", items: ["AWS CDK"] },
-  ],
-} as const;
-
-export const useCases = {
-  index: "07",
-  kicker: "Casos de uso",
-  title: "Un mismo método, cuatro frentes.",
-  imageAlt: "Vista aérea de una ladera cultivada con una red de puntos y líneas superpuesta",
-  items: [
-    {
-      icon: "risk",
-      title: "Gestión del riesgo",
-      scope: "Deslizamientos y movimientos en masa",
-      text:
-        "El comportamiento del terreno empieza mucho antes de que sea visible. El reto no es reaccionar mejor, es poder leer esas señales a tiempo.",
-    },
-    {
-      icon: "agro",
-      title: "Monitoreo agrícola",
-      scope: "Variabilidad del suelo y eficiencia productiva",
-      text: "El suelo no se comporta igual en toda la extensión de un cultivo.",
-    },
-    {
-      icon: "infra",
-      title: "Infraestructura",
-      scope: "Estabilidad del entorno de obras y activos lineales",
-      // Pendiente de aprobación editorial (ronda de ajustes 1)
-      text: "Lectura continua del terreno alrededor de obras y activos para anticipar cambios en su estabilidad.",
-    },
-    {
-      icon: "environment",
-      title: "Ambiente",
-      scope: "Variables hídricas, climáticas y ambientales en distintos niveles",
-      // Pendiente de aprobación editorial (ronda de ajustes 1)
-      text: "Integración de variables hídricas, climáticas y ambientales para entender cómo interactúan en el territorio.",
-    },
-  ] satisfies ReadonlyArray<{
-    icon: CaseIcon;
-    title: string;
-    scope: string;
-    text: string;
-  }>,
-} as const;
-
 export const contact = {
   index: "08",
-  kicker: "Contacto",
+  kicker: "Hablemos",
   titleBold1: "Entender mejor",
   titleLight: "para",
   titleBold2: "decidir mejor",
-  text: "Cuéntenos qué territorio necesita entender. Le mostramos cómo M3TRIC integra sus datos en una sola lectura.",
+  text: "Cuéntenos qué terreno necesita entender. Le mostramos cómo M3TRIC puede ayudarle.",
+  pendingChannels: "Los canales de contacto se publicarán con el dominio oficial.",
   imageAlt: "Vista aérea vertical de una ladera cultivada con una red de puntos y líneas superpuesta",
   emailLabel: "Correo",
   phoneLabel: "Teléfono",

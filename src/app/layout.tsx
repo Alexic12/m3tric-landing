@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Barlow } from "next/font/google";
 import { BRAND_GREEN_900 } from "@/config/brand";
 import { HydrationMarker } from "@/components/layout/HydrationMarker";
+import { faq } from "@/content/landing";
 import { siteConfig } from "@/config/site";
 import "./globals.css";
 
@@ -52,7 +53,9 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     images: ["/og.png"],
   },
-  robots: { index: true, follow: true },
+  robots: siteConfig.isIndexable ? { index: true, follow: true } : { index: false, follow: false },
+  // Which deploy this HTML belongs to; scripts/deploy/smoke.mjs compares it with the expected ReleaseId.
+  other: { "m3tric:release": siteConfig.releaseId },
 };
 
 export const viewport: Viewport = {
@@ -75,6 +78,14 @@ const jsonLd = {
       alternateName: "Metric",
       url: siteConfig.siteUrl,
       inLanguage: "es-CO",
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: faq.items.map(({ question, answer }) => ({
+        "@type": "Question",
+        name: question,
+        acceptedAnswer: { "@type": "Answer", text: answer },
+      })),
     },
   ],
 };

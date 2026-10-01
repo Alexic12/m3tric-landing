@@ -1,0 +1,107 @@
+name: Deploy staging
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: Why this manual deploy
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+# One deploy or rollback at a time, never cancelling one in flight (a cancelled CloudFormation/S3 pass leaves
+# a half-published site). A newer pending run replaces an older pending one: only the latest main matters.
+concurrency:
+  group: landing-staging
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: 24.19.0
+  STACK_NAME: m3tric-staging-LandingSiteStack
+
+jobs:
+  ci:
+    name: CI
+    uses: ./.github/workflows/ci.yml
+
+  infra:
+    name: CDK deploy
+    needs: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: landing-staging
+    permissions:
+      id-token: write
+      contents: read
+    outputs:
+      bucket: ${{ steps.outputs.outputs.bucket }}
+      distribution_id: ${{ steps.outputs.outputs.distribution_id }}
+      site_url: ${{ steps.outputs.outputs.site_url }}
+      release_id: ${{ steps.meta.outputs.release_id }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Release id
+        id: meta
+        run: echo "release_id=deploy-${{ github.run_number }}-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            infra/package-lock.json
+
+      - run: npm ci
+        working-directory: infra
+
+      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-session-name: landing-cdk-${{ github.run_id }}
+
+      - name: cdk deploy
+        working-directory: infra
+        env:
+          RELEASE_ID: ${{ steps.meta.outputs.release_id }}
+        run: >
+          npx cdk deploy "$STACK_NAME"
+          -c env=staging -c gitSha="$GITHUB_SHA" -c releaseId="$RELEASE_ID"
+          --require-approval never --outputs-file cdk-outputs.json
+
+      - name: Read stack outputs
+        id: outputs
+        working-directory: infra
+        run: |
+          set -euo pipefail
+          out() { jq -er --arg k "$1" '.[env.STACK_NAME][$k] | select(. != null and . != "")' cdk-outputs.json; }
+          site_url="$(out SiteUrl)"
+          case "$site_url" in https://*) ;; *) echo "::error::SiteUrl is not https: $site_url"; exit 1 ;; esac
+          {
+            echo "bucket=$(out SiteBucketName)"
+            echo "distribution_id=$(out DistributionId)"
+            echo "site_url=${site_url%/}"
+          } >> "$GITHUB_OUTPUT"
+
+  publish:
+    name: Publish
+    needs: infra
+    permissions:
+      id-token: write
+      contents: read
+    uses: ./.github/workflows/publish.yml
+    with:
+      ref: ${{ github.sha }}
+      bucket: ${{ needs.infra.outputs.bucket }}
+      distribution_id: ${{ needs.infra.outputs.distribution_id }}
+      site_url: ${{ needs.infra.outputs.site_url }}
+      release_id: ${{ needs.infra.outputs.release_id }}
+      reason: ${{ github.event_name == 'workflow_dispatch' && inputs.reason || format('push to {0}', github.ref_name) }}

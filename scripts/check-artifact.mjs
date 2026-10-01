@@ -1,6 +1,7 @@
 // Scans out/ for forbidden content and required files (fail-closed).
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { extname, join, relative } from "node:path";
+import { profileProblems } from "./lib/artifact-rules.mjs";
 import { ROOT, loadReleaseEnv } from "./lib/release-config.mjs";
 
 const OUT = join(ROOT, "out");
@@ -9,6 +10,8 @@ const get = (key) => (env[key] ?? "").trim();
 const siteUrl = get("NEXT_PUBLIC_SITE_URL");
 const platformUrl = get("NEXT_PUBLIC_PLATFORM_URL");
 const email = get("NEXT_PUBLIC_CONTACT_EMAIL");
+const profile = get("NEXT_PUBLIC_RELEASE_PROFILE");
+const releaseId = get("NEXT_PUBLIC_RELEASE_ID");
 
 const problems = [];
 
@@ -70,7 +73,8 @@ for (const file of walk(OUT)) {
   }
 }
 
-for (const file of ["sitemap.xml", "robots.txt"]) {
+// robots.txt only advertises the sitemap (and so only carries SITE_URL) when the profile is indexable.
+for (const file of profile === "production" ? ["sitemap.xml", "robots.txt"] : ["sitemap.xml"]) {
   const path = join(OUT, file);
   if (existsSync(path) && !readFileSync(path, "utf8").includes(siteUrl || "\u0000")) {
     problems.push(`${file} no contiene SITE_URL / does not contain SITE_URL (${siteUrl || "unset"})`);
@@ -87,6 +91,16 @@ if (existsSync(indexPath)) {
     problems.push(`index.html no enlaza la PLATFORM_URL exacta / does not link the exact PLATFORM_URL (${platformUrl || "unset"})`);
   if (email && !html.includes(`href="mailto:${escapeAttr(email)}?subject=`))
     problems.push(`index.html no contiene el mailto exacto / does not contain the exact mailto (${email})`);
+  if (!html.includes('"@type":"FAQPage"')) problems.push('index.html sin JSON-LD FAQPage / missing FAQPage JSON-LD');
+  const robotsPath = join(OUT, "robots.txt");
+  problems.push(
+    ...profileProblems({
+      profile,
+      html,
+      robotsTxt: existsSync(robotsPath) ? readFileSync(robotsPath, "utf8") : "",
+      releaseId: releaseId || undefined,
+    }),
+  );
   if (!/\/og\.png/.test(html)) problems.push("index.html no referencia /og.png / does not reference /og.png");
 
   const referenced = new Set(html.match(/\/images\/[\w./-]+\.(?:webp|png|jpe?g|svg|avif)/g) ?? []);

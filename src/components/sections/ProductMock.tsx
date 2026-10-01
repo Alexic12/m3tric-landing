@@ -1,4 +1,4 @@
-import { a11y, platform } from "@/content/landing";
+import { a11y, howItWorks } from "@/content/landing";
 
 const INK = "#0b0f0d";
 const MUTED = "#4b5563";
@@ -139,7 +139,7 @@ export function ProductMock() {
         </g>
       </svg>
       <figcaption className="mt-5 text-center text-sm text-m3-muted">
-        {platform.mockCaption}
+        {howItWorks.mockCaption}
       </figcaption>
     </figure>
   );

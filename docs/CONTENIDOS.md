@@ -521,7 +521,7 @@ Los colores y fuentes están centralizados en `@theme`:
 **Reglas de uso (obligatorio):**
 
 - **Verde cálido** (amarillo/naranja/rojo): **solo** para niveles de alerta. Nunca botones, decoración o texto editorial.
-- **Contraste**: todos cumplen WCAG AA mínimo. Ver `docs/SPEC-landing-v2.md` §3.2 para contrastes específicos.
+- **Contraste**: todos cumplen WCAG AA mínimo. Ver `docs/SPEC.md` §3.2 para contrastes específicos.
 - **Tipografía**: La pila de fuentes intenta `DIN 2014 Rounded` (licencia comercial, no en el repo). Fallback es `Barlow` (OFL, autohospedada). Si el cliente licencia DIN 2014 Rounded, agregar `.woff2` vía `next/font/local` — la pila no cambia.
 
 **Para cambiar un color:**

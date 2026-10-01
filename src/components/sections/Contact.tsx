@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { contact, cta } from "@/content/landing";
 import { mailtoHref, siteConfig } from "@/config/site";
+import { formatPhone } from "./contact-format";
 
 export function Contact() {
   const mailHref = mailtoHref(cta.mailSubject);
@@ -15,7 +16,7 @@ export function Contact() {
     <section
       id="contacto"
       aria-labelledby="contacto-title"
-      className="on-dark relative isolate overflow-hidden bg-m3-green-900 text-white"
+      className="on-dark relative isolate overflow-hidden border-t border-white/10 bg-m3-green-900 text-white"
     >
       <NodeNetwork className="absolute inset-0 -z-10 size-full opacity-20" seed={33} nodes={26} />
       <div className="mx-auto grid max-w-[1280px] gap-12 px-4 py-24 sm:px-6 md:py-32 lg:grid-cols-12 lg:items-stretch lg:gap-16 lg:px-8">
@@ -44,20 +45,24 @@ export function Contact() {
             <p className="text-lead mt-8 max-w-xl text-m3-green-200">{contact.text}</p>
           </Reveal>
 
-          <Reveal delay={0.1} className="mt-10 flex flex-wrap gap-3">
-            {mailHref ? (
-              <Button href={mailHref} variant="primary-on-dark" size="lg" icon={<Mail size={20} strokeWidth={1.5} />}>
-                {cta.writeTeam}
+          <Reveal delay={0.1} className="mt-10">
+            {/* Without a configured email there is no contact link at all: say so instead of linking nowhere. */}
+            {!email ? <p className="mb-6 max-w-xl text-lg text-white">{contact.pendingChannels}</p> : null}
+            <div className="flex flex-wrap gap-3">
+              {mailHref ? (
+                <Button href={mailHref} variant="primary-on-dark" size="lg" icon={<Mail size={20} strokeWidth={1.5} />}>
+                  {cta.writeTeam}
+                </Button>
+              ) : null}
+              <Button
+                href={siteConfig.platformUrl}
+                variant={mailHref ? "ghost-on-dark" : "primary-on-dark"}
+                size="lg"
+                icon={<ArrowUpRight size={20} strokeWidth={1.5} />}
+              >
+                {cta.platform}
               </Button>
-            ) : null}
-            <Button
-              href={siteConfig.platformUrl}
-              variant={mailHref ? "ghost-on-dark" : "primary-on-dark"}
-              size="lg"
-              icon={<ArrowUpRight size={20} strokeWidth={1.5} />}
-            >
-              {cta.platform}
-            </Button>
+            </div>
           </Reveal>
 
           {email || phone ? (
@@ -77,7 +82,7 @@ export function Contact() {
                     <a href={`tel:${phone}`} className="inline-flex min-h-11 items-center gap-3 text-lg text-white hover:text-m3-green-200">
                       <Phone size={20} strokeWidth={1.5} aria-hidden="true" className="shrink-0 text-m3-green-400" />
                       <span className="sr-only">{contact.phoneLabel}: </span>
-                      {phone}
+                      {formatPhone(phone)}
                     </a>
                   </li>
                 ) : null}

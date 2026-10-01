@@ -679,5 +679,5 @@ aws s3 ls s3://<bucket>/404.html --region us-east-1
 ## Referencias
 
 - **Anexo 1 técnico**: Gates G5–G6, §7 (arquitectura), §11 (seguridad)
-- **Spec build**: `docs/SPEC-landing-v2.md` §6, §11
+- **Spec build**: `docs/SPEC.md` §6, §11
 - **AWS CLI**: [aws s3 sync](https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html), [cloudfront invalidation](https://docs.aws.amazon.com/cli/latest/reference/cloudfront/create-invalidation.html)

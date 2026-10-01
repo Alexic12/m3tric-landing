@@ -274,7 +274,7 @@ Cuando actualices activos:
 ## Referencias
 
 - **Manual de marca**: `docs/20260428_Manual de marca - Metric.pptx` (láminas 1, 3, 8, 12)
-- **Spec técnica**: `docs/SPEC-landing-v2.md` (§3 marca, §7 arquitectura)
+- **Spec técnica**: `docs/SPEC.md` (§3 marca, §7 arquitectura)
 - **Licencias OSI**: https://opensource.org/licenses
 - **Google Fonts Barlow**: https://fonts.google.com/specimen/Barlow
 - **Lucide React**: https://lucide.dev

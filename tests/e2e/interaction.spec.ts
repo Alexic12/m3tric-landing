@@ -115,6 +115,33 @@ test.describe("mobile menu (390x844)", () => {
   });
 });
 
+test.describe("mobile CTA hierarchy (390x844)", () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  test("header shows the compact primary 'Hablar'; the menu offers both CTAs and 'Hablar con el equipo' lands on #contacto", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const headerCta = page.locator("header").getByRole("link", { name: "Hablar con el equipo" }).first();
+    await expect(headerCta).toBeVisible();
+    await expect(headerCta).toHaveText("Hablar con el equipo"); // textContent keeps the visually hidden tail
+    const visibleWidth = await headerCta.evaluate((el) => el.getBoundingClientRect().width);
+    expect(visibleWidth, "compact: much narrower than the full label").toBeLessThan(120);
+    await expect(page.locator("header nav[aria-label='Navegación principal']")).toBeHidden();
+    await expect(page.locator("header").getByRole("link", { name: "Abrir plataforma" }).first()).toBeHidden();
+
+    await page.locator("header button[aria-controls='menu-movil']").click();
+    const menu = page.locator("#menu-movil");
+    await expect(menu.getByRole("link", { name: "Hablar con el equipo" })).toBeVisible();
+    await expect(menu.getByRole("link", { name: "Abrir plataforma" })).toBeVisible();
+    await menu.getByRole("link", { name: "Hablar con el equipo" }).click();
+    await expect(menu).toBeHidden();
+    await expect(page).toHaveURL(/#contacto$/);
+    await waitForScrollSettled(page);
+    await expectHeadingClearOfHeader(page, "contacto");
+  });
+});
+
 test.describe("desktop navigation (1440x900)", () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
@@ -211,29 +238,110 @@ test("header switches from transparent to solid after scrolling", async ({ page 
 });
 
 for (const height of [900, 700, 560]) {
-  test(`hero CTA is not overlapped at 1280x${height}`, async ({ page }) => {
-    await page.setViewportSize({ width: 1280, height });
-    await page.goto("/");
-    const cta = page.locator("#inicio").getByRole("link", { name: "Abrir plataforma" });
-    await expect(cta).toBeVisible();
-    const inViewportAtLoad = await cta.evaluate((el) => {
-      const r = el.getBoundingClientRect();
-      return r.top >= 72 && r.bottom <= window.innerHeight;
+  for (const name of ["Hablar con el equipo", "Abrir plataforma"]) {
+    test(`hero CTA "${name}" is not overlapped at 1280x${height}`, async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height });
+      await page.goto("/");
+      const cta = page.locator("#inicio").getByRole("link", { name });
+      await expect(cta).toBeVisible();
+      const inViewportAtLoad = await cta.evaluate((el) => {
+        const r = el.getBoundingClientRect();
+        return r.top >= 72 && r.bottom <= window.innerHeight;
+      });
+      test.info().annotations.push({ type: "cta-in-first-viewport", description: String(inViewportAtLoad) });
+      await cta.scrollIntoViewIfNeeded();
+      await waitForScrollSettled(page);
+      const hit = await cta.evaluate((el) => {
+        const r = el.getBoundingClientRect();
+        const top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+        return {
+          resolvesToLink: top !== null && (top === el || el.contains(top)),
+          what: top ? `${top.tagName.toLowerCase()}.${String(top.className).slice(0, 40)}` : null,
+          underHeader: r.top < 72,
+        };
+      });
+      expect(hit.resolvesToLink, `element at CTA centre: ${hit.what}`).toBe(true);
+      // Playwright's own actionability check (visible, stable, receives events at the click point).
+      await cta.click({ trial: true });
     });
-    test.info().annotations.push({ type: "cta-in-first-viewport", description: String(inViewportAtLoad) });
-    await cta.scrollIntoViewIfNeeded();
-    await waitForScrollSettled(page);
-    const hit = await cta.evaluate((el) => {
-      const r = el.getBoundingClientRect();
-      const top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
-      return {
-        resolvesToLink: top !== null && (top === el || el.contains(top)),
-        what: top ? `${top.tagName.toLowerCase()}.${String(top.className).slice(0, 40)}` : null,
-        underHeader: r.top < 72,
-      };
-    });
-    expect(hit.resolvesToLink, `element at CTA centre: ${hit.what}`).toBe(true);
-    // Playwright's own actionability check (visible, stable, receives events at the click point).
-    await cta.click({ trial: true });
-  });
+  }
 }
+
+test.describe("FAQ accordion (native <details>)", () => {
+  const items = (page: Page) => page.locator("#preguntas details");
+
+  test("six questions; each summary wraps an h3 and offers a target of at least 44px", async ({ page }) => {
+    await page.goto("/");
+    await expect(items(page)).toHaveCount(6);
+    await expect(page.locator("#preguntas summary > h3")).toHaveCount(6);
+    await expect(page.getByRole("heading", { level: 3, name: "¿Qué necesito para empezar?" })).toHaveCount(1);
+    const heights = await page.locator("#preguntas summary").evaluateAll((els) => els.map((el) => el.getBoundingClientRect().height));
+    for (const h of heights) expect(h).toBeGreaterThanOrEqual(44);
+  });
+
+  test("the first answer starts open, the rest closed; a click opens and closes", async ({ page }) => {
+    await page.goto("/");
+    await expect(items(page).nth(0)).toHaveAttribute("open", "");
+    await expect(items(page).nth(1)).not.toHaveAttribute("open", /.*/);
+    const second = items(page).nth(1);
+    const answer = second.locator("p");
+    await expect(answer).toBeHidden();
+    await second.locator("summary").click();
+    await expect(second).toHaveAttribute("open", "");
+    await expect(answer).toBeVisible();
+    await expect(answer).toContainText("Mediciones de sensores en campo");
+    await second.locator("summary").click();
+    await expect(second).not.toHaveAttribute("open", /.*/);
+    await expect(answer).toBeHidden();
+  });
+
+  test("keyboard: Enter and Space toggle a focused question and the focus ring is visible", async ({ page }) => {
+    await page.goto("/");
+    const third = items(page).nth(2);
+    const summary = third.locator("summary");
+    await summary.scrollIntoViewIfNeeded();
+    await summary.focus();
+    await page.keyboard.press("Enter");
+    await expect(third).toHaveAttribute("open", "");
+    await page.keyboard.press("Space");
+    await expect(third).not.toHaveAttribute("open", /.*/);
+    await page.keyboard.press("Enter");
+    await expect(third).toHaveAttribute("open", "");
+    await expect(summary).toBeFocused();
+    // :focus-visible after keyboard activation: a real outline, not the browser default being stripped.
+    const outline = await summary.evaluate((el) => {
+      const cs = getComputedStyle(el);
+      return { style: cs.outlineStyle, width: parseFloat(cs.outlineWidth) };
+    });
+    expect(outline.style).not.toBe("none");
+    expect(outline.width).toBeGreaterThan(0);
+  });
+
+  test("the chevron rotates when a question opens (CSS only)", async ({ page }) => {
+    await page.goto("/");
+    const second = items(page).nth(1);
+    const chevron = second.locator("summary svg");
+    // Tailwind 4 drives rotation through the individual `rotate` property, not `transform`.
+    const rotation = () =>
+      chevron.evaluate((el) => {
+        const value = getComputedStyle(el).rotate;
+        return value === "none" ? 0 : Math.round(parseFloat(value));
+      });
+    await expect(chevron).toHaveAttribute("aria-hidden", "true");
+    expect(Math.abs(await rotation())).toBe(0);
+    await second.locator("summary").click();
+    await expect.poll(async () => Math.abs(await rotation())).toBe(180);
+  });
+
+  test.describe("without JavaScript", () => {
+    test.use({ javaScriptEnabled: false });
+    test("the accordion still opens and closes", async ({ page }) => {
+      await page.goto("/");
+      const fourth = items(page).nth(3);
+      await expect(fourth.locator("p")).toBeHidden();
+      await fourth.locator("summary").click();
+      await expect(fourth.locator("p")).toBeVisible();
+      await expect(fourth.locator("p")).toContainText("CSV");
+    });
+  });
+});

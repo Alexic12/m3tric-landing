@@ -91,7 +91,7 @@ export function Scales() {
                   >
                     <TripleBar active={BARS[scale.id]} className="w-7 shrink-0 text-m3-green-400" />
                     <span className="text-lg font-bold leading-tight">
-                      {scale.code} <span className="font-light">{scale.name}</span>
+                      {scale.code} · <span className="font-light">{scale.name}</span>
                     </span>
                   </button>
                 );

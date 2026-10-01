@@ -74,7 +74,7 @@ test("link matrix (EV-06)", async ({ page }, testInfo) => {
     }
 
     const isPlatformCta = /abrir plataforma/i.test(name);
-    const isPlatformNamed = /plataforma/i.test(name) && href !== "#plataforma";
+    const isPlatformNamed = /plataforma/i.test(name);
     if (isPlatformCta || isPlatformNamed) {
       type = "platform-cta";
       if (href !== PLATFORM_URL) problems.push(`platform link ${href} != ${PLATFORM_URL}`);

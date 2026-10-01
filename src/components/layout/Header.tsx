@@ -6,7 +6,7 @@ import { Logo } from "@/components/brand/Logo";
 import { TripleBar } from "@/components/brand/TripleBar";
 import { Button } from "@/components/ui/Button";
 import { a11y, cta, navItems } from "@/content/landing";
-import { siteConfig, mailtoHref } from "@/config/site";
+import { siteConfig } from "@/config/site";
 
 const SCROLL_SOLID_PX = 40;
 const XL_QUERY = "(min-width: 1280px)";
@@ -49,7 +49,6 @@ export function Header() {
   const headerRef = useRef<HTMLElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const active = useActiveSection(NAV_IDS);
-  const contactHref = mailtoHref(cta.mailSubject);
 
   const close = useCallback(() => {
     setOpen(false);
@@ -138,7 +137,7 @@ export function Header() {
         </a>
 
         <nav aria-label={a11y.mainNav} className="hidden xl:block">
-          <ul className="flex items-center gap-7">
+          <ul className="flex items-center gap-6 2xl:gap-8">
             {navItems.map((item) => (
               <li key={item.id}>
                 <a
@@ -159,16 +158,23 @@ export function Header() {
           </ul>
         </nav>
 
-        <div className="flex items-center gap-2 sm:gap-3">
-          <Button
+        <div className="flex items-center gap-1 sm:gap-3">
+          <a
             href={siteConfig.platformUrl}
+            className={`hidden min-h-11 items-center gap-1.5 rounded-full px-3 text-[0.9375rem] font-medium transition-opacity hover:opacity-70 xl:inline-flex ${linkTone}`}
+          >
+            {cta.platform}
+            <ArrowUpRight size={16} strokeWidth={1.5} aria-hidden="true" />
+          </a>
+          <Button
+            href="#contacto"
             variant={solid ? "primary-on-light" : "primary-on-dark"}
-            icon={<ArrowUpRight size={18} strokeWidth={1.5} className="max-sm:hidden" />}
+            onClick={open ? closeForNavigation : undefined}
             className="max-sm:px-4"
           >
             <span>
-              <span className="max-sm:sr-only">{cta.platformVerb} </span>
-              <span className="max-sm:capitalize">{cta.platformNoun}</span>
+              {cta.teamVerb}
+              <span className="sr-only xl:not-sr-only"> {cta.teamRest}</span>
             </span>
           </Button>
           <button
@@ -213,14 +219,12 @@ export function Header() {
             ))}
           </ul>
           <div className="mt-auto flex flex-col gap-3 pt-10 sm:flex-row">
-            <Button href={siteConfig.platformUrl} variant="primary-on-dark" size="lg" icon={<ArrowUpRight size={20} strokeWidth={1.5} />}>
+            <Button href="#contacto" variant="primary-on-dark" size="lg" onClick={closeForNavigation}>
+              {cta.team}
+            </Button>
+            <Button href={siteConfig.platformUrl} variant="ghost-on-dark" size="lg" icon={<ArrowUpRight size={20} strokeWidth={1.5} />}>
               {cta.platform}
             </Button>
-            {contactHref ? (
-              <Button href={contactHref} variant="ghost-on-dark" size="lg" onClick={closeForNavigation}>
-                {cta.writeTeam}
-              </Button>
-            ) : null}
           </div>
         </nav>
       </div>

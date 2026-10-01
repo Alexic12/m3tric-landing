@@ -20,9 +20,17 @@ const rawEmail = clean(process.env.NEXT_PUBLIC_CONTACT_EMAIL);
 const email = rawEmail && STRICT_EMAIL.test(rawEmail) ? rawEmail : undefined;
 const phone = clean(process.env.NEXT_PUBLIC_CONTACT_PHONE);
 
+export type ReleaseProfile = "staging" | "production" | "development";
+
 export interface SiteConfig {
   siteUrl: string;
   platformUrl: string;
+  /** `development` is any build that did not set NEXT_PUBLIC_RELEASE_PROFILE: treated as non-indexable. */
+  releaseProfile: ReleaseProfile;
+  /** True only for the production profile (ADR-004). Drives robots meta, robots.txt and the sitemap link. */
+  isIndexable: boolean;
+  /** Deploy identifier (also in the m3tric:release meta). "local" outside CI. */
+  releaseId: string;
   contact: { email?: string; phone?: string };
 }
 
@@ -30,11 +38,21 @@ export interface SiteConfig {
 // minifier folds them and the localhost dev fallbacks never reach the bundle
 // (scripts/check-artifact.mjs fails the release if they do). A whitespace-only
 // value is rejected by scripts/check-config.mjs before a release build runs.
+// The profile follows the same rule: each branch compares the inlined literal, so the minifier folds
+// it to one string and `isIndexable` to a boolean; anything but the exact "production" is not indexable.
 export const siteConfig: SiteConfig = {
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL ? process.env.NEXT_PUBLIC_SITE_URL.trim() : DEV_SITE_URL,
   platformUrl: process.env.NEXT_PUBLIC_PLATFORM_URL
     ? process.env.NEXT_PUBLIC_PLATFORM_URL.trim()
     : DEV_PLATFORM_URL,
+  releaseProfile:
+    process.env.NEXT_PUBLIC_RELEASE_PROFILE === "production"
+      ? "production"
+      : process.env.NEXT_PUBLIC_RELEASE_PROFILE === "staging"
+        ? "staging"
+        : "development",
+  isIndexable: process.env.NEXT_PUBLIC_RELEASE_PROFILE === "production",
+  releaseId: process.env.NEXT_PUBLIC_RELEASE_ID ? process.env.NEXT_PUBLIC_RELEASE_ID.trim() : "local",
   contact: { email, phone },
 };
 

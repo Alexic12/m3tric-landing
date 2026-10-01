@@ -55,3 +55,10 @@ export function tabChord(testInfo: TestInfo, backwards = false): string {
   const alt = testInfo.project.name === "webkit" && process.platform === "darwin";
   return `${alt ? "Alt+" : ""}${backwards ? "Shift+" : ""}Tab`;
 }
+
+/** Normalised text of the h2 of every top-level section, in page order. */
+export async function sectionTitles(page: Page): Promise<string[]> {
+  return page.evaluate(() =>
+    Array.from(document.querySelectorAll("main > section h2")).map((h) => (h.textContent ?? "").replace(/\s+/g, " ").trim()),
+  );
+}

@@ -1,14 +1,20 @@
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Bell, FileText, MapPinned, type LucideIcon } from "lucide-react";
 import { NodeNetwork } from "@/components/brand/NodeNetwork";
 import { TripleBar } from "@/components/brand/TripleBar";
 import { Button } from "@/components/ui/Button";
-import { a11y, cta, hero } from "@/content/landing";
+import { a11y, cta, hero, type OutcomeIcon } from "@/content/landing";
 import { siteConfig } from "@/config/site";
 
 const WIDE_SRCSET = [640, 1280, 1920, 2560].map((w) => `/images/aerial-wide-${w}.webp ${w}w`).join(", ");
 // Mobile hero: one small, low-quality crop. It sits behind a >= 70 % veil, so detail is invisible, and it is
 // the LCP-critical request on slow networks (see scripts/optimize-images.py WIDTH_QUALITY).
 const TALL_SRC = "/images/aerial-tall-480.webp";
+
+const OUTCOME_ICONS: Record<OutcomeIcon, LucideIcon> = {
+  alerts: Bell,
+  map: MapPinned,
+  reports: FileText,
+};
 
 export function Hero() {
   return (
@@ -38,7 +44,7 @@ export function Hero() {
         aria-hidden="true"
         className="absolute inset-0 -z-20 hidden bg-linear-to-r from-m3-green-900 via-m3-green-900/80 to-transparent md:block"
       />
-      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-20 h-1/3 bg-linear-to-t from-m3-green-900/90 to-transparent" />
+      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-20 h-1/2 bg-linear-to-t from-m3-green-900 to-transparent" />
       <NodeNetwork className="absolute inset-0 -z-10 size-full opacity-50 [mask-image:linear-gradient(to_right,transparent_15%,black_75%)]" />
 
       <div className="mx-auto flex w-full max-w-[1280px] flex-1 flex-col justify-between px-4 pb-10 pt-[calc(72px+3.5rem)] sm:px-6 md:pb-14 md:pt-[calc(72px+5rem)] lg:px-8">
@@ -54,27 +60,43 @@ export function Hero() {
           <p className="text-lead mt-8 max-w-xl text-white/90">{hero.lead}</p>
           <div className="mt-10 flex flex-wrap gap-3">
             <Button
-              href={siteConfig.platformUrl}
+              href="#contacto"
               variant="primary-on-dark"
+              size="lg"
+              icon={<ArrowRight size={20} strokeWidth={1.5} />}
+            >
+              {cta.team}
+            </Button>
+            <Button
+              href={siteConfig.platformUrl}
+              variant="ghost-on-dark"
               size="lg"
               icon={<ArrowUpRight size={20} strokeWidth={1.5} />}
             >
               {cta.platform}
             </Button>
-            <Button href="#contacto" variant="ghost-on-dark" size="lg">
-              {cta.team}
-            </Button>
           </div>
         </div>
 
-        <div className="mt-16 md:mt-20">
-          <ul aria-label={a11y.layers} className="grid gap-4 border-t border-white/20 pt-6 md:grid-cols-3 md:gap-8">
-            {hero.layers.map((layer) => (
-              <li key={layer.label} className="flex items-center gap-4">
-                <TripleBar active={layer.active} className="w-8 shrink-0 text-m3-green-400" />
-                <span className="text-base font-medium text-white md:text-lg">{layer.label}</span>
-              </li>
-            ))}
+        <div className="mt-14 md:mt-20">
+          <ul
+            aria-label={a11y.outcomes}
+            className="grid gap-px overflow-hidden rounded-2xl border border-white/20 bg-white/20 md:grid-cols-3"
+          >
+            {hero.outcomes.map((outcome) => {
+              const Icon = OUTCOME_ICONS[outcome.icon];
+              return (
+                <li key={outcome.label} className="flex items-start gap-4 bg-m3-green-900/90 p-5 backdrop-blur-sm md:p-6">
+                  <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-m3-green-200/15 text-m3-green-200">
+                    <Icon size={22} strokeWidth={1.5} aria-hidden="true" />
+                  </span>
+                  <div>
+                    <p className="text-lg font-bold leading-snug text-white">{outcome.label}</p>
+                    <p className="mt-1 text-[0.9375rem] leading-snug text-m3-green-200">{outcome.text}</p>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>

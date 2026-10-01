@@ -3,6 +3,8 @@ import { describe, test } from "node:test";
 import { validate } from "./lib/release-config.mjs";
 
 const GOOD = {
+  RELEASE_PROFILE: "production",
+  NEXT_PUBLIC_RELEASE_PROFILE: "production",
   NEXT_PUBLIC_SITE_URL: "https://m3tric.co",
   NEXT_PUBLIC_PLATFORM_URL: "https://app.m3tric.co/login",
   NEXT_PUBLIC_CONTACT_EMAIL: "contacto@m3tric.co",
@@ -111,6 +113,46 @@ describe("CONTACT_EMAIL and PHONE", () => {
   });
 
   test("an empty config reports every required variable", () => {
-    assert.equal(validate({}).length, 3);
+    assert.equal(validate({}).length, 4);
+  });
+});
+
+describe("release profiles (ADR-003)", () => {
+  const STAGING = {
+    RELEASE_PROFILE: "staging",
+    NEXT_PUBLIC_RELEASE_PROFILE: "staging",
+    NEXT_PUBLIC_SITE_URL: "https://d111111abcdef8.cloudfront.net",
+    NEXT_PUBLIC_PLATFORM_URL: "https://d3pz2gipvkcx1b.cloudfront.net/login",
+  };
+
+  test("staging passes without a contact email", () => {
+    assert.deepEqual(validate(STAGING), []);
+  });
+
+  test("staging still validates an email that is present", () => {
+    assert.ok(fieldProblems({ ...STAGING, NEXT_PUBLIC_CONTACT_EMAIL: "a@example.com" }, "NEXT_PUBLIC_CONTACT_EMAIL").length > 0);
+    assert.deepEqual(validate({ ...STAGING, NEXT_PUBLIC_CONTACT_EMAIL: "contacto@m3tric.co" }), []);
+  });
+
+  test("production without an email fails", () => {
+    assert.ok(fieldProblems({ ...STAGING, RELEASE_PROFILE: "production", NEXT_PUBLIC_RELEASE_PROFILE: "production" }, "NEXT_PUBLIC_CONTACT_EMAIL").length > 0);
+  });
+
+  for (const value of ["", "prod", "Production", "development"]) {
+    test(`rejects RELEASE_PROFILE ${JSON.stringify(value)}`, () => {
+      assert.ok(fieldProblems({ ...STAGING, RELEASE_PROFILE: value }, "RELEASE_PROFILE").length > 0);
+    });
+  }
+
+  test("NEXT_PUBLIC_RELEASE_PROFILE must equal RELEASE_PROFILE", () => {
+    assert.ok(fieldProblems({ ...STAGING, NEXT_PUBLIC_RELEASE_PROFILE: "production" }, "NEXT_PUBLIC_RELEASE_PROFILE").length > 0);
+    assert.ok(fieldProblems({ ...STAGING, NEXT_PUBLIC_RELEASE_PROFILE: "" }, "NEXT_PUBLIC_RELEASE_PROFILE").length > 0);
+  });
+
+  test("release id is optional but must be a safe token", () => {
+    assert.deepEqual(validate({ ...STAGING, NEXT_PUBLIC_RELEASE_ID: "deploy-12-abc1234" }), []);
+    for (const bad of ['a"b', "a b", "x".repeat(65), "<s>"]) {
+      assert.ok(fieldProblems({ ...STAGING, NEXT_PUBLIC_RELEASE_ID: bad }, "NEXT_PUBLIC_RELEASE_ID").length > 0, bad);
+    }
   });
 });

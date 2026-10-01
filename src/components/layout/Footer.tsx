@@ -2,6 +2,7 @@ import { Logo } from "@/components/brand/Logo";
 import { TripleBar } from "@/components/brand/TripleBar";
 import { a11y, brand, contact, cta, footer, navItems } from "@/content/landing";
 import { mailtoHref, siteConfig } from "@/config/site";
+import { formatPhone } from "@/components/sections/contact-format";
 
 const BUILD_YEAR = new Date().getFullYear();
 
@@ -49,7 +50,7 @@ export function Footer() {
                 {phone ? (
                   <li>
                     <a href={`tel:${phone}`} className={linkClass}>
-                      {phone}
+                      {formatPhone(phone)}
                     </a>
                   </li>
                 ) : null}
