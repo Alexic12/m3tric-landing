@@ -1,9 +1,12 @@
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { expect, test } from "@playwright/test";
+import { ENGINE_NOTICE } from "../helpers/live";
 import { scrollThrough } from "../helpers/page";
 
 const EVIDENCE = join(__dirname, "..", "..", "docs", "evidence");
+// Browser-emitted advisories (GPU driver, deliberate probe-context release) are
+// not the page's own warnings, so ENGINE_NOTICE is tolerated alongside this one.
 const KNOWN_WARNING = /THREE\.Clock.*deprecated|THREE\.THREE\.Clock/i;
 
 test.beforeEach(({}, testInfo) => {
@@ -36,7 +39,7 @@ test.describe("with WebGL", () => {
     await page.waitForTimeout(1000);
     writeFileSync(join(EVIDENCE, "console-3d.json"), JSON.stringify({ errors, warnings }, null, 2));
     expect(errors, "console errors").toEqual([]);
-    const unknown = warnings.filter((w) => !KNOWN_WARNING.test(w));
+    const unknown = warnings.filter((w) => !KNOWN_WARNING.test(w) && !ENGINE_NOTICE.test(w));
     expect(unknown, "warnings other than the accepted THREE.Clock deprecation").toEqual([]);
   });
 });

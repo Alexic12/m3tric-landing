@@ -13,7 +13,7 @@
     "orientationAngle": 0,
     "orientationType": "landscape-primary"
   },
-  "timestamp": "2026-10-01T13:13:58.870Z",
+  "timestamp": "2026-10-01T14:17:01.623Z",
   "url": "http://127.0.0.1:4173/",
   "toolOptions": {
     "runOnly": {
@@ -4332,7 +4332,7 @@
           "impact": null,
           "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 91.7 99.08\" aria-hidden=\"true\" focusable=\"false\" class=\"w-8 shrink-0 text-m3-green-900\" style=\"height:auto\" fill=\"currentColor\">",
           "target": [
-            "li:nth-child(1) > .gap-y-2.py-6.sm\\:grid-cols-\\[minmax\\(0\\,15rem\\)_1fr\\] > .text-h3.gap-4 > .w-8[viewBox=\"0 0 91.7 99.08\"][fill=\"currentColor\"]"
+            "li:nth-child(1) > .gap-y-2.py-6.sm\\:grid-cols-\\[15rem_1fr\\] > .text-h3.gap-4 > .w-8[viewBox=\"0 0 91.7 99.08\"][fill=\"currentColor\"]"
           ]
         },
         {
@@ -4364,7 +4364,7 @@
           "impact": null,
           "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 91.7 99.08\" aria-hidden=\"true\" focusable=\"false\" class=\"w-8 shrink-0 text-m3-green-900\" style=\"height:auto\" fill=\"currentColor\">",
           "target": [
-            "li:nth-child(2) > .gap-y-2.py-6.sm\\:grid-cols-\\[minmax\\(0\\,15rem\\)_1fr\\] > .text-h3.gap-4 > .w-8[viewBox=\"0 0 91.7 99.08\"][fill=\"currentColor\"]"
+            "li:nth-child(2) > .gap-y-2.py-6.sm\\:grid-cols-\\[15rem_1fr\\] > .text-h3.gap-4 > .w-8[viewBox=\"0 0 91.7 99.08\"][fill=\"currentColor\"]"
           ]
         },
         {
@@ -4396,7 +4396,7 @@
           "impact": null,
           "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 91.7 99.08\" aria-hidden=\"true\" focusable=\"false\" class=\"w-8 shrink-0 text-m3-green-900\" style=\"height:auto\" fill=\"currentColor\">",
           "target": [
-            "li:nth-child(3) > .gap-y-2.py-6.sm\\:grid-cols-\\[minmax\\(0\\,15rem\\)_1fr\\] > .text-h3.gap-4 > .w-8[viewBox=\"0 0 91.7 99.08\"][fill=\"currentColor\"]"
+            "li:nth-child(3) > .gap-y-2.py-6.sm\\:grid-cols-\\[15rem_1fr\\] > .text-h3.gap-4 > .w-8[viewBox=\"0 0 91.7 99.08\"][fill=\"currentColor\"]"
           ]
         },
         {
@@ -8330,9 +8330,9 @@
           ],
           "none": [],
           "impact": null,
-          "html": "<div data-reveal=\"\" class=\"grid gap-x-8 gap-y-2 border-b border-m3-green-900/15 py-6 sm:grid-cols-[minmax(0,15rem)_1fr] sm:items-baseline\" style=\"transition-delay:0.08s\" data-revealed=\"\">",
+          "html": "<div data-reveal=\"\" class=\"grid gap-x-8 gap-y-2 border-b border-m3-green-900/15 py-6 sm:grid-cols-[15rem_1fr] sm:items-baseline\" style=\"transition-delay:0.08s\" data-revealed=\"\">",
           "target": [
-            "li:nth-child(2) > .gap-y-2.py-6.sm\\:grid-cols-\\[minmax\\(0\\,15rem\\)_1fr\\]"
+            "li:nth-child(2) > .gap-y-2.py-6.sm\\:grid-cols-\\[15rem_1fr\\]"
           ]
         },
         {
@@ -8362,9 +8362,9 @@
           ],
           "none": [],
           "impact": null,
-          "html": "<div data-reveal=\"\" class=\"grid gap-x-8 gap-y-2 border-b border-m3-green-900/15 py-6 sm:grid-cols-[minmax(0,15rem)_1fr] sm:items-baseline\" style=\"transition-delay:0.16s\" data-revealed=\"\">",
+          "html": "<div data-reveal=\"\" class=\"grid gap-x-8 gap-y-2 border-b border-m3-green-900/15 py-6 sm:grid-cols-[15rem_1fr] sm:items-baseline\" style=\"transition-delay:0.16s\" data-revealed=\"\">",
           "target": [
-            "li:nth-child(3) > .gap-y-2.py-6.sm\\:grid-cols-\\[minmax\\(0\\,15rem\\)_1fr\\]"
+            "li:nth-child(3) > .gap-y-2.py-6.sm\\:grid-cols-\\[15rem_1fr\\]"
           ]
         },
         {
@@ -8814,19 +8814,19 @@
                 {
                   "html": "<h3 class=\"text-h3 flex items-center gap-4 text-m3-green-900\">",
                   "target": [
-                    "li:nth-child(1) > .gap-y-2.py-6.sm\\:grid-cols-\\[minmax\\(0\\,15rem\\)_1fr\\] > .text-h3.gap-4"
+                    "li:nth-child(1) > .gap-y-2.py-6.sm\\:grid-cols-\\[15rem_1fr\\] > .text-h3.gap-4"
                   ]
                 },
                 {
                   "html": "<h3 class=\"text-h3 flex items-center gap-4 text-m3-green-900\">",
                   "target": [
-                    "li:nth-child(2) > .gap-y-2.py-6.sm\\:grid-cols-\\[minmax\\(0\\,15rem\\)_1fr\\] > .text-h3.gap-4"
+                    "li:nth-child(2) > .gap-y-2.py-6.sm\\:grid-cols-\\[15rem_1fr\\] > .text-h3.gap-4"
                   ]
                 },
                 {
                   "html": "<h3 class=\"text-h3 flex items-center gap-4 text-m3-green-900\">",
                   "target": [
-                    "li:nth-child(3) > .gap-y-2.py-6.sm\\:grid-cols-\\[minmax\\(0\\,15rem\\)_1fr\\] > .text-h3.gap-4"
+                    "li:nth-child(3) > .gap-y-2.py-6.sm\\:grid-cols-\\[15rem_1fr\\] > .text-h3.gap-4"
                   ]
                 },
                 {
@@ -10533,7 +10533,7 @@
           "impact": null,
           "html": "<h3 class=\"text-h3 flex items-center gap-4 text-m3-green-900\">",
           "target": [
-            "li:nth-child(1) > .gap-y-2.py-6.sm\\:grid-cols-\\[minmax\\(0\\,15rem\\)_1fr\\] > .text-h3.gap-4"
+            "li:nth-child(1) > .gap-y-2.py-6.sm\\:grid-cols-\\[15rem_1fr\\] > .text-h3.gap-4"
           ]
         },
         {
@@ -10558,7 +10558,7 @@
           "impact": null,
           "html": "<p class=\"text-m3-muted\">Soluciones basadas en evidencia, modelos analíticos y validación en campo.</p>",
           "target": [
-            "li:nth-child(1) > .gap-y-2.py-6.sm\\:grid-cols-\\[minmax\\(0\\,15rem\\)_1fr\\] > .text-m3-muted"
+            "li:nth-child(1) > .gap-y-2.py-6.sm\\:grid-cols-\\[15rem_1fr\\] > .text-m3-muted"
           ]
         },
         {
@@ -10583,7 +10583,7 @@
           "impact": null,
           "html": "<h3 class=\"text-h3 flex items-center gap-4 text-m3-green-900\">",
           "target": [
-            "li:nth-child(2) > .gap-y-2.py-6.sm\\:grid-cols-\\[minmax\\(0\\,15rem\\)_1fr\\] > .text-h3.gap-4"
+            "li:nth-child(2) > .gap-y-2.py-6.sm\\:grid-cols-\\[15rem_1fr\\] > .text-h3.gap-4"
           ]
         },
         {
@@ -10608,7 +10608,7 @@
           "impact": null,
           "html": "<p class=\"text-m3-muted\">Información confiable y detallada para decisiones críticas.</p>",
           "target": [
-            "li:nth-child(2) > .gap-y-2.py-6.sm\\:grid-cols-\\[minmax\\(0\\,15rem\\)_1fr\\] > .text-m3-muted"
+            "li:nth-child(2) > .gap-y-2.py-6.sm\\:grid-cols-\\[15rem_1fr\\] > .text-m3-muted"
           ]
         },
         {
@@ -10633,7 +10633,7 @@
           "impact": null,
           "html": "<h3 class=\"text-h3 flex items-center gap-4 text-m3-green-900\">",
           "target": [
-            "li:nth-child(3) > .gap-y-2.py-6.sm\\:grid-cols-\\[minmax\\(0\\,15rem\\)_1fr\\] > .text-h3.gap-4"
+            "li:nth-child(3) > .gap-y-2.py-6.sm\\:grid-cols-\\[15rem_1fr\\] > .text-h3.gap-4"
           ]
         },
         {
@@ -10658,7 +10658,7 @@
           "impact": null,
           "html": "<p class=\"text-m3-muted\">Consistencia en la información que soporta decisiones críticas.</p>",
           "target": [
-            "li:nth-child(3) > .gap-y-2.py-6.sm\\:grid-cols-\\[minmax\\(0\\,15rem\\)_1fr\\] > .text-m3-muted"
+            "li:nth-child(3) > .gap-y-2.py-6.sm\\:grid-cols-\\[15rem_1fr\\] > .text-m3-muted"
           ]
         },
         {

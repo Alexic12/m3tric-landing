@@ -13,7 +13,7 @@
     "orientationAngle": 0,
     "orientationType": "landscape-primary"
   },
-  "timestamp": "2026-10-01T13:13:53.233Z",
+  "timestamp": "2026-10-01T14:16:56.013Z",
   "url": "http://127.0.0.1:4173/",
   "toolOptions": {
     "runOnly": {
@@ -3284,7 +3284,7 @@
           "impact": null,
           "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 91.7 99.08\" aria-hidden=\"true\" focusable=\"false\" class=\"w-8 shrink-0 text-m3-green-900\" style=\"height:auto\" fill=\"currentColor\">",
           "target": [
-            "li:nth-child(1) > .gap-y-2.py-6.sm\\:grid-cols-\\[minmax\\(0\\,15rem\\)_1fr\\] > .text-h3.gap-4 > .w-8[viewBox=\"0 0 91.7 99.08\"][fill=\"currentColor\"]"
+            "li:nth-child(1) > .gap-y-2.py-6.sm\\:grid-cols-\\[15rem_1fr\\] > .text-h3.gap-4 > .w-8[viewBox=\"0 0 91.7 99.08\"][fill=\"currentColor\"]"
           ]
         },
         {
@@ -3316,7 +3316,7 @@
           "impact": null,
           "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 91.7 99.08\" aria-hidden=\"true\" focusable=\"false\" class=\"w-8 shrink-0 text-m3-green-900\" style=\"height:auto\" fill=\"currentColor\">",
           "target": [
-            "li:nth-child(2) > .gap-y-2.py-6.sm\\:grid-cols-\\[minmax\\(0\\,15rem\\)_1fr\\] > .text-h3.gap-4 > .w-8[viewBox=\"0 0 91.7 99.08\"][fill=\"currentColor\"]"
+            "li:nth-child(2) > .gap-y-2.py-6.sm\\:grid-cols-\\[15rem_1fr\\] > .text-h3.gap-4 > .w-8[viewBox=\"0 0 91.7 99.08\"][fill=\"currentColor\"]"
           ]
         },
         {
@@ -3348,7 +3348,7 @@
           "impact": null,
           "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 91.7 99.08\" aria-hidden=\"true\" focusable=\"false\" class=\"w-8 shrink-0 text-m3-green-900\" style=\"height:auto\" fill=\"currentColor\">",
           "target": [
-            "li:nth-child(3) > .gap-y-2.py-6.sm\\:grid-cols-\\[minmax\\(0\\,15rem\\)_1fr\\] > .text-h3.gap-4 > .w-8[viewBox=\"0 0 91.7 99.08\"][fill=\"currentColor\"]"
+            "li:nth-child(3) > .gap-y-2.py-6.sm\\:grid-cols-\\[15rem_1fr\\] > .text-h3.gap-4 > .w-8[viewBox=\"0 0 91.7 99.08\"][fill=\"currentColor\"]"
           ]
         },
         {

@@ -1,21 +1,24 @@
-# M3TRIC Landing v2
+# M3TRIC Landing v3
 
-Sitio público estático de M3TRIC: lectura multiescala del territorio. Construido con Next.js 16, exportado como contenido estático listo para S3 + CloudFront.
+Sitio público estático de M3TRIC. Construido con Next.js 16 (exportación estática), publicado en S3 privado + CloudFront y desplegado por GitHub Actions con AWS CDK.
+
+La página está escrita para quien decide, no para quien programa: primero **qué obtiene** (avisos a tiempo, un mapa claro del terreno, reportes para decidir) y, más abajo, una franja técnica con capacidades, flujo de datos y tecnología.
 
 ## Qué es
 
 M3TRIC es una plataforma que integra sensores en campo, observación aérea e información satelital para interpretar el comportamiento del territorio en tres escalas complementarias:
 
-- **M1 (Micro)**: observaciones de sensores en puntos específicos — *Disponible*
-- **M2 (Meso)**: agregaciones y patrones en zonas — *En evolución*
-- **M3 (Macro)**: visión territorial estratégica — *En evolución*
+- **M1 (Punto)**: observaciones de sensores en puntos específicos — *Disponible*
+- **M2 (Zona)**: agregaciones y patrones en zonas — *En evolución*
+- **M3 (Territorio)**: visión territorial estratégica — *En evolución*
 
-Esta landing presenta la propuesta de valor, la plataforma, los productos, capacidades y casos de uso, con un visor 3D interactivo de las tres escalas (con fallback SVG para navegadores sin WebGL).
+Estructura de la página (`src/app/page.tsx`): Hero · Lo que usted obtiene · Para quién es · Cómo funciona · Escalas (con visor 3D y respaldo SVG) · Por qué M3TRIC · Preguntas frecuentes · Para equipos técnicos · Contacto.
 
 ## Requisitos
 
-- **Node.js**: versión 20 o superior
-- **npm**: versión 10 o superior
+- **Node.js 24.19.0** (versión fijada en CI y en `infra/`)
+- **npm** (se usa `npm ci`)
+- Python 3 con Pillow solo para `npm run evidence:contrast` / `evidence:screens` y para regenerar imágenes (`scripts/optimize-images.py`)
 
 ## Inicio rápido
 
@@ -26,206 +29,185 @@ npm ci
 # Desarrollo local (http://localhost:3000)
 npm run dev
 
-# Build de producción (genera out/)
+# Release local: valida configuración, lint, tipos, build y artefacto (genera out/)
 npm run release
 
-# Servir el build localmente (http://localhost:4173)
+# Servir out/ localmente (http://localhost:4173)
 npm run serve:out
 ```
 
-### Variables de configuración
+`npm run release` necesita las variables de la sección siguiente. Parta de `.env.example`:
 
-Crear `.env.production.local` con los siguientes valores (obligatorios para `npm run release`):
+```bash
+cp .env.example .env.production.local   # y complete con valores aprobados
+```
 
-| Variable | Obligatoria | Validación | Ejemplo |
+## Perfiles de release y variables
+
+El perfil decide qué es obligatorio (ADR-003) y si el sitio es indexable (ADR-004). Todas las variables `NEXT_PUBLIC_*` se incrustan en el HTML en el build y **no son secretas**.
+
+| Variable | `production` | `staging` | Qué hace |
 |---|---|---|---|
-| `NEXT_PUBLIC_SITE_URL` | Sí | HTTPS, bare origin solo (sin path/query/hash/trailing slash), dominio público válido | `https://m3tric.co` |
-| `NEXT_PUBLIC_PLATFORM_URL` | Sí | HTTPS, dominio público válido, sin userinfo | `https://app.m3tric.co/login` |
-| `NEXT_PUBLIC_CONTACT_EMAIL` | Sí | Email válido (strict regex), no dominio de ejemplo/test | `hola@m3tric.co` |
-| `NEXT_PUBLIC_CONTACT_PHONE` | No | E.164 si presente (ej. +573001234567), se omite del HTML si falta | `+573012345678` |
+| `RELEASE_PROFILE` | obligatoria | obligatoria | `staging` o `production`; la lee el gate de release |
+| `NEXT_PUBLIC_RELEASE_PROFILE` | obligatoria | obligatoria | Debe ser igual a `RELEASE_PROFILE`; la lee la aplicación (`noindex`, bloque de contacto) |
+| `NEXT_PUBLIC_RELEASE_ID` | opcional | opcional | Identificador del despliegue (`^[A-Za-z0-9._-]{1,64}$`); queda en el meta `m3tric:release`. Vacío = `local` |
+| `NEXT_PUBLIC_SITE_URL` | obligatoria | obligatoria | Origen `https` puro, sin barra final; dominio público |
+| `NEXT_PUBLIC_PLATFORM_URL` | obligatoria | obligatoria | URL `https` del login de la plataforma, sin usuario/contraseña |
+| `NEXT_PUBLIC_CONTACT_EMAIL` | **obligatoria** | opcional | Correo de contacto (`mailto:`); si está presente se valida siempre |
+| `NEXT_PUBLIC_CONTACT_PHONE` | opcional | opcional | Teléfono en E.164 (`+573001234567`); si falta, no se muestra |
 
-**Validación de hosts**: No se aceptan IP literales (`127.0.0.1`, `[::1]`), single-label hosts, `.local`, `.internal`, `.test`, `.example`, dominios de ejemplo (`example.{com,org,net}`), ni trailing dots.
+No se aceptan IP literales, hosts de una sola etiqueta, punto final ni `.local`, `.internal`, `.test`, `.example`, `.invalid`, `localhost` o `example.{com,org,net}`. Si falta una variable obligatoria o falla la validación, `npm run release` se detiene con código 1 (*fail-closed*).
 
-Si falta una variable obligatoria o falla la validación, `npm run release` falla inmediatamente (fail-closed).
+- **staging**: el sitio es `noindex, nofollow` (meta, `robots.txt` con `Disallow: /` y cabecera `X-Robots-Tag`) y sin correo configurado la sección Contacto muestra solo «Abrir plataforma».
+- **production**: indexable, `robots.txt` anuncia el sitemap y el correo de contacto es obligatorio.
+
+En desarrollo (`npm run dev`), si faltan `NEXT_PUBLIC_SITE_URL` o `NEXT_PUBLIC_PLATFORM_URL` se usan valores de `localhost` y se avisa por consola. **Nunca publicar así**: `check:artifact` lo rechaza.
 
 ## Scripts
 
 | Script | Comando | Qué hace |
 |---|---|---|
-| `npm run dev` | `next dev` | Servidor de desarrollo con hot-reload en http://localhost:3000 |
-| `npm run build` | `next build` | Build de Next.js (genera `.next/`, no el export estático) |
-| `npm run start` | `npm run serve:out` | Sirve el contenido de `out/` en http://localhost:4173 |
-| `npm run lint` | `eslint` | Valida estilo de código (sin fix automático en release) |
-| `npm run typecheck` | `tsc --noEmit` | Valida tipos TypeScript sin generar archivos |
-| `npm run test:unit` | `node --test "scripts/**/*.test.mjs"` | Tests unitarios de las reglas de release (validación, configuración) |
-| `npm run check:config` | `node scripts/check-config.mjs` | Valida variables públicas (paso 1 del release) |
-| `npm run check:artifact` | `node scripts/check-artifact.mjs` | Valida contenido de `out/` (paso 5 del release) |
-| `npm run release` | Ver abajo | Pipeline completo de producción (fail-closed) |
-| `npm run serve:out` | `node scripts/serve-out.mjs` | Servidor estático para `out/` en http://localhost:4173 (usado por tests y preview local) |
-| `npm run test:e2e` | Ver abajo | Suite E2E Playwright contra `out/` (4 navegadores, 231 tests) |
-| `npm run test:e2e:update` | Ver abajo | Regenera snapshots de regresión visual (Chromium) |
-| `npm run evidence:lighthouse` | `node tests/helpers/lighthouse.mjs` | Genera reportes Lighthouse (móvil + desktop con gzip) → `docs/evidence/` |
-| `npm run evidence:contrast` | `node tests/helpers/contrast.mjs && python3 tests/helpers/contrast.py` | Mide contrastes de texto sobre fotografía → `docs/evidence/contrast-hero.md` |
-| `npm run evidence:screens` | `python3 tests/helpers/to-webp.py` | Convierte capturas PNG a WebP (calidad 80) → `docs/evidence/screenshots/` |
+| `npm run dev` | `next dev` | Servidor de desarrollo en http://localhost:3000 |
+| `npm run build` | `next build` | Build de Next.js; con `output: "export"` genera `out/` |
+| `npm run start` | `npm run serve:out` | Sirve `out/` en http://localhost:4173 |
+| `npm run lint` | `eslint` | Valida estilo de código |
+| `npm run typecheck` | `tsc --noEmit` | Valida tipos sin generar archivos |
+| `npm run test:unit` | `node --test "scripts/**/*.test.mjs"` | Pruebas de reglas de configuración, reglas de artefacto, higiene y manifiesto |
+| `npm run check:config` | `node scripts/check-config.mjs` | Valida las variables públicas según el perfil |
+| `npm run check:artifact` | `node scripts/check-artifact.mjs` | Valida `out/`: archivos requeridos, texto prohibido, enlaces exactos, JSON-LD y coherencia del perfil |
+| `npm run hygiene` | `bash scripts/hygiene.sh` | Acciones fijadas por SHA, archivos prohibidos y marcadores de conflicto (requiere estar en un worktree de git) |
+| `npm run release` | ver abajo | Pipeline de release completo (*fail-closed*) |
+| `npm run serve:out` | `node scripts/serve-out.mjs` | Servidor estático para `out/` (preview local y pruebas) |
+| `npm run build:e2e` | `RELEASE_PROFILE=production … next build` | Build con perfil production y dominios de verificación (`m3tric-test.co`) para la suite E2E |
+| `npm run test:e2e` | `build:e2e && playwright test && evidence:screens` | Suite Playwright completa (chromium, firefox, webkit, chrome) y conversión de capturas |
+| `npm run test:e2e:ci` | `build:e2e && playwright test --ignore-snapshots --project=chromium --project=firefox --project=webkit` | Lo que ejecuta CI, sin comparar snapshots (ADR-006) |
+| `npm run test:e2e:update` | `build:e2e && playwright test --project=chromium tests/e2e/visual.spec.ts --update-snapshots` | Regenera los snapshots de regresión visual (chromium) |
+| `npm run evidence:lighthouse` | `node tests/helpers/lighthouse.mjs` | Lighthouse móvil y escritorio → `docs/evidence/` |
+| `npm run evidence:contrast` | `node tests/helpers/contrast.mjs && python3 tests/helpers/contrast.py` | Contraste medido sobre fotografía → `docs/evidence/contrast-hero.md` |
+| `npm run evidence:screens` | `python3 tests/helpers/to-webp.py` | Convierte capturas PNG a WebP → `docs/evidence/screenshots/` |
 
 ### Pipeline de release (`npm run release`)
 
-Ejecuta **en orden** (fail-closed: si cualquier paso falla, todo se detiene):
+Ejecuta **en orden**; si cualquier paso falla, se detiene:
 
-1. `test:unit` — tests de las reglas de configuración y validación
-2. `check:config` — valida que todas las variables obligatorias existan y sean válidas (HTTPS, sin localhost/example.com)
-3. `lint` — ESLint (sin fix automático)
-4. `typecheck` — TypeScript (sin generar archivos)
-5. `next build` — genera export estático en `out/`
-6. `check:artifact` — verifica que `out/` no contenga:
-   - Hosts prohibidos: `localhost`, `127.0.0.1`, `example.com`
-   - Palabras prohibidas: `TODO`, `lorem`, `placeholder`
-   - Archivos requeridos: `index.html`, `404.html`, `robots.txt`, `sitemap.xml`, `og.png`, `icon.svg`, `apple-icon.png`, `icon-192.png`, `icon-512.png`, `manifest.webmanifest`
-   - URLs válidas en `out/index.html` (exactamente `PLATFORM_URL` y `SITE_URL`)
+1. `test:unit`
+2. `check:config`
+3. `lint`
+4. `typecheck`
+5. `next build` (genera `out/`)
+6. `check:artifact`
 
-Si **cualquier paso falla**, el build se detiene con código 1. No hay artefacto parcial.
+Detalle de `check:artifact` y del resto del flujo de publicación: `docs/OPERACION.md`.
 
-**Output**: `out/` listo para publicar (o error explicativo si falla la validación).
-
-## Configuración
-
-### Entorno de desarrollo
-
-En desarrollo (`npm run dev`, `npm run build`), si faltan variables, se usan valores por defecto:
-
-- `NEXT_PUBLIC_SITE_URL` → `http://localhost:3000`
-- `NEXT_PUBLIC_PLATFORM_URL` → `http://localhost:5173/login`
-
-Se muestra una advertencia en consola, pero el desarrollo continúa. **Nunca publicar así.**
-
-### Entorno de producción
-
-Crear `.env.production.local` (git-ignored) con los valores reales aprobados. Ejemplo:
-
-```
-NEXT_PUBLIC_SITE_URL=https://m3tric.co
-NEXT_PUBLIC_PLATFORM_URL=https://app.m3tric.co/login
-NEXT_PUBLIC_CONTACT_EMAIL=hola@m3tric.co
-NEXT_PUBLIC_CONTACT_PHONE=+573012345678
-```
-
-Validar antes de `npm run release`:
+### Infraestructura (`infra/`)
 
 ```bash
-# Solo valida configuración, no hace build
-npm run check:config
-
-# OK → procede con el release
-npm run release
+cd infra
+npm ci
+npm run typecheck   # tsc sobre bin/lib y sobre las pruebas
+npm run lint        # eslint, cero advertencias
+npm test            # vitest: plantillas exactas + cdk-nag
+npm run synth       # cdk synth con env=staging y valores de prueba
 ```
+
+## Infraestructura y despliegue
+
+La infraestructura es una app AWS CDK v2 (TypeScript) en `infra/`, con dos stacks en la cuenta `147997127433`, región `us-east-2`:
+
+| Stack | Quién lo despliega | Qué contiene |
+|---|---|---|
+| `m3tric-staging-LandingDeliveryIdentityStack` | Una persona, una sola vez (ya desplegado) | Rol de GitHub Actions por OIDC con confianza exacta al environment `landing-staging` |
+| `m3tric-staging-LandingSiteStack` | GitHub Actions | Bucket S3 privado (BPA, SSE-S3, versionado), CloudFront con OAC, cabeceras de seguridad y CSP, bucket de logs, presupuesto y su política de publicación |
+
+Detalle, modelo de seguridad y supresiones de `cdk-nag`: `infra/README.md`. Decisiones: `docs/adr/ADR-002`.
+
+## CI/CD
+
+Los workflows están en `.github/workflows/`. Todas las *actions* están fijadas por SHA de 40 caracteres (lo exige `scripts/hygiene.sh`).
+
+| Workflow | Cuándo corre | Qué hace |
+|---|---|---|
+| `ci.yml` | En cada pull request y como parte de `deploy.yml` | `hygiene`; gate de release por perfil (`staging` y `production`); E2E en chromium, firefox y webkit; infra (lint, typecheck, vitest + cdk-nag, `cdk synth`). Sin credenciales de AWS |
+| `deploy.yml` («Deploy staging») | Push a `main` y manual (`reason` obligatorio) | CI → `cdk deploy` del stack del sitio por OIDC → `publish.yml` |
+| `publish.yml` | Llamado por `deploy.yml` y `rollback.yml` | `npm run release` (perfil staging) → `publish.sh` → invalidación → smoke → manifiesto (`_deploy/manifest.json`) |
+| `rollback.yml` («Rollback staging») | Manual (`ref` + `reason`) | Reconstruye un commit anterior de `main` y lo publica (ADR-007) |
+
+Variables del environment de GitHub `landing-staging`: `AWS_DEPLOY_ROLE_ARN`, `AWS_REGION`, `PLATFORM_URL` (y, opcionales, `CONTACT_EMAIL`, `CONTACT_PHONE`). Procedimiento completo, verificación y resolución de problemas: `docs/OPERACION.md`.
 
 ## Estructura del proyecto
 
 ```
 src/
-├── app/                          # Next.js App Router
-│   ├── layout.tsx                # Metadatos, fuente Barlow, CSS global
-│   ├── page.tsx                  # Página principal (ensamble de secciones)
-│   ├── globals.css               # Temas de color, escala de tipografía, utilidades
-│   ├── robots.ts                 # robots.txt dinámico
-│   ├── sitemap.ts                # sitemap.xml dinámico
-│   ├── not-found.tsx             # 404 personalizado
-│   ├── icon.svg                  # Favicon (derivado del logo)
-│   ├── apple-icon.png            # Ícono para iOS
-│   └── (no hay API routes ni rutas dinámicas)
-│
+├── app/                      # Next.js App Router
+│   ├── layout.tsx            # Metadatos, Barlow, JSON-LD (Organization, WebSite, FAQPage), meta m3tric:release
+│   ├── page.tsx              # Ensamble de secciones
+│   ├── globals.css           # Tokens de color y tipografía, utilidades
+│   ├── robots.ts             # robots.txt según perfil
+│   ├── sitemap.ts            # sitemap.xml
+│   ├── not-found.tsx         # 404 propio
+│   └── icon.svg, apple-icon.png
 ├── config/
-│   └── site.ts                   # Lector único de variables públicas (siteUrl, platformUrl, contacto)
-│
+│   ├── site.ts               # Lector único de variables públicas y perfil de release
+│   └── brand.ts              # Constantes de marca que no pueden ser tokens CSS
 ├── content/
-│   └── landing.ts                # Contenido de la página (copy, títulos, listas) — fuente única
-│
+│   └── landing.ts            # Todo el copy del sitio — fuente única
 ├── components/
-│   ├── brand/
-│   │   ├── Logo.tsx              # Variantes del logo (color, reverse, mono-dark, mono-light)
-│   │   ├── TripleBar.tsx         # Motivo de tres barras (marca + separador + indicador)
-│   │   └── NodeNetwork.tsx       # Motivo de red de nodos para fondos
-│   │
-│   ├── ui/
-│   │   ├── Button.tsx            # Botón genérico (estilo de marca)
-│   │   ├── SectionHeading.tsx    # H2 + meta (índice + kicker)
-│   │   ├── StatusBadge.tsx       # Badge "Disponible" / "En evolución"
-│   │   └── Reveal.tsx            # Animación de entrada (scroll-triggered, respeta prefers-reduced-motion)
-│   │
-│   ├── layout/
-│   │   ├── Header.tsx            # Encabezado fijo (nav + CTA Abrir plataforma)
-│   │   ├── Footer.tsx            # Pie (logo reverse, links, contacto, derechos)
-│   │   └── SkipLink.tsx          # Skip link "Saltar al contenido"
-│   │
-│   ├── sections/
-│   │   ├── Hero.tsx              # Sección 1: propuesta + CTA + capas
-│   │   ├── Proposal.tsx          # Sección 2: manifiesto + 3 valores + globo
-│   │   ├── Platform.tsx          # Sección 3: 4 pasos + ilustración SVG
-│   │   ├── Scales.tsx            # Sección 4: tabs M1/M2/M3 + escena 3D + fallback
-│   │   ├── Products.tsx          # Sección 5: 3 líneas de producto
-│   │   ├── Capabilities.tsx      # Sección 6: Disponible / En evolución + escala de colores
-│   │   ├── Technology.tsx        # Sección 7: flujo + stack
-│   │   ├── UseCases.tsx          # Sección 8: 4 casos de uso + foto
-│   │   └── Contact.tsx           # Sección 9: CTA final + contacto
-│   │
-│   └── three/
-│       ├── TerrainScene.tsx      # Escena 3D: terreno low-poly + 3 escalas (M1/M2/M3)
-│       └── TerrainFallback.tsx   # Fallback SVG para sin WebGL / prefers-reduced-motion
-│
-├── public/
-│   ├── images/
-│   │   ├── aerial-wide-*.webp    # Foto hero (2560/1920/1280/640 px)
-│   │   ├── aerial-tall-*.webp    # Foto casos de uso (747/640/480 px; 480 solo móvil, q55)
-│   │   └── globe-*.webp          # Globo (1000/640 px)
-│   ├── og.png                    # Open Graph (1200×630)
-│   ├── icon.svg                  # SVG del logo (favicon)
-│   ├── apple-icon.png            # iOS home (180×180)
-│   ├── icon-192.png              # Web manifest (192×192)
-│   └── icon-512.png              # Web manifest (512×512)
-│
-├── scripts/
-│   ├── check-config.mjs          # Valida vars en release (Node puro, no TS)
-│   ├── check-artifact.mjs        # Valida out/ después del build
-│   ├── serve-out.mjs             # Servidor estático para out/ (local + tests)
-│   └── optimize-images.py        # Convierte PNG brand a WebP en 4 anchos
-│
-└── tests/
-    └── e2e/
-        └── *.spec.ts             # Tests Playwright (contenido, responsive, a11y, 3D, CTA)
+│   ├── brand/                # Logo, TripleBar, NodeNetwork
+│   ├── ui/                   # Button, SectionHeading, StatusBadge, Reveal
+│   ├── layout/               # Header, Footer, SkipLink, HydrationMarker
+│   ├── sections/             # Hero, Benefits, UseCases, HowItWorks, Scales,
+│   │                         # WhyM3tric, Faq, TechnicalZone, Contact
+│   └── three/                # TerrainScene (3D) y TerrainFallback (SVG)
+public/                       # images/*.webp, og.png, iconos
+scripts/
+├── check-config.mjs, check-artifact.mjs, serve-out.mjs, hygiene.sh, optimize-images.py
+├── lib/                      # release-config.mjs, artifact-rules.mjs (reglas compartidas)
+└── deploy/                   # publish.sh, smoke.mjs, manifest.mjs, upload-manifest.sh
+infra/                        # App CDK (bin/, lib/, config/, test/)
+tests/
+├── e2e/                      # Playwright: content, links, responsive, visual, interaction, resilience, a11y, three
+└── helpers/                  # env, page, lighthouse, contrast, serve-gzip
+.github/workflows/            # ci, deploy, publish, rollback
+docs/                         # SPEC, TRACEABILITY, OPERACION, CONTENIDOS, ASSETS, adr/, evidence/
 ```
 
 ### Activos
 
 | Ubicación | Contenido | Gestión |
 |---|---|---|
-| `public/images/` | Fotos brand WebP | Reemplazar `.webp` según ancho; mantener nombres y proporciones o actualizar `width/height` en componentes |
-| `public/og.png` | Open Graph | Imagen de marca 1200×630; regenerar si cambia identidad visual |
-| `public/icon.svg` y `.png` | Logo y favicons | Derivados del logo oficial (§3.4 de la spec); mantener el SVG exacto del manual |
-| `src/content/landing.ts` | Textos, títulos, CTA | Actualizar aquí (sin duplicar en componentes) |
-| `src/app/globals.css` | Tokens de color y tipografía | Mantener sincronizado con el manual de marca (§3.2 y 3.3) |
+| `public/images/` | Fotos de marca en WebP | Regenerar con `scripts/optimize-images.py`; ver `docs/CONTENIDOS.md` |
+| `public/og.png` | Open Graph 1200×630 | Regenerar si cambia la identidad visual |
+| `public/icon.svg` y `.png` | Favicon e íconos | Derivados del logo; el favicon derivado espera validación de marca |
+| `src/content/landing.ts` | Textos, títulos, CTA | Editar aquí; no hay texto en JSX |
+| `src/app/globals.css` | Tokens de color y tipografía | Mantener sincronizado con el manual de marca |
 
 ## Documentación
 
-- `docs/SPEC.md` — especificación completa (ref para manuales)
-- `docs/CONTENIDOS.md` — guía de actualización de textos, imágenes, contacto
-- `docs/OPERACION.md` — procedimiento de publicación (S3 + CloudFront)
-- `docs/ASSETS.md` — inventario de activos y licencias
-- `docs/evidence/` — capturas, reportes QA, axe, Lighthouse
-- `CHANGELOG.md` — historial de versiones
+| Documento | Contenido |
+|---|---|
+| `docs/SPEC.md` | Especificación end-to-end (v3), con los IDs de requisito |
+| `docs/TRACEABILITY.md` | Matriz requisito → spec → implementación → verificación → evidencia, y brechas abiertas |
+| `docs/adr/` | Decisiones de arquitectura ADR-001 a ADR-007 |
+| `docs/OPERACION.md` | Pipeline de publicación, bootstrap, rollback, verificación, caché, cabeceras, costos y resolución de problemas |
+| `docs/CONTENIDOS.md` | Cómo actualizar textos, imágenes, contacto y marca |
+| `docs/ASSETS.md` | Inventario de activos, dependencias y licencias |
+| `docs/evidence/` | Capturas, informes de QA, axe, Lighthouse, matrices |
+| `infra/README.md` | Infraestructura como código: stacks, seguridad, costos |
+| `CHANGELOG.md` | Historial de versiones |
 
 ## Licencias
 
-- **Barlow** (fuente) — [SIL Open Font Licence 1.1](https://github.com/jpt/barlow), autohospedada vía `next/font/google` en build
+- **Barlow** (fuente) — [SIL Open Font Licence 1.1](https://github.com/jpt/barlow), autohospedada vía `next/font/google` en build (ADR-001)
 - **lucide-react** (iconografía) — [ISC](https://github.com/lucide-icons/lucide)
 - **three.js**, **@react-three/fiber** — [MIT](https://threejs.org/license)
 - **Next.js**, **React** — [MIT](https://opensource.org/licenses/MIT)
 - **Tailwind CSS** — [MIT](https://github.com/tailwindlabs/tailwindcss/blob/master/LICENSE)
 
-Ver `docs/ASSETS.md` para inventario completo con orígenes y dimensiones.
+Herramientas de infraestructura y CI (AWS CDK, cdk-nag, zod, vitest, GitHub Actions): `docs/ASSETS.md`.
 
 ## Soporte
 
-- **Spec técnica**: `docs/SPEC.md`
+- **Especificación**: `docs/SPEC.md` · **Trazabilidad**: `docs/TRACEABILITY.md`
 - **Actualización de contenidos**: `docs/CONTENIDOS.md`
-- **Publicación a producción**: `docs/OPERACION.md`
+- **Publicación y operación**: `docs/OPERACION.md`
 - **Release gate**: `npm run release` (falla si hay problemas)
