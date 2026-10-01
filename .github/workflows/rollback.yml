@@ -69,6 +69,11 @@ jobs:
       bucket: ${{ steps.read.outputs.bucket }}
       distribution_id: ${{ steps.read.outputs.distribution_id }}
       site_url: ${{ steps.read.outputs.site_url }}
+      # Environment variables are only readable in a job that declares the environment; the build job in
+      # publish.yml deliberately does not, so they travel as inputs.
+      platform_url: ${{ vars.PLATFORM_URL }}
+      contact_email: ${{ vars.CONTACT_EMAIL }}
+      contact_phone: ${{ vars.CONTACT_PHONE }}
     steps:
       - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
@@ -107,4 +112,7 @@ jobs:
       distribution_id: ${{ needs.stack.outputs.distribution_id }}
       site_url: ${{ needs.stack.outputs.site_url }}
       release_id: ${{ needs.resolve.outputs.release_id }}
+      platform_url: ${{ needs.stack.outputs.platform_url }}
+      contact_email: ${{ needs.stack.outputs.contact_email }}
+      contact_phone: ${{ needs.stack.outputs.contact_phone }}
       reason: ${{ inputs.reason }}

@@ -1,17 +1,17 @@
 # Matriz de navegadores
 
-Fecha: 2026-09-30 · Host: macOS 27.0 (Darwin 27.0.0), Node v25.6.0, Playwright 1.63.0.
+Fecha: 2026-10-01 · Host: macOS 27.0 (Darwin 27.0.0), Node v25.6.0, Playwright 1.63.0 · Local: `npm run test:e2e` · En vivo: `npm run test:live` contra `https://d21guxd9tjai7a.cloudfront.net` (release `deploy-2-19f4f15`, staging).
 
-| Navegador | Proyecto Playwright | Versión | Ejecutado | Resultado (suite completa) | Notas |
+| Navegador | Proyecto Playwright | Versión | Local (suite completa) | En vivo (CloudFront) | Notas |
 |---|---|---|---|---|---|
-| Chromium | `chromium` | 153.0.8010.12 | Sí | 63 pass / 0 fail / 0 skip | Único proyecto con axe, 3D (WebGL / `--disable-3d-apis`) y snapshots de regresión |
-| Google Chrome (canal estable) | `chrome` | 154.0.8037.58 | Sí | 56 pass / 0 fail / 7 skip | Skips: axe (3) y three (4), solo chromium |
-| Microsoft Edge | (`msedge`) | n/d | **No** | no ejecutado | Edge no está instalado en `/Applications`; proyecto comentado en `playwright.config.ts`. Pendiente en una máquina con Edge (motor Chromium, riesgo bajo) |
-| Firefox | `firefox` | 155.0 | Sí | 56 pass / 0 fail / 7 skip | Skips: axe (3) y three (4) |
-| WebKit | `webkit` | 26.6 | Sí | 56 pass / 0 fail / 7 skip | Ver aviso abajo |
-| Safari real (macOS / iOS) | — | — | **No** | smoke manual pendiente | Ver lista de verificación |
+| Chromium | `chromium` | 153.0.8010.12 | 86 pass / 0 fail / 0 skip | 19 pass / 0 fail / 0 skip | Único proyecto con axe, 3D verificado (canvas `3d`) y snapshots de regresión |
+| Google Chrome (canal estable) | `chrome` | 154.0.8037.58 | 79 pass / 0 fail / 7 skip | no ejecutado (no es proyecto de la suite en vivo; mismo motor que chromium) | Skips: axe (3) y three (4) |
+| Microsoft Edge | (`msedge`) | n/d | **No** | **No** | No instalado en `/Applications`; proyecto comentado en `playwright.config.ts`. **Pendiente** en una máquina con Edge (motor Chromium, riesgo bajo) |
+| Firefox | `firefox` | 155.0 | 79 pass / 0 fail / 7 skip | 11 pass / 0 fail / 8 skip; sin errores de consola/CSP/red; 3D montado (`data-visual="3d"`) | Aviso propio del navegador `WebGL context was lost.` por el sondeo `hasWebGL2()` (benigno, ver QA-REPORT §4) |
+| WebKit | `webkit` | 26.6 | 79 pass / 0 fail / 7 skip | 11 pass / 0 fail / 8 skip; sin errores de consola/CSP/red; 3D montado | Ver aviso abajo |
+| Safari real (macOS / iOS) | — | — | — | **No** | Smoke manual **pendiente**; ver lista de verificación |
 
-(Conteos por proyecto: 63 tests; 231 pass + 21 skip en total = 252. Corrida final ejecutada 2 veces, 0 flaky.)
+Local: 344 tests por corrida completa = 323 pass + 21 skip, 0 fail, 0 flaky (2 corridas consecutivas idénticas). En vivo: 57 tests = 41 pass + 16 skip por corrida (chromium 19 ejecutados, firefox 11, webkit 11; los 16 skips son axe y HTTP, solo-chromium), 2 corridas consecutivas idénticas, 0 flaky. La suite en vivo cubre en los tres motores: respuestas 200/304 del mismo origen, 0 terceros, 0 errores de consola, 0 violaciones CSP, orden de secciones, perfil staging, CTAs, sin desbordamiento (5 anchos), menú modal con trampa de foco y capturas a 360/1280; chromium añade axe y los chequeos HTTP.
 
 ## Aviso: Playwright WebKit no es Safari
 

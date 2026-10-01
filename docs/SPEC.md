@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Versión | 3.0 · 2026-10-01 (v2: 2026-09-30, en el historial de git como `docs/SPEC-landing-v2.md`) |
+| Versión | 3.1 · 2026-10-01 (alineada con los workflows desplegados) (v2: 2026-09-30, en el historial de git como `docs/SPEC-landing-v2.md`) |
 | Alcance | Producto/UX, marca, frontend, calidad, infraestructura como código, CI/CD, publicación en AWS y trazabilidad |
 | Fuentes de verdad | `docs/20260428_Manual de marca - Metric.pptx` (raíz del workspace) · `docs/entregables/Anexo_1_Alcance_Tecnico_Landing_AWS_M3TRIC_2026-09-23.pdf` · `README.md` raíz del workspace (capacidades vs. límites) · instrucciones del owner (sesiones 2026-09-30 y 2026-10-01) |
 | Precedencia ante conflicto | Anexo 1 (qué se entrega) > instrucciones del owner > Manual de marca (cómo se ve y suena) > README (qué se puede afirmar) > esta spec |
@@ -43,7 +43,7 @@ Una landing pública de M3TRIC que un gerente, un alcalde, un ingeniero de obra 
 **Hecho significa:**
 1. `npm run release` pasa con el perfil del entorno (§9).
 2. CI verde en GitHub (lint, typecheck, unitarias, e2e en 3 motores, pruebas de IaC con cdk-nag, synth).
-3. El workflow `Deploy` desplegó la infraestructura y el sitio, y su smoke contra la URL pública pasó.
+3. El workflow `Deploy staging` desplegó la infraestructura y el sitio, y su smoke contra la URL pública pasó.
 4. La URL de CloudFront responde con el sitio, cabeceras de seguridad, 404 propio y S3 directo en 403.
 5. `docs/TRACEABILITY.md` no tiene requisitos sin evidencia, salvo los marcados como dependencia del cliente.
 
@@ -88,7 +88,7 @@ Una landing pública de M3TRIC que un gerente, un alcalde, un ingeniero de obra 
 Contraste (calculado): `#004124`/blanco 11.79 · `#004124`/beige 10.56 · `#B7E3C7`/`#004124` 8.32 · `#74C69D`/`#004124` 5.79 · `#2C694F`/blanco 6.48 · `#4B5563`/blanco 7.56. **Prohibido como texto:** `#74C69D` sobre blanco (2.04) o sobre `#2C694F` (3.18). **Excepción decorativa:** numerales grandes `aria-hidden` con orden en `<ol>` (WCAG 1.4.3). Texto sobre foto: velo `#004124` ≥ 70 %, contraste medido (`npm run evidence:contrast`).
 
 ### 3.3 Tipografía (REQ-B03, ADR-001)
-Pila `"DIN 2014 Rounded", var(--font-barlow), system-ui, sans-serif`. Barlow (OFL) autohospedada vía `next/font`. Pesos 300/400/500/700/800; mezcla **Bold** + *Light* en titulares (patrón lámina 12). Escala fluida: Display 56→120 px · H2 36→64 · H3 22→28 · Lead 18→22 · Body 16–17 · Meta 12–13.
+Pila `"DIN 2014 Rounded", var(--font-barlow), system-ui, sans-serif`. Barlow (OFL) autohospedada vía `next/font`. Pesos 300/400/500/700/800 (cargados en `src/app/layout.tsx`); mezcla **Bold** + *Light* en titulares (patrón lámina 12). Escala fluida: Display 56→120 px · H2 36→64 · H3 22→28 · Lead 18→22 · Body 16–17 · Meta 12–13.
 
 ### 3.4 Logo (REQ-B01)
 Vector exacto de las formas libres de la lámina 8 (`src/components/brand/Logo.tsx`, no redibujar). Variantes de la lámina 11: `color`, `reverse`, `mono-dark`, `mono-light`. Mínimo 96 px de ancho; área de protección = altura de una barra. `alternateName: "Metric"` en JSON-LD (REQ-B07). Favicon derivado (tres barras sobre `#004124`), pendiente de validación de marca.
@@ -257,10 +257,11 @@ App CDK v2 en `infra/` (TypeScript), alineada con las convenciones del repo de l
 
 Todas las actions **fijadas por SHA de 40 caracteres**. Permisos mínimos por job. Node 24.19.0.
 
-### 11.1 `ci.yml` — en PR y en push a `main`
+### 11.1 `ci.yml` ("CI") — en PR y como `workflow_call`
+No tiene disparador `push`: en `main` lo invoca `deploy.yml` antes de desplegar, para no duplicar la misma verificación.
 Jobs: `hygiene` (actions fijadas por SHA, archivos prohibidos `.env*` salvo `.env.example`, `*.pem`, `cdk.out`, `node_modules`, `out`), `web` (npm ci, lint, typecheck, test:unit, build con dominios de verificación, Playwright chromium/firefox/webkit, sin la comparación de snapshots visuales, que dependen del SO, ADR-006), `infra` (npm ci, typecheck, vitest + cdk-nag, `cdk synth`). Sin credenciales AWS: corre igual en forks.
 
-### 11.2 `deploy.yml` — en push a `main` (tras CI) y manual
+### 11.2 `deploy.yml` ("Deploy staging") — en push a `main` y manual (`workflow_dispatch` con `reason`)
 1. `needs: ci` (vía `workflow_call`).
 2. Job `deploy` en el environment **`landing-staging`** (protegido: solo `main`), `concurrency: landing-staging` sin cancelar en curso, `permissions: id-token: write, contents: read`.
 3. OIDC → rol de §10.1 (`aws-actions/configure-aws-credentials`).
@@ -277,7 +278,7 @@ Contra `SITE_URL`: `/` 200 con HTML de la versión (meta `m3tric:release` = `Rel
 ### 11.5 Manifiesto y trazabilidad del despliegue
 Artefacto `deploy-manifest.json` (commit, `ReleaseId`, run id, URL, ids de stack/bucket/distribución, sha256 de cada archivo de `out/`, resultado del smoke) + resumen del job. El mismo manifiesto se sube a `s3://<bucket>/_deploy/manifest.json` con `no-cache`, para saber qué versión está viva.
 
-### 11.6 `rollback.yml` — manual
+### 11.6 `rollback.yml` ("Rollback staging") — manual
 Entrada: `ref` (sha o tag) + `reason`. Hace checkout de esa referencia y ejecuta `publish.yml` (no toca la infraestructura). Reconstruir desde git en lugar de restaurar objetos: el artefacto es reproducible y queda trazado igual que un deploy (ADR-007). Se prueba una vez como parte de la entrega (REQ-A12).
 
 ## 12. Seguridad (REQ-A10, REQ-A11)

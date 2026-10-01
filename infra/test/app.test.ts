@@ -1,5 +1,6 @@
 import { Stack, Validations } from 'aws-cdk-lib';
 import { Annotations, Match } from 'aws-cdk-lib/assertions';
+import { AssetManifestArtifact } from 'aws-cdk-lib/cx-api';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { AwsSolutionsChecks } from 'cdk-nag';
 import type { IConstruct } from 'constructs';
@@ -36,7 +37,6 @@ const UNTAGGABLE_TYPES = [
   'AWS::S3::BucketPolicy',
   'AWS::CloudFront::OriginAccessControl',
   'AWS::CloudFront::ResponseHeadersPolicy',
-  'AWS::IAM::Policy',
   'AWS::SNS::TopicPolicy',
 ];
 
@@ -44,10 +44,16 @@ const UNTAGGABLE_TYPES = [
 // must change this list in the same diff.
 const EXPECTED_ACKNOWLEDGEMENTS = [
   `${IDENTITY_STACK}/GitHubDeployRole :: AwsSolutions-IAM5[Resource::arn:aws:cloudformation:us-east-2:147997127433:stack/m3tric-staging-LandingSiteStack/*]`,
+  `${IDENTITY_STACK}/GitHubDeployRole :: AwsSolutions-IAM5[Resource::arn:aws:s3:::m3tric-staging-landing-cdk-assets-147997127433-us-east-2/site/*]`,
+  `${IDENTITY_STACK}/GitHubDeployRole :: AwsSolutions-IAM5[Resource::arn:aws:s3:::m3tric-staging-landingsitestack-sitebucket*]`,
+  `${IDENTITY_STACK}/GitHubDeployRole :: AwsSolutions-IAM5[Resource::arn:aws:s3:::m3tric-staging-landingsitestack-sitebucket*/*]`,
+  `${IDENTITY_STACK}/CfnExecRole :: AwsSolutions-IAM5[Resource::arn:aws:s3:::m3tric-staging-landingsitestack-*]`,
+  `${IDENTITY_STACK}/CfnExecRole :: AwsSolutions-IAM5[Resource::arn:aws:sns:us-east-2:147997127433:m3tric-staging-landing-*]`,
+  `${IDENTITY_STACK}/CfnExecRole :: AwsSolutions-IAM5[Resource::arn:aws:budgets::147997127433:budget/m3tric-staging-landing-*]`,
+  `${IDENTITY_STACK}/CdkAssetsBucket :: AwsSolutions-S1`,
   `${SITE_STACK}/Distribution :: AwsSolutions-CFR1`,
   `${SITE_STACK}/Distribution :: AwsSolutions-CFR2`,
   `${SITE_STACK}/Distribution :: AwsSolutions-CFR4`,
-  `${SITE_STACK}/PublishPolicy :: AwsSolutions-IAM5[Resource::<SiteBucket397A1860.Arn>/*]`,
 ].sort();
 
 interface Acknowledgement {
@@ -135,19 +141,46 @@ describe('landing CDK app', () => {
     }
   });
 
-  it('requires a CDK bootstrap version the account has (31)', () => {
+  it('deploys the identity stack (human only) through the account bootstrap it has (version 31)', () => {
     const ACCOUNT_BOOTSTRAP_VERSION = 31;
-    for (const template of [synthesized.identity, synthesized.site]) {
-      expect(template.Parameters?.BootstrapVersion?.Default).toBe('/cdk-bootstrap/hnb659fds/version');
-      const assertion = template.Rules?.CheckBootstrapVersion?.Assertions?.[0]?.Assert;
-      const rejected = assertion['Fn::Not'][0]['Fn::Contains'][0] as string[];
-      const minimum = Math.max(...rejected.map(Number)) + 1;
-      expect(minimum).toBeLessThanOrEqual(ACCOUNT_BOOTSTRAP_VERSION);
-    }
-    for (const stack of app.synth().stacks) {
-      expect(stack.requiresBootstrapStackVersion).toBeLessThanOrEqual(ACCOUNT_BOOTSTRAP_VERSION);
-      expect(stack.assumeRoleArn).toBe('arn:${AWS::Partition}:iam::147997127433:role/cdk-hnb659fds-deploy-role-147997127433-us-east-2');
-    }
+    const template = synthesized.identity;
+    expect(template.Parameters?.BootstrapVersion?.Default).toBe('/cdk-bootstrap/hnb659fds/version');
+    const assertion = template.Rules?.CheckBootstrapVersion?.Assertions?.[0]?.Assert;
+    const rejected = assertion['Fn::Not'][0]['Fn::Contains'][0] as string[];
+    expect(Math.max(...rejected.map(Number)) + 1).toBeLessThanOrEqual(ACCOUNT_BOOTSTRAP_VERSION);
+    const stack = app.synth().getStackByName(IDENTITY_STACK);
+    expect(stack.requiresBootstrapStackVersion).toBeLessThanOrEqual(ACCOUNT_BOOTSTRAP_VERSION);
+    expect(stack.assumeRoleArn).toBe('arn:${AWS::Partition}:iam::147997127433:role/cdk-hnb659fds-deploy-role-147997127433-us-east-2');
+  });
+
+  it('synthesizes the site stack with CLI credentials into the dedicated assets bucket, with no bootstrap dependency', () => {
+    const assembly = app.synth();
+    const stack = assembly.getStackByName(SITE_STACK);
+    // No role of the shared bootstrap is ever assumed or passed on the CLI's behalf.
+    expect(stack.assumeRoleArn).toBeUndefined();
+    expect(stack.cloudFormationExecutionRoleArn).toBeUndefined();
+    expect(stack.lookupRole).toBeUndefined();
+    expect(stack.requiresBootstrapStackVersion).toBeUndefined();
+    expect(stack.bootstrapStackVersionSsmParameter).toBeUndefined();
+    expect(synthesized.site.Parameters).toBeUndefined();
+    expect(synthesized.site.Rules).toBeUndefined();
+    expect(JSON.stringify(synthesized.site)).not.toMatch(/BootstrapVersion|AWS::SSM|hnb659fds/);
+    expect(stack.stackTemplateAssetObjectUrl).toMatch(
+      /^s3:\/\/m3tric-staging-landing-cdk-assets-147997127433-us-east-2\/site\/[0-9a-f]{64}\.json$/,
+    );
+
+    const manifests = stack.dependencies.filter(AssetManifestArtifact.isAssetManifestArtifact);
+    expect(manifests).toHaveLength(1);
+    const { files = {}, dockerImages = {} } = manifests[0]!.contents;
+    expect(dockerImages).toEqual({});
+    const destinations = Object.values(files).flatMap((file) => Object.values(file.destinations));
+    expect(destinations).toEqual([
+      {
+        bucketName: 'm3tric-staging-landing-cdk-assets-147997127433-us-east-2',
+        objectKey: expect.stringMatching(/^site\/[0-9a-f]{64}\.json$/),
+        region: 'us-east-2',
+      },
+    ]);
   });
 
   it('rejects a context env that does not match the configuration', () => {

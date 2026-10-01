@@ -18,9 +18,11 @@
     "test:e2e": "npm run build:e2e && playwright test && npm run evidence:screens",
     "test:e2e:ci": "npm run build:e2e && playwright test --ignore-snapshots --project=chromium --project=firefox --project=webkit",
     "test:e2e:update": "npm run build:e2e && playwright test --project=chromium tests/e2e/visual.spec.ts --update-snapshots",
+    "test:live": "playwright test -c playwright.live.config.ts && python3 tests/helpers/to-webp-live.py",
     "evidence:lighthouse": "node tests/helpers/lighthouse.mjs",
     "evidence:contrast": "node tests/helpers/contrast.mjs && python3 tests/helpers/contrast.py",
-    "evidence:screens": "python3 tests/helpers/to-webp.py"
+    "evidence:screens": "python3 tests/helpers/to-webp.py",
+    "evidence:live-lighthouse": "node tests/helpers/lighthouse-live.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "^9.5.0",

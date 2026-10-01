@@ -1,0 +1,94 @@
+{
+  "url": "https://d21guxd9tjai7a.cloudfront.net/",
+  "generatedAt": "2026-10-01T14:12:12.338Z",
+  "forms": {
+    "mobile": {
+      "runs": [
+        {
+          "run": 1,
+          "lighthouseVersion": "12.8.2",
+          "perf": 100,
+          "a11y": 100,
+          "bestPractices": 100,
+          "seo": 69,
+          "lcpMs": 1523,
+          "fcpMs": 965,
+          "cls": 0,
+          "tbtMs": 4,
+          "speedIndexMs": 1441
+        },
+        {
+          "run": 2,
+          "lighthouseVersion": "12.8.2",
+          "perf": 100,
+          "a11y": 100,
+          "bestPractices": 100,
+          "seo": 69,
+          "lcpMs": 1520,
+          "fcpMs": 960,
+          "cls": 0,
+          "tbtMs": 4,
+          "speedIndexMs": 1529
+        },
+        {
+          "run": 3,
+          "lighthouseVersion": "12.8.2",
+          "perf": 100,
+          "a11y": 100,
+          "bestPractices": 100,
+          "seo": 69,
+          "lcpMs": 1522,
+          "fcpMs": 970,
+          "cls": 0,
+          "tbtMs": 5,
+          "speedIndexMs": 1546
+        }
+      ],
+      "medianRun": 3
+    },
+    "desktop": {
+      "runs": [
+        {
+          "run": 1,
+          "lighthouseVersion": "12.8.2",
+          "perf": 100,
+          "a11y": 100,
+          "bestPractices": 100,
+          "seo": 69,
+          "lcpMs": 351,
+          "fcpMs": 282,
+          "cls": 0,
+          "tbtMs": 0,
+          "speedIndexMs": 721
+        },
+        {
+          "run": 2,
+          "lighthouseVersion": "12.8.2",
+          "perf": 100,
+          "a11y": 100,
+          "bestPractices": 100,
+          "seo": 69,
+          "lcpMs": 352,
+          "fcpMs": 283,
+          "cls": 0,
+          "tbtMs": 0,
+          "speedIndexMs": 587
+        },
+        {
+          "run": 3,
+          "lighthouseVersion": "12.8.2",
+          "perf": 100,
+          "a11y": 100,
+          "bestPractices": 100,
+          "seo": 69,
+          "lcpMs": 344,
+          "fcpMs": 272,
+          "cls": 0,
+          "tbtMs": 0,
+          "speedIndexMs": 597
+        }
+      ],
+      "medianRun": 1
+    }
+  }
+}

@@ -16,6 +16,11 @@
   },
   "oidcProviderArn": "arn:aws:iam::147997127433:oidc-provider/token.actions.githubusercontent.com",
   "cdkQualifier": "hnb659fds",
+  "siteCloudFront": {
+    "distributionId": "E1J2L9XZIAGQ7M",
+    "originAccessControlId": "E3QYZ9YDRZ4IZP",
+    "responseHeadersPolicyId": "952c4e4a-adb6-4ed4-b06a-dbc54cac2676"
+  },
   "budgetMonthlyUsd": 10,
   "robotsNoindex": true,
   "logRetentionDays": 90,

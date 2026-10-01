@@ -4,6 +4,50 @@ Todas las versiones de la landing de M3TRIC.
 
 ---
 
+## [3.0.0] - 2026-10-01
+
+Rediseño centrado en lo que obtiene el usuario, infraestructura como código, CI/CD y trazabilidad de requisitos. Especificación: `docs/SPEC.md` (v3).
+
+### Agregado
+
+- **Rediseño para usuarios no técnicos** (REQ-O03, REQ-O04): la página abre con lo que el usuario obtiene y deja el detalle técnico en una franja propia. Orden de secciones: Hero (tres resultados: avisos a tiempo, mapa claro del terreno, reportes para decidir) · Lo que usted obtiene (`#beneficios`) · Para quién es (`#casos`) · Cómo funciona (`#como-funciona`) · Escalas (`#escalas`, pestañas M1 Punto / M2 Zona / M3 Territorio) · Por qué M3TRIC (`#por-que`) · Preguntas frecuentes (`#preguntas`) · Para equipos técnicos (`#tecnico`) · Contacto (`#contacto`).
+- **Preguntas frecuentes** con acordeón nativo (`<details>`, funciona sin JavaScript) y JSON-LD `FAQPage` generado desde el mismo contenido (`src/content/landing.ts` → `faq`).
+- **Perfiles de release** `staging` y `production` (`RELEASE_PROFILE`, `NEXT_PUBLIC_RELEASE_PROFILE`) e identificador de despliegue `NEXT_PUBLIC_RELEASE_ID`, publicado en el meta `m3tric:release`. En staging el correo de contacto es opcional (ADR-003).
+- **`noindex` en staging** en tres capas: meta robots, `robots.txt` con `Disallow: /` y cabecera `X-Robots-Tag` en CloudFront (ADR-004).
+- **Infraestructura como código** en `infra/` (AWS CDK v2, TypeScript): `m3tric-staging-LandingDeliveryIdentityStack` (rol de GitHub Actions por OIDC, desplegado una vez por una persona) y `m3tric-staging-LandingSiteStack` (S3 privado con BPA, SSE-S3 y versionado; CloudFront con OAC, CSP y cabeceras de seguridad; bucket de logs con retención de 90 días; presupuesto mensual con aviso al 80 %). Pruebas de plantilla con `vitest` y `cdk-nag` (ADR-002).
+- **CI/CD con GitHub Actions** (`.github/workflows/`): `ci.yml`, `deploy.yml`, `publish.yml` y `rollback.yml`, con todas las *actions* fijadas por SHA y autenticación solo por OIDC.
+- **Scripts de publicación y verificación** (`scripts/deploy/`): `publish.sh` (caché por tipo de contenido e invalidación de CloudFront), `smoke.mjs` (10 comprobaciones contra la URL publicada), `manifest.mjs` y `upload-manifest.sh` (`_deploy/manifest.json` con commit, run, huella SHA-256 de cada archivo y resultado del smoke). `scripts/hygiene.sh` (acciones fijadas, archivos prohibidos, marcadores de conflicto).
+- **Trazabilidad**: IDs de requisito en `docs/SPEC.md` §0, `docs/TRACEABILITY.md` (requisito → spec → implementación → verificación → evidencia, con estado según el Anexo 1 §3 y brechas abiertas) y `docs/adr/ADR-001` a `ADR-007`.
+- **Pruebas** nuevas en `scripts/` (reglas de artefacto, higiene, manifiesto) y en `infra/test/` (configuración, identidad, sitio, `cdk-nag`).
+
+### Cambiado
+
+- Reglas de release compartidas en `scripts/lib/release-config.mjs` y `scripts/lib/artifact-rules.mjs` (las usan `check:config`, `check:artifact` y el smoke). `check:artifact` ahora exige además el JSON-LD `FAQPage` y la coherencia del perfil (meta `noindex`, `robots.txt` y `m3tric:release`).
+- Navegación: Beneficios · Casos de uso · Cómo funciona · Escalas · Preguntas · Técnico · Contacto, con «Abrir plataforma» y «Hablar con el equipo» como acciones.
+- Suite E2E adaptada a la nueva arquitectura de información. CI la ejecuta en chromium, firefox y webkit sin comparar snapshots visuales, que dependen del sistema operativo (ADR-006).
+- `docs/OPERACION.md` reescrito alrededor del pipeline real. El rollback pasa a ser **reconstrucción desde git** (ADR-007).
+- `README.md`, `docs/CONTENIDOS.md` y `docs/ASSETS.md` actualizados a v3.
+
+### Eliminado
+
+- Claves de contenido de v2 en `src/content/landing.ts`: `proposal`, `platform`, `products`, `capabilities` y `technology`. Sus secciones se reemplazan por `whyM3tric`, `howItWorks`, `benefits` y `technical`.
+- Procedimiento manual de publicación con `aws s3 sync` por pasos y el rollback por restauración de versiones de S3.
+
+### Seguridad
+
+- Sin credenciales de larga duración: solo OIDC, con confianza exacta al environment `landing-staging` de este repositorio.
+- CSP y cabeceras de seguridad aplicadas en CloudFront (HSTS de dos años, `X-Frame-Options: DENY`, `Permissions-Policy`).
+- **Riesgo aceptado (ADR-002):** el rol de ejecución de CloudFormation del bootstrap de CDK de la cuenta tiene `AdministratorAccess`; quien pueda ejecutar un job en el environment `landing-staging` puede, en la práctica, cambiar cualquier recurso de CloudFormation de la cuenta. Mitigado con la restricción del environment a `main` y las demás medidas del ADR; endurecimiento recomendado antes de producción.
+
+### Conocido / Pendiente
+
+- La evidencia de `docs/evidence/` (informe de QA, matriz de navegadores, contraste, axe, Lighthouse) corresponde a v2 y debe regenerarse con v3; solo `link-matrix.md` es de v3.
+- LCP móvil local de 2,9 s frente al presupuesto de 2,5 s; la aceptación se mide en CloudFront (ADR-005).
+- Sin dominio propio: TLS 1.2+ mínimo y dominio productivo son dependencia del cliente (REQ-A09).
+- Estado de cada requisito y brechas abiertas: `docs/TRACEABILITY.md`.
+
+---
+
 ## [2.0.0] - 2026-09-30
 
 ### Agregado
@@ -120,7 +164,7 @@ Todas las versiones de la landing de M3TRIC.
 
 ---
 
-## Pendiente del cliente (Anexo 1 §14)
+## Pendiente del cliente (Anexo 1 §14; vigente en 3.0.0, ver `docs/SPEC.md` §16 y `docs/TRACEABILITY.md`)
 
 Decisiones que no bloquean el build de código, pero sí el release a producción:
 
@@ -140,8 +184,8 @@ Decisiones que no bloquean el build de código, pero sí el release a producció
 
 - El sitio es **completamente estático** (HTML/CSS/JS pre-compilado). No hay Next.js runtime ni API routes.
 - **Gates de release** (`npm run release`) validan configuración, linting, tipos y contenido del artefacto.
-- **Seguridad aplicada en CloudFront** (Response Headers Policy): CSP, HSTS, X-Frame-Options, etc.
-- **Rollback** mediante S3 versioning o re-sync de build anterior (ver `docs/OPERACION.md`).
+- **Seguridad aplicada en CloudFront** (Response Headers Policy): CSP, HSTS, X-Frame-Options, etc. (definida como código desde 3.0.0 en `infra/`).
+- **Rollback**: en 2.0.0 se describía por S3 versioning o re-sync manual; desde 3.0.0 es por reconstrucción desde git con el workflow `Rollback staging` (ADR-007, `docs/OPERACION.md`).
 
 ---
 

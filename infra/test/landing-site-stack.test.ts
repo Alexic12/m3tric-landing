@@ -1,12 +1,8 @@
 import type { CfnElement } from 'aws-cdk-lib';
 import { describe, expect, it } from 'vitest';
 
-import { LandingSiteStack } from '../lib/landing-site-stack';
 import {
-  SITE_STACK,
-  allowedActions,
   getAtt,
-  newApp,
   objectsArn,
   onlyResource,
   resourcesOfType,
@@ -22,6 +18,7 @@ const EXPECTED_CSP =
   "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'";
 const EXPECTED_PERMISSIONS_POLICY = 'camera=(), microphone=(), geolocation=(), payment=(), usb=()';
 const CACHING_OPTIMIZED_ID = '658327ea-f89d-4fab-a63d-7e88639e58f6';
+const EXPECTED_REMOVED_HEADERS = ['server', 'x-amz-version-id', 'x-amz-server-side-encryption', 'x-amz-request-id', 'x-amz-id-2'];
 const SSL_DENY = (bucketId: string) => ({
   Effect: 'Deny',
   Principal: { AWS: '*' },
@@ -202,7 +199,35 @@ describe('LandingSiteStack distribution', () => {
           { Header: 'X-Robots-Tag', Value: 'noindex, nofollow', Override: true },
         ],
       },
+      RemoveHeadersConfig: { Items: EXPECTED_REMOVED_HEADERS.map((Header) => ({ Header })) },
     });
+  });
+
+  it('removes the S3 implementation headers (audit L) and none CloudFront forbids removing', () => {
+    // CloudFront rejects a policy that removes any of these (they are read-only or
+    // CloudFront's own); CDK only checks five of them at synth.
+    const CLOUDFRONT_NOT_REMOVABLE = [
+      'connection',
+      'content-encoding',
+      'content-length',
+      'expect',
+      'host',
+      'keep-alive',
+      'proxy-authenticate',
+      'proxy-authorization',
+      'proxy-connection',
+      'trailer',
+      'transfer-encoding',
+      'upgrade',
+      'via',
+      'warning',
+    ];
+    const removed = (responseHeadersConfig(site).RemoveHeadersConfig.Items as Array<{ Header: string }>).map(({ Header }) => Header);
+    expect(removed).toEqual(EXPECTED_REMOVED_HEADERS);
+    for (const header of removed) {
+      expect(CLOUDFRONT_NOT_REMOVABLE, header).not.toContain(header.toLowerCase());
+      expect(header, header).not.toMatch(/^(x-amz-cf-|x-amzn-|x-edge-|x-accel-|x-cache$|x-forwarded-proto$|x-real-ip$)/i);
+    }
   });
 
   it('omits X-Robots-Tag (and only it) when robotsNoindex is false', () => {
@@ -215,54 +240,32 @@ describe('LandingSiteStack distribution', () => {
   });
 });
 
-describe('LandingSiteStack publish permissions', () => {
-  it('attaches one policy to the existing deploy role by name and never creates or alters a role', () => {
-    const [, policy] = onlyResource(site, 'AWS::IAM::Policy');
-    expect(policy.Properties?.PolicyName).toBe('m3tric-staging-landing-publish');
-    expect(policy.Properties?.Roles).toEqual(['m3tric-staging-landing-github-deploy']);
-    expect(policy.Properties?.Users).toBeUndefined();
-    expect(policy.Properties?.Groups).toBeUndefined();
-    expect(resourcesOfType(site, 'AWS::IAM::Role')).toEqual([]);
-    expect(resourcesOfType(site, 'AWS::IAM::ManagedPolicy')).toEqual([]);
+describe('LandingSiteStack has no IAM surface', () => {
+  it('contains no AWS::IAM::* resource of any kind (the execution role could not create one anyway)', () => {
+    expect(Object.values(site.Resources).filter((resource) => resource.Type.startsWith('AWS::IAM::'))).toEqual([]);
   });
 
-  it('grants exactly the closed action list on exactly this bucket and distribution', () => {
-    const [, policy] = onlyResource(site, 'AWS::IAM::Policy');
-    const statements = policy.Properties?.PolicyDocument.Statement as Array<Record<string, any>>;
-    expect(statements).toEqual([
-      { Sid: 'ListSiteBucket', Effect: 'Allow', Action: 's3:ListBucket', Resource: getAtt(siteBucketId, 'Arn') },
-      {
-        Sid: 'SyncSiteObjects',
-        Effect: 'Allow',
-        Action: ['s3:DeleteObject', 's3:GetObject', 's3:PutObject'],
-        Resource: objectsArn(siteBucketId),
-      },
-      {
-        Sid: 'InvalidateDistribution',
-        Effect: 'Allow',
-        Action: ['cloudfront:CreateInvalidation', 'cloudfront:GetInvalidation'],
-        Resource: { 'Fn::Join': ['', ['arn:aws:cloudfront::147997127433:distribution/', { Ref: distributionId }]] },
-      },
-    ]);
-    expect(allowedActions(statements)).toEqual([
-      'cloudfront:CreateInvalidation',
-      'cloudfront:GetInvalidation',
-      's3:DeleteObject',
-      's3:GetObject',
-      's3:ListBucket',
-      's3:PutObject',
+  it('contains exactly the reviewed resource types', () => {
+    expect([...new Set(Object.values(site.Resources).map((resource) => resource.Type))].sort()).toEqual([
+      'AWS::Budgets::Budget',
+      'AWS::CloudFront::Distribution',
+      'AWS::CloudFront::OriginAccessControl',
+      'AWS::CloudFront::ResponseHeadersPolicy',
+      'AWS::S3::Bucket',
+      'AWS::S3::BucketPolicy',
+      'AWS::SNS::Topic',
+      'AWS::SNS::TopicPolicy',
     ]);
   });
 
-  it('refuses to synthesize when the publish role name drifts from the identity stack', () => {
-    expect(
-      () =>
-        new LandingSiteStack(newApp(), SITE_STACK, {
-          env: { account: '147997127433', region: 'us-east-2' },
-          config: stagingConfig(),
-          publishRoleName: 'm3tric-staging-some-other-role',
-        }),
-    ).toThrow(/does not match the delivery identity role m3tric-staging-landing-github-deploy/);
+  it('keeps the physical-name prefix the identity stack scopes its S3 permissions to', () => {
+    // CloudFormation names buckets <stack name>-<logical id>-<random>, lower-cased.
+    // The identity stack matches `m3tric-staging-landingsitestack-*` (execution
+    // role) and `...-sitebucket*` (publish); renaming the stack or the SiteBucket
+    // construct would silently leave both policies pointing at nothing.
+    expect(stacks.site.stackName.toLowerCase()).toBe('m3tric-staging-landingsitestack');
+    expect(siteBucketId.toLowerCase().startsWith('sitebucket')).toBe(true);
+    expect(logsBucketId.toLowerCase().startsWith('sitebucket')).toBe(false);
   });
 });
 
@@ -329,7 +332,6 @@ describe('LandingSiteStack outputs and coupling', () => {
       DistributionId: { Value: { Ref: distributionId } },
       DistributionDomainName: { Value: getAtt(distributionId, 'DomainName') },
       SiteUrl: { Value: { 'Fn::Join': ['', ['https://', getAtt(distributionId, 'DomainName')]] } },
-      PublishRoleName: { Value: 'm3tric-staging-landing-github-deploy' },
     });
   });
 

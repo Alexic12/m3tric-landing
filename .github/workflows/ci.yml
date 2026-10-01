@@ -69,12 +69,21 @@ jobs:
   # on macOS and fonts/antialiasing differ on Linux (ADR-006). Everything else is asserted.
   e2e:
     name: E2E (${{ matrix.project }})
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 25
     strategy:
       fail-fast: false
       matrix:
-        project: [chromium, firefox, webkit]
+        # WebKit runs on macOS: on Ubuntu its system dependencies (gstreamer,
+        # ffmpeg) are the packages the runners' mirror kept stalling on, and
+        # macOS WebKit needs no apt step and is closer to real Safari.
+        include:
+          - project: chromium
+            os: ubuntu-latest
+          - project: firefox
+            os: ubuntu-latest
+          - project: webkit
+            os: macos-15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -87,7 +96,29 @@ jobs:
             package-lock.json
             infra/package-lock.json
       - run: npm ci
-      - run: npx playwright install --with-deps chromium firefox webkit
+      # The runners' Ubuntu mirror sometimes stalls single downloads ("Ign:"
+      # lines) until apt's long default timeout, which twice ran a job past its
+      # limit. Short timeouts plus retries make a stall fail over quickly, and
+      # each matrix job installs only its own browser's system dependencies.
+      - name: Install system dependencies (${{ matrix.project }})
+        if: runner.os == 'Linux'
+        timeout-minutes: 15
+        env:
+          PROJECT: ${{ matrix.project }}
+        run: |
+          printf 'Acquire::Retries "5";\nAcquire::http::Timeout "20";\nAcquire::https::Timeout "20";\n' \
+            | sudo tee /etc/apt/apt.conf.d/80-ci-retries >/dev/null
+          for attempt in 1 2 3; do
+            if npx playwright install-deps "$PROJECT"; then exit 0; fi
+            echo "::warning::playwright install-deps failed (attempt $attempt of 3); retrying"
+            sleep $((attempt * 15))
+          done
+          exit 1
+      - name: Install Playwright browser (${{ matrix.project }})
+        run: npx playwright install "$PROJECT"
+        timeout-minutes: 5
+        env:
+          PROJECT: ${{ matrix.project }}
       - run: npm run build:e2e
       - run: npx playwright test --ignore-snapshots --project=${{ matrix.project }}
         env:

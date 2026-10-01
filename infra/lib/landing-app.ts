@@ -1,10 +1,10 @@
-import { DefaultStackSynthesizer, Tags, Validations, type App } from 'aws-cdk-lib';
+import { CliCredentialsStackSynthesizer, DefaultStackSynthesizer, Tags, Validations, type App } from 'aws-cdk-lib';
 import { AwsSolutionsChecks } from 'cdk-nag';
 
 import { requiredTags, type DeploymentContext, type LandingConfig } from './config';
 import { LandingDeliveryIdentityStack } from './delivery-identity-stack';
 import { LandingSiteStack } from './landing-site-stack';
-import { DELIVERY_IDENTITY_STACK_ID, SITE_STACK_ID, stackName } from './names';
+import { DELIVERY_IDENTITY_STACK_ID, SITE_ASSETS_PREFIX, SITE_STACK_ID, cdkAssetsBucketName, stackName } from './names';
 
 export interface LandingStacks {
   readonly identity: LandingDeliveryIdentityStack;
@@ -32,17 +32,14 @@ export function buildLandingApp(app: App, config: LandingConfig, deployment: Dep
     tags: { ...tags },
   };
 
-  // Explicit qualifier so the synthesizer and the identity role's sts:AssumeRole
-  // resources are derived from the same configured value.
-  const synthesizer = () => new DefaultStackSynthesizer({ qualifier: config.cdkQualifier });
-
   // Construct ID == physical stack name, so `cdk deploy m3tric-staging-LandingSiteStack`
   // selects the stack by the same name CloudFormation shows.
   const identityName = stackName(config.environment, DELIVERY_IDENTITY_STACK_ID);
   const identity = new LandingDeliveryIdentityStack(app, identityName, {
     ...common,
     stackName: identityName,
-    synthesizer: synthesizer(),
+    // A human admin deploys this stack, through the account's shared bootstrap.
+    synthesizer: new DefaultStackSynthesizer({ qualifier: config.cdkQualifier }),
     config,
   });
 
@@ -50,11 +47,16 @@ export function buildLandingApp(app: App, config: LandingConfig, deployment: Dep
   const site = new LandingSiteStack(app, siteName, {
     ...common,
     stackName: siteName,
-    synthesizer: synthesizer(),
+    // No shared bootstrap role at all (audit H2): the CLI's own credentials (the
+    // GitHub role) stage the template in the landing's own assets bucket and
+    // create the change set, and CloudFormation runs it as the role passed with
+    // --role-arn (the scoped execution role). This synthesizer emits no
+    // BootstrapVersion parameter/rule and no role ARNs to assume.
+    synthesizer: new CliCredentialsStackSynthesizer({
+      fileAssetsBucketName: cdkAssetsBucketName(config.environment, config.account, config.region),
+      bucketPrefix: SITE_ASSETS_PREFIX,
+    }),
     config,
-    // A plain string, not a token: no CloudFormation export/import is created, so
-    // the site stack never depends on the identity stack at deploy time.
-    publishRoleName: identity.deployRoleName,
   });
 
   return { identity, site };

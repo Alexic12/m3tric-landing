@@ -34,6 +34,11 @@ describe('staging configuration file', () => {
       github: { owner: 'Alexic12', repo: 'm3tric-landing', environment: 'landing-staging' },
       oidcProviderArn: 'arn:aws:iam::147997127433:oidc-provider/token.actions.githubusercontent.com',
       cdkQualifier: 'hnb659fds',
+      siteCloudFront: {
+        distributionId: 'E1J2L9XZIAGQ7M',
+        originAccessControlId: 'E3QYZ9YDRZ4IZP',
+        responseHeadersPolicyId: '952c4e4a-adb6-4ed4-b06a-dbc54cac2676',
+      },
       budgetMonthlyUsd: 10,
       robotsNoindex: true,
       logRetentionDays: 90,
@@ -80,6 +85,16 @@ describe('configuration schema (fail closed)', () => {
     expect(rejects((raw) => (raw.github.repo = 'm3tric-*'))).toThrow();
     expect(rejects((raw) => (raw.github.repo = '..'))).toThrow();
     expect(rejects((raw) => (raw.github.owner = 'Alexic12?'))).toThrow();
+  });
+
+  it('accepts only CloudFront ID alphabets in the IDs that reach IAM resource ARNs', () => {
+    expect(rejects((raw) => (raw.siteCloudFront.distributionId = '*'))).toThrow(/distribution ID/);
+    expect(rejects((raw) => (raw.siteCloudFront.distributionId = 'E1J2L9XZIAGQ7M*'))).toThrow(/distribution ID/);
+    expect(rejects((raw) => (raw.siteCloudFront.distributionId = 'E1J2L9XZIAGQ7M/x'))).toThrow(/distribution ID/);
+    expect(rejects((raw) => (raw.siteCloudFront.originAccessControlId = 'e3qyz9ydrz4izp'))).toThrow(/origin access control ID/);
+    expect(rejects((raw) => (raw.siteCloudFront.responseHeadersPolicyId = '952c4e4a-*'))).toThrow(/response headers policy ID/);
+    expect(rejects((raw) => delete raw.siteCloudFront)).toThrow();
+    expect(rejects((raw) => (raw.siteCloudFront.extra = 'x'))).toThrow();
   });
 
   it('restricts regions to the commercial partition the ARNs are built for', () => {

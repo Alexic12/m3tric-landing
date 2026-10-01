@@ -13,21 +13,13 @@ import {
   type ResponseCustomHeader,
 } from 'aws-cdk-lib/aws-cloudfront';
 import { S3BucketOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
-import { Effect, Policy, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
-import { BlockPublicAccess, Bucket, BucketEncryption, ObjectOwnership, type CfnBucket } from 'aws-cdk-lib/aws-s3';
+import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { BlockPublicAccess, Bucket, BucketEncryption, ObjectOwnership } from 'aws-cdk-lib/aws-s3';
 import { Topic } from 'aws-cdk-lib/aws-sns';
 import type { Construct } from 'constructs';
 
 import type { LandingConfig } from './config';
-import {
-  DEPLOY_ROLE_PATH,
-  PARTITION,
-  budgetName,
-  budgetTopicName,
-  deployRoleName,
-  publishPolicyName,
-  responseHeadersPolicyName,
-} from './names';
+import { PARTITION, SITE_BUCKET_ID, budgetName, budgetTopicName, responseHeadersPolicyName } from './names';
 
 // Edge security headers (SPEC §10.2). Next's static export inlines its bootstrap
 // scripts and styles, hence 'unsafe-inline'; everything else is same-origin only.
@@ -47,6 +39,18 @@ export const PERMISSIONS_POLICY = 'camera=(), microphone=(), geolocation=(), pay
 export const ROBOTS_NOINDEX = 'noindex, nofollow';
 const HSTS_MAX_AGE = Duration.seconds(63_072_000); // two years
 
+// Origin headers that only describe the S3 implementation (audit finding L). The
+// last two are already stripped by CloudFront for S3 origins (not seen at the
+// edge on 2026-10-01); they are listed so a change of origin type cannot leak
+// them. None is in CloudFront's list of headers a policy may not remove.
+export const REMOVED_ORIGIN_HEADERS = [
+  'server',
+  'x-amz-version-id',
+  'x-amz-server-side-encryption',
+  'x-amz-request-id',
+  'x-amz-id-2',
+] as const;
+
 // A missing object behind OAC surfaces as 403 (CloudFront has no s3:ListBucket),
 // so both codes map to the site's own 404 page with a real 404 status.
 const NOT_FOUND_PAGE = '/404.html';
@@ -59,34 +63,24 @@ const BUDGET_ALERT_THRESHOLD_PERCENT = 80;
 
 export interface LandingSiteStackProps extends StackProps {
   readonly config: LandingConfig;
-  /**
-   * Name of the GitHub deploy role created by LandingDeliveryIdentityStack. The
-   * publish policy attaches to it by name; the role itself is never modified.
-   */
-  readonly publishRoleName: string;
 }
 
+/**
+ * Site resources only. No IAM resource of any kind: the stack is deployed by the
+ * workflow through the scoped CloudFormation execution role, which has no IAM
+ * permissions, and the publish permissions live in the identity stack (ADR-002).
+ */
 export class LandingSiteStack extends Stack {
   public readonly siteBucket: Bucket;
   public readonly logsBucket: Bucket;
   public readonly distribution: Distribution;
 
   public constructor(scope: Construct, id: string, props: LandingSiteStackProps) {
-    const { config, publishRoleName, ...stackProps } = props;
+    const { config, ...stackProps } = props;
     super(scope, id, {
-      description: 'M3TRIC landing: private S3 origin + CloudFront (OAC), publish policy and budget',
+      description: 'M3TRIC landing: private S3 origin + CloudFront (OAC), security headers and budget',
       ...stackProps,
     });
-
-    // Synth-time guard: the identity stack is deployed separately, so a drifted
-    // name would only surface as a CloudFormation failure (or a policy on the
-    // wrong role) at deploy time.
-    const expectedRoleName = deployRoleName(config.environment);
-    if (publishRoleName !== expectedRoleName) {
-      throw new Error(
-        `publishRoleName ${publishRoleName} does not match the delivery identity role ${expectedRoleName}`,
-      );
-    }
 
     this.logsBucket = new Bucket(this, 'LogsBucket', {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
@@ -100,7 +94,9 @@ export class LandingSiteStack extends Stack {
       autoDeleteObjects: false,
     });
 
-    this.siteBucket = new Bucket(this, 'SiteBucket', {
+    // The identity stack's publish policy matches this bucket by the name prefix
+    // CloudFormation derives from this construct id (names.ts).
+    this.siteBucket = new Bucket(this, SITE_BUCKET_ID, {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       encryption: BucketEncryption.S3_MANAGED,
       enforceSSL: true,
@@ -137,6 +133,7 @@ export class LandingSiteStack extends Stack {
         referrerPolicy: { referrerPolicy: HeadersReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN, override: true },
       },
       customHeadersBehavior: { customHeaders },
+      removeHeaders: [...REMOVED_ORIGIN_HEADERS],
     });
 
     this.distribution = new Distribution(this, 'Distribution', {
@@ -182,47 +179,6 @@ export class LandingSiteStack extends Stack {
           'No custom domain yet: with the default *.cloudfront.net certificate CloudFront does not allow setting the minimum viewer TLS policy. Custom domain + ACM (us-east-1) + TLSv1.2_2021 is client dependency REQ-A09 (SPEC 16.1).',
       },
     );
-
-    // The role is imported mutable so CDK emits a standalone AWS::IAM::Policy
-    // attached by name; nothing else about the role is managed here.
-    const publishRole = Role.fromRoleArn(
-      this,
-      'PublishRole',
-      `arn:${PARTITION}:iam::${config.account}:role${DEPLOY_ROLE_PATH}${publishRoleName}`,
-      { mutable: true },
-    );
-    const publishPolicy = new Policy(this, 'PublishPolicy', {
-      policyName: publishPolicyName(config.environment),
-      roles: [publishRole],
-      statements: [
-        new PolicyStatement({
-          sid: 'ListSiteBucket',
-          effect: Effect.ALLOW,
-          actions: ['s3:ListBucket'],
-          resources: [this.siteBucket.bucketArn],
-        }),
-        new PolicyStatement({
-          sid: 'SyncSiteObjects',
-          effect: Effect.ALLOW,
-          actions: ['s3:GetObject', 's3:PutObject', 's3:DeleteObject'],
-          resources: [this.siteBucket.arnForObjects('*')],
-        }),
-        new PolicyStatement({
-          sid: 'InvalidateDistribution',
-          effect: Effect.ALLOW,
-          actions: ['cloudfront:CreateInvalidation', 'cloudfront:GetInvalidation'],
-          resources: [this.distribution.distributionArn],
-        }),
-      ],
-    });
-    // cdk-nag reports the object wildcard as `<LogicalId.Arn>/*`; acknowledging that
-    // exact finding (not the whole rule) keeps any future wildcard visible.
-    const siteBucketLogicalId = this.getLogicalId(this.siteBucket.node.defaultChild as CfnBucket);
-    Validations.of(publishPolicy).acknowledge({
-      id: `AwsSolutions-IAM5[Resource::<${siteBucketLogicalId}.Arn>/*]`,
-      reason:
-        '`aws s3 sync --delete` must read, write and delete arbitrary object keys of the export; scoped to this single site bucket, no other bucket or action.',
-    });
 
     // No SSE-KMS on purpose: Budgets cannot publish to a topic under the
     // AWS-managed SNS key, and a customer-managed key (~USD 1/month) would be 10%
@@ -286,6 +242,5 @@ export class LandingSiteStack extends Stack {
     new CfnOutput(this, 'DistributionId', { value: this.distribution.distributionId });
     new CfnOutput(this, 'DistributionDomainName', { value: this.distribution.distributionDomainName });
     new CfnOutput(this, 'SiteUrl', { value: `https://${this.distribution.distributionDomainName}` });
-    new CfnOutput(this, 'PublishRoleName', { value: publishRoleName });
   }
 }

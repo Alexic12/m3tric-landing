@@ -19,8 +19,8 @@ Fotos de marca optimizadas en WebP. Generadas desde PNG originales del manual de
 | `aerial-tall-747.webp` | Manual, lámina 12 | 747 × 1256 px | Propiedad M3TRIC | Casos de uso — foto aérea vertical | Desktop; orientación portrait; calidad 78 |
 | `aerial-tall-640.webp` | Manual, lámina 12 | 640 × 1073 px | Propiedad M3TRIC | Casos de uso — foto aérea vertical | Tablet; orientación portrait; calidad 78 |
 | `aerial-tall-480.webp` | Manual, lámina 12 | 480 × 805 px | Propiedad M3TRIC | Casos de uso — foto aérea vertical | Móvil; orientación portrait; calidad 55 (hero móvil, LCP-crítico) |
-| `globe-1000.webp` | Manual, lámina 3 (globo monocromo) | 1000 × 667 px | Propiedad M3TRIC | Propuesta de valor — globo terráqueo con red de nodos | Desktop |
-| `globe-640.webp` | Manual, lámina 3 | 640 × 427 px | Propiedad M3TRIC | Propuesta de valor — globo terráqueo | Móvil |
+| `globe-1000.webp` | Manual, lámina 3 (globo monocromo) | 1000 × 667 px | Propiedad M3TRIC | «Por qué M3TRIC» — globo terráqueo con red de nodos | Desktop |
+| `globe-640.webp` | Manual, lámina 3 | 640 × 427 px | Propiedad M3TRIC | «Por qué M3TRIC» — globo terráqueo | Móvil |
 
 **Notas técnicas:**
 
@@ -226,6 +226,11 @@ Permite modificación, distribución comercial. Requiere declaración de cambios
 | `scripts/check-artifact.mjs` | Validación de artefacto `out/` | Proyecto |
 | `scripts/serve-out.mjs` | Servidor estático para `out/` | Proyecto |
 | `scripts/optimize-images.py` | Conversión PNG → WebP | Proyecto |
+| `scripts/lib/release-config.mjs`, `scripts/lib/artifact-rules.mjs` | Reglas compartidas del gate de release y del smoke | Proyecto |
+| `scripts/hygiene.sh` | Higiene del repositorio (acciones fijadas, archivos prohibidos) | Proyecto |
+| `scripts/deploy/{publish.sh,smoke.mjs,manifest.mjs,upload-manifest.sh}` | Publicación, verificación y manifiesto de despliegue | Proyecto |
+| `infra/**` | App AWS CDK (stacks de identidad y de sitio) | Proyecto |
+| `.github/workflows/{ci,deploy,publish,rollback}.yml` | Pipeline CI/CD | Proyecto |
 
 ---
 
@@ -249,10 +254,40 @@ De acuerdo con Anexo 1 §13.2 y spec §15:
 
 | Herramienta | Propósito | En producción |
 |---|---|---|
-| Playwright | Tests E2E | ❌ No |
-| @axe-core/playwright | Auditoría accesibilidad | ❌ No (solo tests) |
+| Playwright (`@playwright/test` 1.63.0) | Tests E2E | ❌ No |
+| `@axe-core/playwright` 4.13.0 | Auditoría accesibilidad | ❌ No (solo tests) |
+| `@next/env` 16.1.6 | Carga de variables de entorno en los scripts de release (`scripts/lib/release-config.mjs`) | ❌ No |
 | Lighthouse | Auditoría de rendimiento | ❌ No (reportes locales) |
 | ESLint, TypeScript | Validación | ❌ No (solo build-time) |
+
+### Herramientas de infraestructura (`infra/package.json`, solo desarrollo y despliegue)
+
+Ninguna se incluye en el sitio publicado. Versiones fijadas en `infra/package.json`.
+
+| Paquete | Versión | Licencia | Propósito |
+|---|---|---|---|
+| `aws-cdk-lib` | 2.267.0 | Apache-2.0 | Biblioteca de constructos de AWS CDK (define los stacks) |
+| `constructs` | 10.8.1 | Apache-2.0 | Modelo base de constructos de CDK |
+| `cdk-nag` | 3.0.2 | Apache-2.0 | Reglas `AwsSolutions` sobre las plantillas (falla la síntesis si hay hallazgos sin justificar) |
+| `zod` | 4.4.3 | MIT | Validación del esquema de `infra/config/*.json` y del contexto de despliegue |
+| `vitest` | 4.1.11 | MIT | Pruebas de las plantillas sintetizadas |
+| `aws-cdk` (CLI) | 2.1138.0 | Apache-2.0 | `cdk synth` / `cdk deploy` (`devDependency`) |
+| `typescript` | 5.9.3 | Apache-2.0 | Compilación y tipos |
+| `eslint`, `@eslint/js`, `typescript-eslint`, `globals` | 10.9.1 · 10.0.1 · 8.68.0 · 17.11.0 | MIT | Lint de `infra/` |
+| `ts-node`, `@types/node` | 10.9.2 · 26.4.0 | MIT | Ejecución de `bin/landing.ts` y tipos de Node |
+
+Las licencias son las que publica cada proyecto; este inventario no sustituye una auditoría de licencias de la cadena de dependencias transitivas.
+
+### GitHub Actions usadas en CI/CD (fijadas por SHA de 40 caracteres)
+
+| Action | Versión | SHA | Uso |
+|---|---|---|---|
+| `actions/checkout` | v7.0.1 | `3d3c42e5aac5ba805825da76410c181273ba90b1` | Descarga del repositorio |
+| `actions/setup-node` | v7.0.0 | `820762786026740c76f36085b0efc47a31fe5020` | Node 24.19.0 y caché de npm |
+| `actions/upload-artifact` | v7.0.1 | `043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` | Informe de Playwright (si falla) y manifiesto de despliegue |
+| `aws-actions/configure-aws-credentials` | v6.3.0 | `e1253824e5c10ff9df46874f81ed3ec929e19cfd` | Credenciales temporales por OIDC |
+
+`scripts/hygiene.sh` (job `hygiene` de CI) falla si algún `uses:` de `.github/workflows/` no está fijado por SHA. Para actualizar una action, cambie el SHA y la versión del comentario en los workflows que la usan (`ci.yml`, `deploy.yml`, `publish.yml`, `rollback.yml`).
 
 ---
 
@@ -267,7 +302,7 @@ Cuando actualices activos:
 - [ ] Ejecutar `npm run dev` y verificar visualmente en 3 anchos de pantalla
 - [ ] Si actualizaste logo: validar con equipo de marca (Anexo 1 §14.4)
 - [ ] Si actualizaste tokens de color: verificar contrastes (WCAG AA mínimo)
-- [ ] Commit + push + `npm run release` antes de publicar
+- [ ] `npm run release` en local y abrir un PR; la publicación la hace `Deploy staging` al fusionar a `main` (`docs/OPERACION.md` §6)
 
 ---
 
