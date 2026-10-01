@@ -1,0 +1,34 @@
+{
+  "name": "@m3tric/landing-infra",
+  "version": "0.0.0-private",
+  "private": true,
+  "description": "M3TRIC landing AWS CDK app (S3 + CloudFront + GitHub OIDC delivery identity)",
+  "engines": {
+    "node": "24.19.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint bin lib test --max-warnings=0",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json",
+    "test": "vitest run --dir test --exclude='cdk.out/**' --exclude='dist/**'",
+    "synth": "cdk synth --lookups=false -c env=staging -c gitSha=0000000000000000000000000000000000000000 -c releaseId=local-synth",
+    "cdk": "cdk"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.267.0",
+    "cdk-nag": "3.0.2",
+    "constructs": "10.8.1",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "26.4.0",
+    "aws-cdk": "2.1138.0",
+    "eslint": "10.9.1",
+    "globals": "17.11.0",
+    "ts-node": "10.9.2",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.68.0",
+    "vitest": "4.1.11"
+  }
+}

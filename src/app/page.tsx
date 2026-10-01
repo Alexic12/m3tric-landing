@@ -1,27 +1,31 @@
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
-import Hero from "@/components/sections/Hero";
-import PlatformSection from "@/components/sections/PlatformSection";
-import ScalesSection from "@/components/sections/ScalesSection";
-import ProductsSection from "@/components/sections/ProductsSection";
-import FeaturesSection from "@/components/sections/FeaturesSection";
-import TechnologySection from "@/components/sections/TechnologySection";
-import UseCasesSection from "@/components/sections/UseCasesSection";
-import CTASection from "@/components/sections/CTASection";
+import { Footer } from "@/components/layout/Footer";
+import { Header } from "@/components/layout/Header";
+import { SkipLink } from "@/components/layout/SkipLink";
+import { Benefits } from "@/components/sections/Benefits";
+import { Contact } from "@/components/sections/Contact";
+import { Faq } from "@/components/sections/Faq";
+import { Hero } from "@/components/sections/Hero";
+import { HowItWorks } from "@/components/sections/HowItWorks";
+import { Scales } from "@/components/sections/Scales";
+import { TechnicalZone } from "@/components/sections/TechnicalZone";
+import { UseCases } from "@/components/sections/UseCases";
+import { WhyM3tric } from "@/components/sections/WhyM3tric";
 
 export default function Home() {
   return (
     <>
-      <Navbar />
-      <main>
+      <SkipLink />
+      <Header />
+      <main id="contenido" tabIndex={-1} className="outline-none">
         <Hero />
-        <PlatformSection />
-        <ScalesSection />
-        <ProductsSection />
-        <FeaturesSection />
-        <TechnologySection />
-        <UseCasesSection />
-        <CTASection />
+        <Benefits />
+        <UseCases />
+        <HowItWorks />
+        <Scales />
+        <WhyM3tric />
+        <Faq />
+        <TechnicalZone />
+        <Contact />
       </main>
       <Footer />
     </>

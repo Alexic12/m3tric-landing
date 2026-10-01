@@ -1,105 +1,69 @@
-"use client";
+import { Logo } from "@/components/brand/Logo";
+import { TripleBar } from "@/components/brand/TripleBar";
+import { a11y, brand, contact, cta, footer, navItems } from "@/content/landing";
+import { mailtoHref, siteConfig } from "@/config/site";
+import { formatPhone } from "@/components/sections/contact-format";
 
-import { ArrowUpRight, Mail } from "lucide-react";
-import { M3tricLogoMark } from "@/components/brand/M3tricLogo";
-import { getPlatformUrl } from "@/lib/platform";
+const BUILD_YEAR = new Date().getFullYear();
 
-const footerLinks = {
-  Plataforma: [
-    { label: "Abrir Plataforma", href: "platform" },
-    { label: "Dashboard", href: "platform" },
-    { label: "Analítica", href: "platform" },
-    { label: "Reportes", href: "platform" },
-  ],
-  Recursos: [
-    { label: "Plataforma", href: "#platform" },
-    { label: "Tecnología", href: "#technology" },
-    { label: "Casos de Uso", href: "#use-cases" },
-    { label: "Contacto", href: "#contact" },
-  ],
-  Empresa: [
-    { label: "Acerca de", href: "#platform" },
-    { label: "Contacto", href: "#contact" },
-    { label: "Productos", href: "#products" },
-    { label: "Escalas", href: "#scales" },
-  ],
-};
+const linkClass = "inline-flex min-h-11 items-center text-m3-green-200 transition-colors hover:text-white";
 
-export default function Footer() {
-  const platformUrl = getPlatformUrl();
+export function Footer() {
+  const { email, phone } = siteConfig.contact;
+  const mailHref = mailtoHref(cta.mailSubject);
 
   return (
-    <footer className="relative border-t border-m3-border/50 bg-m3-bg-alt">
-      <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20">
-        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-5">
-          {/* Brand */}
-          <div className="lg:col-span-2">
-            <div className="flex items-center gap-1.5 mb-4">
-              <M3tricLogoMark size={28} />
-              <span className="text-lg font-bold tracking-tight" style={{ color: "#1b4332" }}>
-                3TRIC
-              </span>
-            </div>
-            <p className="text-sm text-m3-text-muted leading-relaxed max-w-xs mb-6">
-              Analítica espacio-temporal multiescala para toma de decisiones
-              territoriales y ambientales.
-            </p>
-            <div className="mb-6 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
-              <a
-                href={platformUrl}
-                className="inline-flex items-center gap-2 rounded-full bg-m3-green-dark px-5 py-2.5 text-sm font-medium text-white hover:bg-m3-green-mid transition-colors"
-              >
-                Abrir Plataforma
-                <ArrowUpRight className="h-3.5 w-3.5" />
-              </a>
-              <a
-                href="mailto:contact@m3tric.io"
-                className="inline-flex items-center gap-2 rounded-full border border-m3-border px-5 py-2.5 text-sm text-m3-text-muted hover:text-m3-green-dark hover:border-m3-accent/30 transition-colors"
-              >
-                <Mail className="h-3.5 w-3.5" />
-                Solicitar Demo
-              </a>
-            </div>
-            <p className="text-xs text-m3-text-dim">
-              Desarrollado en la Universidad EAFIT, Medellín, Colombia
-            </p>
+    <footer className="on-dark bg-m3-green-950 text-white">
+      <div className="mx-auto max-w-[1280px] px-4 py-16 sm:px-6 md:py-20 lg:px-8">
+        <div className="grid gap-12 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <a href="#inicio" className="inline-block rounded-sm">
+              <Logo variant="reverse" label={a11y.homeLink} className="w-44" />
+            </a>
+            <p className="text-h3 mt-8 max-w-sm font-light text-white">{brand.tagline}</p>
           </div>
 
-          {/* Link columns */}
-          {Object.entries(footerLinks).map(([category, links]) => (
-            <div key={category}>
-              <h4 className="text-xs font-mono text-m3-text-muted uppercase tracking-widest mb-4">
-                {category}
-              </h4>
-              <ul className="space-y-2.5">
-                {links.map((link) => (
-                  <li key={link.label}>
-                    <a
-                      href={link.href === "platform" ? platformUrl : link.href}
-                      className="text-sm text-m3-text-dim hover:text-m3-accent transition-colors duration-300"
-                    >
-                      {link.label}
+          <nav aria-label={a11y.footerNav} className="lg:col-span-4 lg:col-start-6">
+            <p className="text-meta text-m3-green-400">{footer.sections}</p>
+            <ul className="mt-3 grid grid-cols-2 gap-x-6">
+              {navItems.map((item) => (
+                <li key={item.id}>
+                  <a href={`#${item.id}`} className={linkClass}>
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {email || phone ? (
+            <div className="lg:col-span-3">
+              <p className="text-meta text-m3-green-400">{contact.kicker}</p>
+              <ul className="mt-3">
+                {email && mailHref ? (
+                  <li>
+                    <a href={mailHref} className={`${linkClass} break-all`}>
+                      {email}
                     </a>
                   </li>
-                ))}
+                ) : null}
+                {phone ? (
+                  <li>
+                    <a href={`tel:${phone}`} className={linkClass}>
+                      {formatPhone(phone)}
+                    </a>
+                  </li>
+                ) : null}
               </ul>
             </div>
-          ))}
+          ) : null}
         </div>
 
-        {/* Bottom bar */}
-        <div className="mt-16 pt-8 border-t border-m3-border/30 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-m3-text-dim">
-            &copy; {new Date().getFullYear()} M3TRIC. Todos los derechos reservados.
+        <div className="mt-14 flex flex-col gap-4 border-t border-white/15 pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-m3-green-200">
+            © {BUILD_YEAR} M3TRIC. {brand.rights}
           </p>
-          <div className="flex items-center gap-6">
-            <a href="#" className="text-xs text-m3-text-dim hover:text-m3-accent transition-colors">
-              Política de Privacidad
-            </a>
-            <a href="#" className="text-xs text-m3-text-dim hover:text-m3-accent transition-colors">
-              Términos de Servicio
-            </a>
-          </div>
+          <TripleBar active={3} className="w-6 text-m3-green-400" />
         </div>
       </div>
     </footer>

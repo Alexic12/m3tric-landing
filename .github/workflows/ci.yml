@@ -1,0 +1,128 @@
+name: CI
+
+# Without AWS credentials on purpose: it runs the same on forks and on PRs.
+# No push trigger: on main, deploy.yml calls this workflow before deploying,
+# so a second standalone run would only duplicate the same checks.
+on:
+  pull_request:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  NODE_VERSION: 24.19.0
+
+jobs:
+  hygiene:
+    name: Hygiene
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: bash scripts/hygiene.sh
+
+  # Full release gate (unit tests, config, lint, typecheck, build, artifact) once per profile, with
+  # verification domains. Staging has no contact email on purpose (ADR-003).
+  web:
+    name: Release gate (${{ matrix.profile }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - profile: staging
+            site_url: https://d111111abcdef8.cloudfront.net
+            contact_email: ""
+          - profile: production
+            site_url: https://m3tric-test.co
+            contact_email: contacto@m3tric-test.co
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            infra/package-lock.json
+      - run: npm ci
+      - run: npm run release
+        env:
+          RELEASE_PROFILE: ${{ matrix.profile }}
+          NEXT_PUBLIC_RELEASE_PROFILE: ${{ matrix.profile }}
+          NEXT_PUBLIC_SITE_URL: ${{ matrix.site_url }}
+          NEXT_PUBLIC_PLATFORM_URL: https://app.m3tric-test.co/login
+          NEXT_PUBLIC_CONTACT_EMAIL: ${{ matrix.contact_email }}
+          NEXT_PUBLIC_RELEASE_ID: ci-${{ github.run_id }}
+
+  # Three engines. Visual snapshot comparison is skipped (--ignore-snapshots): the baselines are rendered
+  # on macOS and fonts/antialiasing differ on Linux (ADR-006). Everything else is asserted.
+  e2e:
+    name: E2E (${{ matrix.project }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            infra/package-lock.json
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - run: npm run build:e2e
+      - run: npx playwright test --ignore-snapshots --project=${{ matrix.project }}
+        env:
+          CI: "true"
+      - if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: playwright-report-${{ matrix.project }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  infra:
+    name: Infra (CDK)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: infra
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            infra/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      # Synth needs no AWS access: gitSha must be 40 hex (GITHUB_SHA is) and the release id is a CI marker.
+      - run: npx cdk synth --lookups=false -c env=staging -c gitSha="$GITHUB_SHA" -c releaseId="ci-$GITHUB_RUN_ID" --quiet

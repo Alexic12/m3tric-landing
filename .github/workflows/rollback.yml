@@ -1,0 +1,110 @@
+name: Rollback staging
+
+# Rebuilds an earlier commit of main and publishes it (ADR-007). Infrastructure is not touched.
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Commit sha or tag to publish (must be in main's history)
+        type: string
+        required: true
+      reason:
+        description: Why this rollback
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: landing-staging
+  cancel-in-progress: false
+
+env:
+  STACK_NAME: m3tric-staging-LandingSiteStack
+
+jobs:
+  resolve:
+    name: Validate ref
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      sha: ${{ steps.resolve.outputs.sha }}
+      release_id: ${{ steps.resolve.outputs.release_id }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          persist-credentials: false
+      - name: Resolve and check ancestry
+        id: resolve
+        env:
+          INPUT_REF: ${{ inputs.ref }}
+        run: |
+          set -euo pipefail
+          # Allow-list the characters: the value reaches git as an argument and must not look like an option.
+          printf '%s' "$INPUT_REF" | grep -Eq '^[A-Za-z0-9][A-Za-z0-9._/-]{0,99}$' \
+            || { echo "::error::ref has unexpected characters"; exit 1; }
+          sha="$(git rev-parse --verify --quiet "$INPUT_REF^{commit}")" \
+            || { echo "::error::ref does not resolve to a commit"; exit 1; }
+          git fetch --quiet origin main
+          git merge-base --is-ancestor "$sha" origin/main \
+            || { echo "::error::$sha is not in main's history"; exit 1; }
+          git cat-file -e "$sha:scripts/deploy/publish.sh" \
+            || { echo "::error::$sha predates the deploy pipeline and cannot be republished"; exit 1; }
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          echo "release_id=rollback-${GITHUB_RUN_ID}-${sha::7}" >> "$GITHUB_OUTPUT"
+
+  stack:
+    name: Read stack outputs
+    needs: resolve
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: landing-staging
+    permissions:
+      id-token: write
+      contents: read
+    outputs:
+      bucket: ${{ steps.read.outputs.bucket }}
+      distribution_id: ${{ steps.read.outputs.distribution_id }}
+      site_url: ${{ steps.read.outputs.site_url }}
+    steps:
+      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-session-name: landing-rollback-${{ github.run_id }}
+      - name: describe-stacks
+        id: read
+        run: |
+          set -euo pipefail
+          out() {
+            local v
+            v="$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" \
+              --query "Stacks[0].Outputs[?OutputKey=='$1'].OutputValue | [0]" --output text)"
+            case "$v" in ""|None) echo "::error::stack output $1 not found"; exit 1 ;; esac
+            printf '%s' "$v"
+          }
+          site_url="$(out SiteUrl)"
+          case "$site_url" in https://*) ;; *) echo "::error::SiteUrl is not https"; exit 1 ;; esac
+          {
+            echo "bucket=$(out SiteBucketName)"
+            echo "distribution_id=$(out DistributionId)"
+            echo "site_url=${site_url%/}"
+          } >> "$GITHUB_OUTPUT"
+
+  publish:
+    name: Publish
+    needs: [resolve, stack]
+    permissions:
+      id-token: write
+      contents: read
+    uses: ./.github/workflows/publish.yml
+    with:
+      ref: ${{ needs.resolve.outputs.sha }}
+      bucket: ${{ needs.stack.outputs.bucket }}
+      distribution_id: ${{ needs.stack.outputs.distribution_id }}
+      site_url: ${{ needs.stack.outputs.site_url }}
+      release_id: ${{ needs.resolve.outputs.release_id }}
+      reason: ${{ inputs.reason }}
