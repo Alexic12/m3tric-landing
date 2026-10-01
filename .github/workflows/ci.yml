@@ -87,7 +87,13 @@ jobs:
             package-lock.json
             infra/package-lock.json
       - run: npm ci
-      - run: npx playwright install --with-deps chromium firefox webkit
+      # Only this job's browser: installing all three (plus their apt deps) in
+      # every matrix job once ran past the job timeout on a slow apt mirror.
+      - name: Install Playwright browser (${{ matrix.project }})
+        run: npx playwright install --with-deps "$PROJECT"
+        timeout-minutes: 12
+        env:
+          PROJECT: ${{ matrix.project }}
       - run: npm run build:e2e
       - run: npx playwright test --ignore-snapshots --project=${{ matrix.project }}
         env:
