@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Versión | 3.1 · 2026-10-01 (alineada con los workflows desplegados) (v2: 2026-09-30, en el historial de git como `docs/SPEC-landing-v2.md`) |
+| Versión | 3.2 · 2026-10-01 (§10, §11 y §12 actualizados al diseño endurecido tras la auditoría de seguridad: sintetizador con credenciales del CLI, rol de ejecución acotado, `sub` OIDC por rama y workflow, jobs sin token) (v2: 2026-09-30, en el historial de git como `docs/SPEC-landing-v2.md`) |
 | Alcance | Producto/UX, marca, frontend, calidad, infraestructura como código, CI/CD, publicación en AWS y trazabilidad |
 | Fuentes de verdad | `docs/20260428_Manual de marca - Metric.pptx` (raíz del workspace) · `docs/entregables/Anexo_1_Alcance_Tecnico_Landing_AWS_M3TRIC_2026-09-23.pdf` · `README.md` raíz del workspace (capacidades vs. límites) · instrucciones del owner (sesiones 2026-09-30 y 2026-10-01) |
 | Precedencia ante conflicto | Anexo 1 (qué se entrega) > instrucciones del owner > Manual de marca (cómo se ve y suena) > README (qué se puede afirmar) > esta spec |
@@ -229,29 +229,44 @@ Valores de staging (no secretos, viven como *variables* del environment de GitHu
 
 App CDK v2 en `infra/` (TypeScript), alineada con las convenciones del repo de la plataforma: `aws-cdk-lib 2.267.0`, CLI `aws-cdk 2.1138.0`, Node 24.19.0, pruebas con `vitest` + `cdk-nag` (AwsSolutions), etiquetas obligatorias y nombres `m3tric-{env}-{Stack}`.
 
-**Cuenta y región:** 147997127433 · `us-east-2` (CloudFront es global). Bootstrap CDK existente (qualifier `hnb659fds`, versión 31).
+**Cuenta y región:** 147997127433 · `us-east-2` (CloudFront es global). Bootstrap CDK existente (qualifier `hnb659fds`, versión 31), compartido con otros proyectos de la cuenta: solo lo usa el stack de identidad, que despliega una persona. **Ningún rol del bootstrap interviene en el despliegue del sitio.**
 
 **Etiquetas en todos los recursos:** `Application=m3tric` · `Component=landing` · `Environment=staging` · `Owner` · `CostCenter` · `ManagedBy=aws-cdk` · `DataClassification=public` · `GitSha` (40 caracteres) · `ReleaseId`.
 
 ### 10.1 `m3tric-staging-LandingDeliveryIdentityStack` (bootstrap, se despliega una vez desde local)
-- Importa el proveedor OIDC existente `token.actions.githubusercontent.com`.
-- Rol `m3tric-staging-landing-github-deploy` (path `/m3tric/delivery/`, sesión ≤ 1 h). Confianza: `aud = sts.amazonaws.com` y `sub = repo:Alexic12/m3tric-landing:environment:landing-staging` (StringEquals exacto: ni ramas, ni PRs, ni forks).
-- Permisos: `sts:AssumeRole` sobre los roles de bootstrap `cdk-hnb659fds-{deploy,file-publishing,lookup}-role-147997127433-us-east-2`; `cloudformation:DescribeStacks` sobre el stack del sitio. Los permisos de publicación los concede el stack del sitio (§10.2), acotados a su bucket y su distribución.
-- No lo puede modificar el propio workflow (vive en otro stack, desplegado por un humano). Riesgo aceptado y documentado en ADR-002: el rol de deploy de CDK ejecuta CloudFormation con la política por defecto del bootstrap; se mitiga con la regla de protección del environment (solo `main`).
+Usa el bootstrap compartido (`DefaultStackSynthesizer`) porque lo despliega una persona con credenciales de administración. Protección de terminación activada. Diseño y razones: ADR-002; detalle y runbook: `infra/README.md`.
+- Importa (no crea) el proveedor OIDC existente `token.actions.githubusercontent.com`.
+- **Bucket de assets propio** `m3tric-staging-landing-cdk-assets-147997127433-us-east-2`: Block Public Access total, SSE-S3, TLS obligatorio, `BucketOwnerEnforced`, objetos expiran a los 30 días, RETAIN. Solo guarda la plantilla del stack del sitio (`site/*`).
+- **Rol de ejecución de CloudFormation** `m3tric-staging-landing-cfn-exec` (path `/m3tric/delivery/`): confía en `cloudformation.amazonaws.com` con `aws:SourceAccount`. **Sin permisos de IAM**: permisos derivados de los *handlers* de cada tipo de recurso y limitados a lo que usa el stack; S3 sobre `m3tric-staging-landingsitestack-*`; CloudFront **fijado por ID** (distribución, OAC y política de cabeceras de `infra/config/staging.json › siteCloudFront`, sin `Create*`); SNS y Budgets sobre el prefijo `m3tric-staging-landing-`. Deny explícito de `iam:*`, `sts:AssumeRole`, `organizations:*` y `cloudformation:*`.
+- **Rol de GitHub** `m3tric-staging-landing-github-deploy` (path `/m3tric/delivery/`, sesión ≤ 1 h). Confianza: `StringEquals` exacto sobre `aud = sts.amazonaws.com` y sobre tres `sub` (ni otras ramas, ni PRs, ni forks, ni otros workflows):
+
+  ```
+  repo:Alexic12/m3tric-landing:environment:landing-staging:ref:refs/heads/main:job_workflow_ref:Alexic12/m3tric-landing/.github/workflows/{deploy,publish,rollback}.yml@refs/heads/main
+  ```
+
+  Exige que el repositorio personalice el `sub` OIDC con `include_claim_keys: ["repo","context","ref","job_workflow_ref"]`.
+- **Permisos del rol de GitHub** (políticas en línea):
+  - `LandingSiteDeploy`: lecturas y `ExecuteChangeSet`/`DeleteChangeSet` sobre el stack del sitio; `CreateChangeSet` solo con la condición `cloudformation:RoleArn` = rol de ejecución; `iam:PassRole` solo de ese rol y solo hacia `cloudformation.amazonaws.com`; `GetObject`/`PutObject` en `site/*` del bucket de assets propio. Deny de `cloudformation:*` fuera del stack del sitio y Deny de `sts:AssumeRole`. **No tiene** `sts:AssumeRole`, `CreateStack`, `UpdateStack`, `DeleteStack` ni `UpdateTerminationProtection`.
+  - `LandingSitePublish`: `s3:ListBucket` y `GetObject/PutObject/DeleteObject` sobre el bucket del sitio; `cloudfront:CreateInvalidation/GetInvalidation` sobre **su** distribución. La política vive en este stack, no en el del sitio.
+- No lo puede modificar el propio workflow (otro stack, desplegado por una persona; el rol de GitHub no puede operar sobre él).
+- **Salidas**: `RoleArn` (variable `AWS_DEPLOY_ROLE_ARN`), `CfnExecRoleArn` (variable `AWS_CFN_EXEC_ROLE_ARN`), `AssetsBucketName`.
+- Riesgos residuales aceptados: ADR-002 y `docs/evidence/live/security-hardening.md` §7.
 
 ### 10.2 `m3tric-staging-LandingSiteStack` (lo despliega GitHub Actions)
+- **Sintetizador**: `CliCredentialsStackSynthesizer` (el CLI usa las credenciales del propio job y sube la plantilla al bucket de assets propio de §10.1). La plantilla no tiene el parámetro `BootstrapVersion` ni depende del bootstrap compartido.
+- **Ningún recurso `AWS::IAM::*`.** CloudFormation ejecuta el stack como `m3tric-staging-landing-cfn-exec` (§10.1), de modo que ninguna plantilla desplegada por el workflow puede crear o cambiar un permiso.
 - **SiteBucket**: Block Public Access total, SSE-S3, versionado, `enforceSSL`, propiedad `BucketOwnerEnforced`, expiración de versiones no actuales a 90 días, `RemovalPolicy.RETAIN`, server access logs al LogsBucket.
 - **LogsBucket**: SSE-S3, BPA, `enforceSSL`, propiedad `BucketOwnerPreferred` (requerida por los logs estándar de CloudFront), expiración 90 días (retención finita, REQ-A11), RETAIN.
 - **Distribution**: origen S3 con **OAC**; `defaultRootObject: index.html`; HTTP/2 y HTTP/3; `redirect-to-https`; `PriceClass_100`; compresión; errores 403/404 → `/404.html` con estado 404; logs estándar al LogsBucket (`cloudfront/`).
 - **Cache**: `CachingOptimized` respetando el `Cache-Control` de origen que fija la publicación (§11.3).
-- **ResponseHeadersPolicy**: CSP `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'` · HSTS `max-age=63072000; includeSubDomains` · `X-Content-Type-Options: nosniff` · `X-Frame-Options: DENY` · `Referrer-Policy: strict-origin-when-cross-origin` · `Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()` · en staging `X-Robots-Tag: noindex, nofollow`.
-- **Política de publicación** adjunta al rol de §10.1: `s3:ListBucket` en el bucket; `s3:GetObject/PutObject/DeleteObject` en `bucket/*`; `cloudfront:CreateInvalidation/GetInvalidation` en el ARN de la distribución.
+- **ResponseHeadersPolicy**: CSP `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'` · HSTS `max-age=63072000; includeSubDomains` · `X-Content-Type-Options: nosniff` · `X-Frame-Options: DENY` · `Referrer-Policy: strict-origin-when-cross-origin` · `Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()` · en staging `X-Robots-Tag: noindex, nofollow`. Todas con `override`. Además **quita** las cabeceras de implementación del origen (`removeHeaders`): `server`, `x-amz-version-id`, `x-amz-server-side-encryption`, `x-amz-request-id` y `x-amz-id-2`. `server: CloudFront` permanece (lo agrega CloudFront y no se puede quitar).
+- **Política de publicación**: ya no está en este stack. Es la política `LandingSitePublish` del rol de GitHub, en el stack de identidad (§10.1), con los mismos permisos acotados al bucket del sitio y a su distribución.
 - **Presupuesto**: AWS Budget mensual (USD, valor en config) filtrado por la etiqueta `Component=landing` si está activada como etiqueta de asignación de costos; notificación al 80 % a un tema SNS. Destinatario institucional: **dependencia del cliente** (el tema queda creado sin suscripción).
 - **Salidas**: `SiteBucketName`, `DistributionId`, `DistributionDomainName`, `SiteUrl`.
 - **TLS**: con el certificado por defecto de `*.cloudfront.net` CloudFront no permite fijar la política mínima. TLS 1.2+ y dominio propio (ACM en us-east-1 + Route 53) quedan como **dependencia del cliente** (REQ-A09).
 
 ### 10.3 Pruebas de IaC
-`vitest` con `Template.fromStack`: BPA, cifrado, versionado, OAC (sin OAI), bucket policy solo para el servicio CloudFront con `AWS:SourceArn` de la distribución, errores 404, cabeceras exactas, `X-Robots-Tag` solo en staging, retención de logs, permisos exactos (lista cerrada de acciones) del rol de publicación, trust policy exacta (aud + sub), etiquetas obligatorias, `cdk-nag` sin errores (supresiones justificadas una a una).
+`vitest` con `Template.fromStack`: BPA, cifrado, versionado, OAC (sin OAI), bucket policy solo para el servicio CloudFront con `AWS:SourceArn` de la distribución, errores 404, cabeceras exactas, `X-Robots-Tag` solo en staging, retención de logs, ausencia de recursos IAM en el stack del sitio, cabeceras de origen quitadas, permisos exactos (lista cerrada de acciones) de las políticas del rol de GitHub y del rol de ejecución, trust policy exacta (aud + tres sub), sintetizador sin dependencia del bootstrap, etiquetas obligatorias, `cdk-nag` sin errores (supresiones justificadas una a una).
 
 ## 11. CI/CD con GitHub Actions (REQ-O06, REQ-C10, REQ-C13, REQ-A12)
 
@@ -259,15 +274,14 @@ Todas las actions **fijadas por SHA de 40 caracteres**. Permisos mínimos por jo
 
 ### 11.1 `ci.yml` ("CI") — en PR y como `workflow_call`
 No tiene disparador `push`: en `main` lo invoca `deploy.yml` antes de desplegar, para no duplicar la misma verificación.
-Jobs: `hygiene` (actions fijadas por SHA, archivos prohibidos `.env*` salvo `.env.example`, `*.pem`, `cdk.out`, `node_modules`, `out`), `web` (npm ci, lint, typecheck, test:unit, build con dominios de verificación, Playwright chromium/firefox/webkit, sin la comparación de snapshots visuales, que dependen del SO, ADR-006), `infra` (npm ci, typecheck, vitest + cdk-nag, `cdk synth`). Sin credenciales AWS: corre igual en forks.
+Jobs: `hygiene` (actions fijadas por SHA, archivos prohibidos `.env*` salvo `.env.example`, `*.pem`, `cdk.out`, `node_modules`, `out`), `web` («Release gate», una vez por perfil `staging` y `production`: npm ci y `npm run release`), `e2e` (Playwright, un job por motor: chromium y firefox en Ubuntu, webkit en `macos-15`; cada job instala solo su navegador; sin la comparación de snapshots visuales, que dependen del SO, ADR-006), `infra` (npm ci, lint, typecheck, vitest + cdk-nag, `cdk synth`). Sin credenciales AWS: corre igual en forks. Los *checks* `Hygiene`, `Infra (CDK)`, `Release gate (staging)`, `Release gate (production)` y `E2E (chromium|firefox|webkit)` son obligatorios en el ruleset de `main` (§12).
 
 ### 11.2 `deploy.yml` ("Deploy staging") — en push a `main` y manual (`workflow_dispatch` con `reason`)
-1. `needs: ci` (vía `workflow_call`).
-2. Job `deploy` en el environment **`landing-staging`** (protegido: solo `main`), `concurrency: landing-staging` sin cancelar en curso, `permissions: id-token: write, contents: read`.
-3. OIDC → rol de §10.1 (`aws-actions/configure-aws-credentials`).
-4. `cdk deploy m3tric-staging-LandingSiteStack --require-approval never` con contexto `gitSha`/`releaseId`.
-5. Lee las salidas del stack.
-6. Workflow reutilizable `publish.yml`: `npm run release` (perfil staging, `SITE_URL` = salida), publicación (§11.3), invalidación y espera, smoke (§11.4), manifiesto de despliegue (§11.5).
+`concurrency: landing-staging` sin cancelar en curso. Cadena de jobs: `ci → synth → infra → publish (build → publish)`.
+1. Job `ci`: reutiliza `ci.yml` (`workflow_call`).
+2. Job `synth` (**sin environment y sin `id-token`**): `npm ci`, `cdk synth` (cdk-nag incluido) y sha256 de cada archivo de `cdk.out`; sube el ensamblado como artefacto (1 día). Aquí corre el código de las dependencias, por eso no hay token (hallazgo M1 de la auditoría).
+3. Job `infra` en el environment **`landing-staging`** (solo `main`), `permissions: id-token: write, contents: read`: comprueba que la variable `AWS_CFN_EXEC_ROLE_ARN` sea el rol de ejecución; descarga el artefacto **por id** (`digest-mismatch: error`); verifica el sha256 de la lista, de cada archivo y que no sobre ninguno; instala solo el CLI de CDK con `npm ci --ignore-scripts`; OIDC → rol de §10.1 (`aws-actions/configure-aws-credentials`); `cdk deploy m3tric-staging-LandingSiteStack --app cdk.out --exclusively --role-arn "$AWS_CFN_EXEC_ROLE_ARN" --method=change-set --require-approval never`; lee las salidas del stack (`SiteUrl` debe ser `https`).
+4. Workflow reutilizable `publish.yml`, en dos jobs: `build` (**sin environment y sin `id-token`**: `npm ci`, `npm run release` con perfil staging y `SITE_URL` = salida, sha256 de `out/`, artefacto) y `publish` (environment `landing-staging`, con el rol: descarga por id y verifica los sha256; no instala paquetes; publicación §11.3, invalidación y espera, smoke §11.4, manifiesto §11.5). Las variables del environment (`PLATFORM_URL`, contacto) viajan como entradas porque `build` no declara environment.
 
 ### 11.3 Publicación (`scripts/deploy/publish.sh`)
 `aws s3 sync out/ s3://<bucket>/ --delete` en pasadas por tipo de contenido: `_next/static/**` → `public, max-age=31536000, immutable`; `images/**`, `og.png`, íconos → `public, max-age=86400`; `*.html`, `robots.txt`, `sitemap.xml`, `manifest.webmanifest`, `*.txt` del payload RSC → `no-cache`. Luego invalidación `/*` y espera a `Completed`.
@@ -279,10 +293,18 @@ Contra `SITE_URL`: `/` 200 con HTML de la versión (meta `m3tric:release` = `Rel
 Artefacto `deploy-manifest.json` (commit, `ReleaseId`, run id, URL, ids de stack/bucket/distribución, sha256 de cada archivo de `out/`, resultado del smoke) + resumen del job. El mismo manifiesto se sube a `s3://<bucket>/_deploy/manifest.json` con `no-cache`, para saber qué versión está viva.
 
 ### 11.6 `rollback.yml` ("Rollback staging") — manual
-Entrada: `ref` (sha o tag) + `reason`. Hace checkout de esa referencia y ejecuta `publish.yml` (no toca la infraestructura). Reconstruir desde git en lugar de restaurar objetos: el artefacto es reproducible y queda trazado igual que un deploy (ADR-007). Se prueba una vez como parte de la entrega (REQ-A12).
+Entrada: `ref` (sha o tag) + `reason`. Jobs: `resolve` (valida el `ref`: caracteres permitidos, que sea un commit del historial de `main` y que contenga `scripts/deploy/publish.sh`), `stack` (environment `landing-staging`, OIDC con el mismo rol de §10.1; solo lee las salidas del stack) y `publish` (`publish.yml`, que reconstruye esa referencia: `build` sin token, `publish` con el rol). No toca la infraestructura: el rol de GitHub solo lee el stack. Reconstruir desde git en lugar de restaurar objetos: el artefacto es reproducible y queda trazado igual que un deploy (ADR-007). Probado el 2026-10-01: run `36870809775`, release `rollback-36870809775-f4bdc1c`, smoke 10/10 (REQ-A12).
 
 ## 12. Seguridad (REQ-A10, REQ-A11)
-Sin secretos en el repo (el repo es **público**); los valores de despliegue son variables no sensibles del environment. Sin credenciales de larga duración: solo OIDC. Bucket privado, OAC, TLS en tránsito, SSE-S3 en reposo. CSP y cabeceras en el borde. Revisión de seguridad del IAM antes del primer deploy.
+Sin secretos en el repo (el repo es **público**); los valores de despliegue son variables no sensibles del environment. Sin credenciales de larga duración: solo OIDC. Bucket privado, OAC, TLS en tránsito, SSE-S3 en reposo. CSP y cabeceras en el borde; las cabeceras de implementación del origen se quitan (§10.2).
+
+Modelo de entrega endurecido (auditoría de seguridad del 2026-10-01, ADR-002; evidencia en `docs/evidence/live/security-hardening.md`):
+- **Ningún rol del bootstrap compartido** (`cdk-hnb659fds-*`) en la cadena del workflow; el rol de GitHub no tiene `sts:AssumeRole` (Deny explícito).
+- **CloudFormation ejecuta como un rol acotado sin IAM** y con CloudFront fijado por ID; el rol de GitHub solo crea change sets del stack del sitio con ese rol (§10.1). El workflow no puede cambiar su propia identidad ni operar sobre otro stack.
+- **Confianza OIDC por repositorio + environment + rama + workflow** (§10.1): tres `sub` exactos.
+- **Sin token OIDC mientras corre código de dependencias** (`npm ci`, `next build`, `cdk synth`): esos jobs no tienen environment ni `id-token`; los jobs con el rol verifican los sha256 del artefacto (§11.2).
+- **Gobernanza de GitHub**: ruleset `main-protegida` (PR y *checks* obligatorios, sin borrado, sin *force-push*, sin *bypass*); environment `landing-staging` con rama `main` y sin *bypass* de administradores; solo se permiten actions de GitHub y `aws-actions/configure-aws-credentials`, fijadas por SHA; los PR de forks requieren aprobación (`all_external_contributors`).
+- Riesgos aceptados o dependientes de terceros: TLS 1.0/1.1 con el certificado por defecto de `*.cloudfront.net` (REQ-A09), CSP con `'unsafe-inline'` (hashes en producción), subject OIDC mutable (inmutable en producción), PR con 0 aprobaciones (un solo mantenedor), sin S3 Block Public Access a nivel de cuenta (decisión de su dueño).
 
 ## 13. Pruebas y evidencia (REQ-C10, REQ-C11, REQ-A07, REQ-A08)
 - Local/CI: `npm run test:unit`, `npm run test:e2e` (contenido, enlaces, responsive, visual, interacción con gestos reales, axe, resiliencia, 3D), `npm run evidence:contrast`, `npm run evidence:lighthouse`, `infra: npm test`.
@@ -294,7 +316,7 @@ Sin secretos en el repo (el repo es **público**); los valores de despliegue son
 
 ## 15. ADRs
 - **ADR-001** Barlow como sustituto de DIN 2014 Rounded.
-- **ADR-002** App CDK propia de la landing (no los stacks cascarón de la plataforma); identidad OIDC en stack separado desplegado por un humano; riesgo del rol de deploy de CDK.
+- **ADR-002** App CDK propia de la landing (no los stacks cascarón de la plataforma); identidad OIDC en stack separado desplegado por un humano; cadena de entrega sin roles compartidos (rol de ejecución acotado, sintetizador con credenciales del CLI).
 - **ADR-003** Perfiles `staging`/`production`: en staging el correo de contacto es opcional porque no hay uno aprobado.
 - **ADR-004** `noindex` en staging (dominio `cloudfront.net` provisional).
 - **ADR-005** LCP medido en CloudFront, no en local.

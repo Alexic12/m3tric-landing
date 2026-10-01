@@ -387,7 +387,7 @@ sim $GH_ROLE cloudformation:CreateChangeSet "$SITE_STACK_ID" "$ROLEARN_CTX"     
 sim $GH_ROLE s3:GetObject arn:aws:s3:::cdk-hnb659fds-assets-147997127433-us-east-2/probe           # implicitDeny
 sim $GH_ROLE s3:PutObject arn:aws:s3:::m3tric-staging-landingsitestack-logsbucket9c4d8843-rfrlniolfutg/probe  # implicitDeny
 sim $SCOPED_EXEC iam:PutRolePolicy $GH_ROLE                                                         # explicitDeny
-sim $SCOPED_EXEC cloudfront:UpdateDistribution arn:aws:cloudfront::147997127433:distribution/E23SMG4PVU4M60  # implicitDeny
+sim $SCOPED_EXEC cloudfront:UpdateDistribution arn:aws:cloudfront::147997127433:distribution/E23SMG4PVU4M60  # implicitDeny (FlyPark, otro proyecto)
 ```
 
 Cualquier resultado distinto del comentado es un fallo: parar y revisar.

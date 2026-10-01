@@ -4,6 +4,36 @@ Todas las versiones de la landing de M3TRIC.
 
 ---
 
+## [3.1.0] - 2026-10-01
+
+Endurecimiento de seguridad de la cadena de entrega tras la auditoría, robustez de CI y QA en vivo contra CloudFront. Especificación: `docs/SPEC.md` (v3.2). Release en vivo: `deploy-3-7c618b7`.
+
+### Seguridad
+
+- **Auditoría de seguridad** (hallazgos H1, H2, M1, M2 y L): todos corregidos y verificados en vivo. Resumen, registro de la migración, simulación de 13 políticas IAM, revisión de CloudTrail, cabeceras y riesgos residuales en `docs/evidence/live/security-hardening.md`.
+- **Ningún rol del bootstrap compartido** (`cdk-hnb659fds-*`) en el despliegue del sitio: el stack del sitio usa `CliCredentialsStackSynthesizer` con un bucket de assets propio (`m3tric-staging-landing-cdk-assets-147997127433-us-east-2`) y el rol de GitHub no tiene `sts:AssumeRole` (Deny explícito).
+- **Rol de ejecución de CloudFormation acotado** `m3tric-staging-landing-cfn-exec`: sin permisos de IAM, con CloudFront fijado por ID (`infra/config/staging.json › siteCloudFront`). El rol de GitHub solo crea change sets del stack del sitio con ese rol. Variable nueva del environment: `AWS_CFN_EXEC_ROLE_ARN`.
+- **Confianza OIDC por repositorio, environment, rama y workflow**: tres `sub` exactos (`deploy.yml`, `publish.yml`, `rollback.yml` en `refs/heads/main`); el repositorio personaliza el `sub` con `include_claim_keys: ["repo","context","ref","job_workflow_ref"]`.
+- **Sin token OIDC mientras corre código de dependencias**: los jobs `synth` (deploy) y `build` (publish) no tienen environment ni `id-token`; los jobs con el rol descargan el artefacto por id y verifican su sha256.
+- **La política de publicación** pasa del stack del sitio al de identidad (`LandingSitePublish`); el stack del sitio queda sin recursos `AWS::IAM::*`.
+- **Cabeceras de implementación del origen fuera**: `server: AmazonS3`, `x-amz-version-id` y `x-amz-server-side-encryption` ya no se exponen (`RemoveHeadersConfig`); las 7 cabeceras de seguridad se mantienen.
+- **Gobernanza de GitHub**: ruleset `main-protegida` (PR y checks obligatorios, sin borrado, sin *force-push*, sin *bypass*); environment `landing-staging` sin *bypass* de administradores; solo actions de GitHub y `aws-actions/configure-aws-credentials`, fijadas por SHA; aprobación obligatoria de workflows de forks.
+- **Riesgos aceptados o pendientes**: TLS 1.0/1.1 con el certificado por defecto de `*.cloudfront.net` (necesita dominio y ACM), CSP con `'unsafe-inline'`, subject OIDC mutable, PR con 0 aprobaciones (un solo mantenedor), sin S3 Block Public Access a nivel de cuenta. Fuera de alcance, para el dueño de la cuenta: el rol `github_actions` confía en `repo:f2x-flypass/prereview-bot:*`.
+
+### Cambiado
+
+- **CI más robusto**: cada job E2E instala solo su navegador; `apt` con reintentos y plazos cortos; E2E de WebKit en `macos-15` (el espejo de Ubuntu detuvo dos veces la instalación de sus dependencias).
+- `deploy.yml` ahora encadena `ci → synth → infra → publish (build → publish)`; `publish.yml` se divide en `build` y `publish`.
+- `docs/SPEC.md` pasa a la versión 3.2 (§10, §11 y §12 alineados con el diseño endurecido); `docs/OPERACION.md`, `infra/README.md`, `docs/adr/ADR-002` y `README.md` actualizados.
+
+### Agregado
+
+- **QA en vivo contra CloudFront** (`docs/evidence/live/`): suite `npm run test:live` (41 pasadas, 0 fallos, 16 omitidas solo-chromium; repetida tras el endurecimiento con el mismo resultado), axe (0 violaciones a 1280 y 390 px), capturas y Lighthouse ×3 (móvil Perf 100 / A11y 100 / BP 100, **LCP 1,52 s** frente al presupuesto de 2,5 s; SEO 69 esperado por el `noindex` de staging). `docs/evidence/QA-REPORT.md` y `browser-matrix.md` regenerados con la suite v3.
+- **Rollback probado** (REQ-A12): deploy → rollback → restauración (runs `36869421270`, `36870809775`, `36871068392`), smoke 10/10 en cada uno.
+- **Trazabilidad actualizada** (`docs/TRACEABILITY.md`): 20 de 41 requisitos en Verificado con evidencia identificada; el resto queda Parcial, Preparado, Pendiente o Dependencia del cliente, con sus brechas.
+
+---
+
 ## [3.0.0] - 2026-10-01
 
 Rediseño centrado en lo que obtiene el usuario, infraestructura como código, CI/CD y trazabilidad de requisitos. Especificación: `docs/SPEC.md` (v3).

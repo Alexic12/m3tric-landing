@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Aceptada; el presupuesto de LCP queda **abierto** hasta medir en vivo |
+| Estado | Aceptada; el presupuesto de LCP se **cumple en vivo** (1,52 s en CloudFront, 2026-10-01; ver Evidencia) |
 | Fecha | 2026-10-01 |
 | Alcance | Presupuestos de rendimiento (`docs/SPEC.md` §8), `docs/evidence/QA-REPORT.md` D-1, `tests/helpers/lighthouse.mjs`, `tests/helpers/serve-gzip.mjs` |
 
@@ -52,4 +52,4 @@ REQ-A07 · REQ-C09 · REQ-C10 · REQ-B03 (costo tipográfico, ADR-001)
 ## Evidencia
 
 - `docs/evidence/QA-REPORT.md` §4 (D-1) y §7 (desglose); `docs/evidence/lighthouse-{mobile,desktop}-gzip.report.{html,json}`. Estos archivos corresponden a la versión v2 del sitio y deben regenerarse con v3.
-- Medición contra CloudFront (`docs/evidence/live/`): Pendiente — se completa con el despliegue.
+- **Medición contra CloudFront (2026-10-01, release `deploy-2-19f4f15`, Lighthouse 12.8.2, 3 corridas por factor):** `docs/evidence/live/lighthouse-live-summary.json` y `lighthouse-{mobile,desktop}-run{1,2,3}.report.json`. Móvil, corrida mediana: Perf 100 / A11y 100 / BP 100, **LCP 1,52 s** (1,520 / 1,522 / 1,523 s en las tres corridas), CLS 0, TBT 5 ms; el presupuesto de 2,5 s se cumple con ~1 s de margen. Escritorio: LCP 0,35 s. D-1 queda **cerrado** (`QA-REPORT.md` §5 y §9); la decisión 4 no se activa y no se aplicó ningún recorte de fuentes ni de contenido. SEO 69 en staging es el efecto de `noindex` (ADR-004). No se repitió sobre `deploy-3-7c618b7`.
