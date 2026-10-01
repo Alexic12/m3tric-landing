@@ -1,0 +1,96 @@
+# Evidencia cruda — cadena de despliegue acotada (generada 2026-10-01T20:34:38Z por el Tech Lead)
+# Comandos reproducibles: ver docs/evidence/live/security-hardening.md
+
+## 1. Stacks (StackStatus | RoleARN | ReleaseId)
+UPDATE_COMPLETE	arn:aws:iam::147997127433:role/m3tric/delivery/m3tric-staging-landing-cfn-exec	deploy-3-7c618b7
+
+## 2. Confianza del rol de GitHub
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Federated": "arn:aws:iam::147997127433:oidc-provider/token.actions.githubusercontent.com"
+            },
+            "Action": "sts:AssumeRoleWithWebIdentity",
+            "Condition": {
+                "StringEquals": {
+                    "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
+                    "token.actions.githubusercontent.com:sub": [
+                        "repo:Alexic12/m3tric-landing:environment:landing-staging:ref:refs/heads/main:job_workflow_ref:Alexic12/m3tric-landing/.github/workflows/deploy.yml@refs/heads/main",
+                        "repo:Alexic12/m3tric-landing:environment:landing-staging:ref:refs/heads/main:job_workflow_ref:Alexic12/m3tric-landing/.github/workflows/publish.yml@refs/heads/main",
+                        "repo:Alexic12/m3tric-landing:environment:landing-staging:ref:refs/heads/main:job_workflow_ref:Alexic12/m3tric-landing/.github/workflows/rollback.yml@refs/heads/main"
+                    ]
+                }
+            }
+        }
+    ]
+}
+
+## 3. Políticas del rol de GitHub (inline | adjuntas)
+POLICYNAMES	LandingSiteDeploy
+POLICYNAMES	LandingSitePublish
+(adjuntas: ninguna si la línea anterior está vacía)
+
+## 4. Recursos IAM en el stack del sitio (debe ser vacío)
+
+## 5. simulate-principal-policy (decisión | rol | acción | recurso)
+implicitDeny | m3tric-staging-landing-github-deploy | iam:CreateUser | arn:aws:iam::147997127433:user/probe
+explicitDeny | m3tric-staging-landing-github-deploy | sts:AssumeRole | arn:aws:iam::147997127433:role/cdk-hnb659fds-deploy-role-147997127433-us-east-2
+explicitDeny | m3tric-staging-landing-github-deploy | sts:AssumeRole | arn:aws:iam::147997127433:role/cdk-hnb659fds-cfn-exec-role-147997127433-us-east-2
+explicitDeny | m3tric-staging-landing-github-deploy | sts:AssumeRole | arn:aws:iam::147997127433:role/cdk-hnb659fds-lookup-role-147997127433-us-east-2
+explicitDeny | m3tric-staging-landing-github-deploy | cloudformation:UpdateStack | arn:aws:cloudformation:us-east-2:147997127433:stack/m3tric-staging-LandingDeliveryIdentityStack/d8bb2540-bd9b-11f1-94b1-0a75e002bea3
+explicitDeny | m3tric-staging-landing-github-deploy | cloudformation:CreateChangeSet | arn:aws:cloudformation:us-east-2:147997127433:stack/m3tric-staging-LandingDeliveryIdentityStack/d8bb2540-bd9b-11f1-94b1-0a75e002bea3
+implicitDeny | m3tric-staging-landing-github-deploy | cloudformation:UpdateStack | arn:aws:cloudformation:us-east-2:147997127433:stack/m3tric-staging-LandingSiteStack/4dba5bd0-bd9d-11f1-99bb-06ffd363a46d
+implicitDeny | m3tric-staging-landing-github-deploy | cloudformation:CreateChangeSet | arn:aws:cloudformation:us-east-2:147997127433:stack/m3tric-staging-LandingSiteStack/4dba5bd0-bd9d-11f1-99bb-06ffd363a46d
+allowed | m3tric-staging-landing-github-deploy | cloudformation:CreateChangeSet | arn:aws:cloudformation:us-east-2:147997127433:stack/m3tric-staging-LandingSiteStack/4dba5bd0-bd9d-11f1-99bb-06ffd363a46d
+implicitDeny | m3tric-staging-landing-github-deploy | s3:GetObject | arn:aws:s3:::cdk-hnb659fds-assets-147997127433-us-east-2/probe
+allowed | m3tric-staging-landing-github-deploy | s3:PutObject | arn:aws:s3:::m3tric-staging-landingsitestack-sitebucket397a1860-5vvb7zmhoxtu/probe
+implicitDeny | m3tric-staging-landing-github-deploy | cloudfront:CreateInvalidation | arn:aws:cloudfront::147997127433:distribution/E3LBUHUINTWS0F
+allowed | m3tric-staging-landing-github-deploy | cloudfront:CreateInvalidation | arn:aws:cloudfront::147997127433:distribution/E1J2L9XZIAGQ7M
+explicitDeny | m3tric-staging-landing-cfn-exec | iam:PutRolePolicy | arn:aws:iam::147997127433:role/m3tric/delivery/m3tric-staging-landing-github-deploy
+implicitDeny | m3tric-staging-landing-cfn-exec | cloudfront:UpdateDistribution | arn:aws:cloudfront::147997127433:distribution/E3LBUHUINTWS0F
+implicitDeny | m3tric-staging-landing-cfn-exec | cloudfront:UpdateDistribution | arn:aws:cloudfront::147997127433:distribution/E23SMG4PVU4M60
+implicitDeny | m3tric-staging-landing-cfn-exec | cloudfront:UpdateDistribution | arn:aws:cloudfront::147997127433:distribution/E1F8V5D243P9EW
+allowed | m3tric-staging-landing-cfn-exec | cloudfront:UpdateDistribution | arn:aws:cloudfront::147997127433:distribution/E1J2L9XZIAGQ7M
+
+## 6. CloudTrail — eventos del rol de GitHub (2 h)
+2026-10-01T15:22:03-05:00	AssumeRoleWithWebIdentity
+2026-10-01T15:20:24-05:00	AssumeRoleWithWebIdentity
+
+## 7. Cabeceras en el borde (GET /)
+HTTP/2 200 
+server: CloudFront
+x-amz-cf-pop: IAD61-P10
+x-amz-cf-id: QqBIMHa18Xkf8xI5KN8yy1jSxyU91Hu0gQRDXQUGmcFegw8_jbmSSw==
+x-frame-options: DENY
+referrer-policy: strict-origin-when-cross-origin
+content-security-policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'
+x-content-type-options: nosniff
+strict-transport-security: max-age=63072000; includeSubDomains
+permissions-policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+x-robots-tag: noindex, nofollow
+
+## 8. S3 directo (debe ser 403)
+403
+
+## 9. GitHub — ruleset de main
+{"bypass_actors":[],"conditions":{"ref_name":{"exclude":[],"include":["~DEFAULT_BRANCH"]}},"enforcement":"active","name":"main-protegida","rules":[{"parameters":null,"type":"deletion"},{"parameters":null,"type":"non_fast_forward"},{"parameters":{"allowed_merge_methods":["merge","squash","rebase"],"dismiss_stale_reviews_on_push":true,"require_code_owner_review":false,"require_extra_approval_for_unattributed_changes":true,"require_last_push_approval":false,"required_approving_review_count":0,"required_review_thread_resolution":true,"required_reviewers":[]},"type":"pull_request"},{"parameters":{"do_not_enforce_on_create":false,"required_status_checks":[{"context":"Hygiene"},{"context":"Infra (CDK)"},{"context":"Release gate (staging)"},{"context":"Release gate (production)"},{"context":"E2E (chromium)"},{"context":"E2E (firefox)"},{"context":"E2E (webkit)"}],"strict_required_status_checks_policy":true},"type":"required_status_checks"}]}
+
+## 10. GitHub — environment landing-staging
+{"can_admins_bypass":false,"deployment_branch_policy":{"custom_branch_policies":true,"protected_branches":false},"name":"landing-staging","protection_rules":["branch_policy"]}
+[{"name":"main","type":"branch"}]
+
+## 11. GitHub — permisos de Actions
+{"enabled":true,"allowed_actions":"selected","selected_actions_url":"https://api.github.com/repositories/1192977011/actions/permissions/selected-actions","sha_pinning_required":true}
+{"github_owned_allowed":true,"patterns_allowed":["aws-actions/configure-aws-credentials@*"],"verified_allowed":false}
+{"default_workflow_permissions":"read","can_approve_pull_request_reviews":false}
+{"approval_policy":"all_external_contributors"}
+
+## 12. GitHub — sub OIDC
+{"use_default":false,"use_immutable_subject":false,"include_claim_keys":["repo","context","ref","job_workflow_ref"],"sub_claim_prefix":"repo:Alexic12/m3tric-landing"}
+
+## 13. GitHub — secretos (deben ser 0)
+0
+0

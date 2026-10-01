@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Aceptada. Revisada el 2026-10-01 tras auditoría de seguridad: sustituye a la versión que aceptaba el rol de despliegue del bootstrap |
+| Estado | Aceptada — implementada y verificada 2026-10-01. Revisada tras auditoría de seguridad: sustituye a la versión que aceptaba el rol de despliegue del bootstrap |
 | Fecha | 2026-10-01 |
 | Alcance | `infra/**`, `.github/workflows/{deploy,publish,rollback}.yml`, environment `landing-staging` y personalización OIDC del repositorio |
 
@@ -86,3 +86,4 @@ REQ-O06 · REQ-A11 · REQ-A12 · REQ-C13
 - Simulación de políticas (`aws iam simulate-custom-policy` sobre las plantillas sintetizadas, 2026-10-01): 57 casos, todos con la decisión esperada.
 - Workflows: `actionlint` 1.7.12 sin hallazgos; verificación de sha256 probada con GNU coreutils 9.4 (archivo alterado, archivo extra, archivo faltante, lista reescrita y digest erróneo: todos rechazados).
 - Antes de la migración, `aws iam simulate-principal-policy` sobre el rol desplegado devuelve `allowed` para `sts:AssumeRole` sobre `cdk-hnb659fds-deploy-role` (H2 vigente); tras el paso f del runbook debe devolver `explicitDeny`.
+- **Verificación en vivo (2026-10-01, migración ejecutada):** `docs/evidence/live/security-hardening.md` — registro de los pasos a–f, simulación de políticas sobre lo desplegado (13/13 como se esperaba; `sts:AssumeRole` sobre `cdk-hnb659fds-deploy-role` y `cdk-hnb659fds-cfn-exec-role` = `explicitDeny`), CloudTrail (solo `AssumeRoleWithWebIdentity`, 0 `AssumeRole` sobre roles `cdk-hnb659fds-*`), cabeceras del borde, gobernanza de GitHub y riesgos residuales. Despliegue completo por la cadena acotada: run `36920298884`, release `deploy-3-7c618b7`, todos los jobs verdes, smoke 10/10.

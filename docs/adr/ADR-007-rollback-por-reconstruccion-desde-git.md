@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Aceptada; la prueba del rollback está **pendiente** |
+| Estado | Aceptada; rollback probado el 2026-10-01 (run `36870809775`; ver Evidencia) |
 | Fecha | 2026-10-01 |
 | Alcance | `.github/workflows/rollback.yml`, `.github/workflows/publish.yml`, `scripts/deploy/*` |
 
@@ -46,4 +46,12 @@ REQ-A12 · REQ-C13 · REQ-O06
 
 - `.github/workflows/rollback.yml`, `.github/workflows/publish.yml`.
 - `scripts/deploy/manifest.mjs` y `scripts/deploy/manifest.test.mjs` › «assembles every documented field».
-- Run de rollback de prueba: Pendiente — se completa con el despliegue.
+- **Rollback probado (2026-10-01)**, ciclo completo desplegar → revertir → restaurar, con smoke 10/10 en cada paso (`docs/evidence/QA-REPORT.md` §8):
+
+  | Paso | Run | Release publicada |
+  |---|---|---|
+  | Deploy inicial | `36869421270` (Deploy staging) | `deploy-1-19f4f15` |
+  | Rollback | `36870809775` (Rollback staging) | `rollback-36870809775-f4bdc1c` |
+  | Restauración | `36871068392` (Deploy staging) | `deploy-2-19f4f15` |
+
+  Con la release restaurada `deploy-2-19f4f15`, el `releaseId` del manifiesto en vivo coincidió con el meta `m3tric:release` de la página (la suite en vivo lo comprueba). El sha completo de `f4bdc1c` se tomó del identificador de release del run y no se re-verificó. Tras la migración de seguridad, `rollback.yml` conserva el mismo contrato (`stack` lee las salidas con el rol de GitHub, `publish.yml` construye sin token); el flujo completo con la cadena acotada se ejercitó con el deploy `36920298884`, no con un nuevo rollback.

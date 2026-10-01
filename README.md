@@ -116,10 +116,10 @@ La infraestructura es una app AWS CDK v2 (TypeScript) en `infra/`, con dos stack
 
 | Stack | Quién lo despliega | Qué contiene |
 |---|---|---|
-| `m3tric-staging-LandingDeliveryIdentityStack` | Una persona, una sola vez (ya desplegado) | Rol de GitHub Actions por OIDC con confianza exacta al environment `landing-staging` |
-| `m3tric-staging-LandingSiteStack` | GitHub Actions | Bucket S3 privado (BPA, SSE-S3, versionado), CloudFront con OAC, cabeceras de seguridad y CSP, bucket de logs, presupuesto y su política de publicación |
+| `m3tric-staging-LandingDeliveryIdentityStack` | Una persona (ya desplegado) | Rol de GitHub Actions por OIDC (confianza exacta: environment `landing-staging`, rama `main` y workflow `deploy`/`publish`/`rollback`, con la política de publicación), rol de ejecución de CloudFormation acotado y sin IAM, y bucket de assets propio |
+| `m3tric-staging-LandingSiteStack` | GitHub Actions | Bucket S3 privado (BPA, SSE-S3, versionado), CloudFront con OAC, cabeceras de seguridad y CSP (quita las cabeceras de implementación del origen), bucket de logs y presupuesto. Sin recursos IAM |
 
-Detalle, modelo de seguridad y supresiones de `cdk-nag`: `infra/README.md`. Decisiones: `docs/adr/ADR-002`.
+Ningún rol del bootstrap compartido de CDK interviene en el despliegue del sitio. Detalle, modelo de seguridad y supresiones de `cdk-nag`: `infra/README.md`. Decisiones: `docs/adr/ADR-002`. Auditoría de seguridad, migración y verificación en vivo: `docs/evidence/live/security-hardening.md`.
 
 ## CI/CD
 
@@ -127,12 +127,12 @@ Los workflows están en `.github/workflows/`. Todas las *actions* están fijadas
 
 | Workflow | Cuándo corre | Qué hace |
 |---|---|---|
-| `ci.yml` | En cada pull request y como parte de `deploy.yml` | `hygiene`; gate de release por perfil (`staging` y `production`); E2E en chromium, firefox y webkit; infra (lint, typecheck, vitest + cdk-nag, `cdk synth`). Sin credenciales de AWS |
-| `deploy.yml` («Deploy staging») | Push a `main` y manual (`reason` obligatorio) | CI → `cdk deploy` del stack del sitio por OIDC → `publish.yml` |
-| `publish.yml` | Llamado por `deploy.yml` y `rollback.yml` | `npm run release` (perfil staging) → `publish.sh` → invalidación → smoke → manifiesto (`_deploy/manifest.json`) |
+| `ci.yml` | En cada pull request y como parte de `deploy.yml` | `hygiene`; gate de release por perfil (`staging` y `production`); E2E en chromium y firefox (Ubuntu) y webkit (macOS); infra (lint, typecheck, vitest + cdk-nag, `cdk synth`). Sin credenciales de AWS |
+| `deploy.yml` («Deploy staging») | Push a `main` y manual (`reason` obligatorio) | `ci` → `synth` (sin token OIDC) → `infra` (`cdk deploy` del stack del sitio por OIDC, con el rol de ejecución acotado) → `publish.yml` |
+| `publish.yml` | Llamado por `deploy.yml` y `rollback.yml` | `build` (sin token OIDC: `npm run release` con perfil staging) → `publish` (verifica el artefacto, `publish.sh`, invalidación, smoke, manifiesto `_deploy/manifest.json`) |
 | `rollback.yml` («Rollback staging») | Manual (`ref` + `reason`) | Reconstruye un commit anterior de `main` y lo publica (ADR-007) |
 
-Variables del environment de GitHub `landing-staging`: `AWS_DEPLOY_ROLE_ARN`, `AWS_REGION`, `PLATFORM_URL` (y, opcionales, `CONTACT_EMAIL`, `CONTACT_PHONE`). Procedimiento completo, verificación y resolución de problemas: `docs/OPERACION.md`.
+Variables del environment de GitHub `landing-staging`: `AWS_DEPLOY_ROLE_ARN`, `AWS_CFN_EXEC_ROLE_ARN`, `AWS_REGION`, `PLATFORM_URL` (y, opcionales, `CONTACT_EMAIL`, `CONTACT_PHONE`). `main` está protegida por el ruleset `main-protegida` (PR y checks obligatorios). Procedimiento completo, verificación y resolución de problemas: `docs/OPERACION.md`.
 
 ## Estructura del proyecto
 
@@ -191,7 +191,8 @@ docs/                         # SPEC, TRACEABILITY, OPERACION, CONTENIDOS, ASSET
 | `docs/OPERACION.md` | Pipeline de publicación, bootstrap, rollback, verificación, caché, cabeceras, costos y resolución de problemas |
 | `docs/CONTENIDOS.md` | Cómo actualizar textos, imágenes, contacto y marca |
 | `docs/ASSETS.md` | Inventario de activos, dependencias y licencias |
-| `docs/evidence/` | Capturas, informes de QA, axe, Lighthouse, matrices |
+| `docs/evidence/` | Capturas, informes de QA, axe, Lighthouse, matrices; `live/` con la QA contra CloudFront |
+| `docs/evidence/live/security-hardening.md` | Auditoría de seguridad, migración, simulación de políticas IAM, cabeceras del borde, gobernanza de GitHub y riesgos residuales |
 | `infra/README.md` | Infraestructura como código: stacks, seguridad, costos |
 | `CHANGELOG.md` | Historial de versiones |
 

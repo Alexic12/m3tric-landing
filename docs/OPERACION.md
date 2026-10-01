@@ -12,38 +12,45 @@ Documentos relacionados: `docs/SPEC.md` (§9–§12), `infra/README.md` (detalle
 |---|---|---|
 | Cuenta / región | `147997127433` · `us-east-2` (CloudFront es global) | `infra/config/staging.json` |
 | Entorno publicado | `staging` (URL provisional `*.cloudfront.net`, no indexable) | ADR-004 |
-| Stack de identidad | `m3tric-staging-LandingDeliveryIdentityStack` — **ya desplegado** por una persona | `infra/README.md` |
-| Rol de despliegue | `arn:aws:iam::147997127433:role/m3tric/delivery/m3tric-staging-landing-github-deploy` | `infra/lib/names.ts` |
+| URL | `https://d21guxd9tjai7a.cloudfront.net` (release `deploy-3-7c618b7` al 2026-10-01, run `36920298884`) | `docs/evidence/live/security-hardening.md` |
+| Stack de identidad | `m3tric-staging-LandingDeliveryIdentityStack` — **ya desplegado** por una persona (migrado al modelo endurecido el 2026-10-01) | `infra/README.md` |
+| Rol de despliegue (GitHub, por OIDC) | `arn:aws:iam::147997127433:role/m3tric/delivery/m3tric-staging-landing-github-deploy` | `infra/lib/names.ts` |
+| Rol de ejecución de CloudFormation | `arn:aws:iam::147997127433:role/m3tric/delivery/m3tric-staging-landing-cfn-exec` (sin IAM; CloudFront fijado por ID) | `infra/lib/delivery-identity-stack.ts` |
+| Bucket de assets de CDK (propio) | `m3tric-staging-landing-cdk-assets-147997127433-us-east-2` | `infra/lib/names.ts` |
 | Stack del sitio | `m3tric-staging-LandingSiteStack` — lo despliega el workflow `Deploy staging` | `.github/workflows/deploy.yml` |
 | Node | `24.19.0` | `.github/workflows/ci.yml`, `infra/package.json` (`engines`) |
 
-El estado de cada requisito (qué está verificado y qué no) está en `docs/TRACEABILITY.md`. Este manual no certifica que la publicación esté operativa: eso lo demuestran el run de GitHub y `_deploy/manifest.json` (sección 8).
+El estado de cada requisito (qué está verificado y qué no) está en `docs/TRACEABILITY.md`. Este manual no certifica que la publicación esté operativa: eso lo demuestran el run de GitHub y `_deploy/manifest.json` (sección 8). El modelo de seguridad de la entrega y su verificación están en `docs/evidence/live/security-hardening.md`.
 
 ## 2. Arquitectura del pipeline
 
 ```mermaid
 flowchart TD
-    PR["Pull request en GitHub"] --> CI["ci.yml: hygiene, release gate (staging y production),<br/>E2E en chromium/firefox/webkit, infra (lint, typecheck, vitest + cdk-nag, cdk synth)"]
-    CI --> MERGE["Merge a main"]
+    PR["Pull request en GitHub"] --> CI["ci.yml: Hygiene, Release gate (staging y production),<br/>E2E (chromium y firefox en Ubuntu, webkit en macOS),<br/>Infra (lint, typecheck, vitest + cdk-nag, cdk synth)"]
+    CI --> MERGE["Merge a main (ruleset main-protegida)"]
     MERGE --> DEPLOY["deploy.yml - Deploy staging<br/>(push a main o workflow_dispatch)"]
     DEPLOY --> CI2["Job ci: reutiliza ci.yml (workflow_call)"]
-    CI2 --> OIDC["Job infra, environment landing-staging:<br/>OIDC - rol m3tric-staging-landing-github-deploy"]
-    OIDC --> CDK["cdk deploy m3tric-staging-LandingSiteStack<br/>(contexto env, gitSha, releaseId)"]
+    CI2 --> SYNTH["Job synth, SIN environment ni id-token:<br/>npm ci + cdk synth, sha256 de cdk.out, artefacto"]
+    SYNTH --> OIDC["Job infra, environment landing-staging:<br/>descarga por id + verifica sha256;<br/>OIDC - rol m3tric-staging-landing-github-deploy"]
+    OIDC --> CDK["cdk deploy m3tric-staging-LandingSiteStack --app cdk.out<br/>--role-arn AWS_CFN_EXEC_ROLE_ARN --method=change-set"]
     CDK --> OUTS["Lee salidas: SiteBucketName, DistributionId, SiteUrl"]
-    OUTS --> REL["publish.yml: npm run release<br/>RELEASE_PROFILE=staging"]
-    REL --> PUBSH["scripts/deploy/publish.sh<br/>aws s3 cp por tipo de contenido + sync --delete"]
+    OUTS --> BUILD["publish.yml, job build, SIN environment ni id-token:<br/>npm run release (RELEASE_PROFILE=staging), sha256 de out/, artefacto"]
+    BUILD --> PUBSH["publish.yml, job publish (con el rol):<br/>descarga por id + verifica sha256;<br/>scripts/deploy/publish.sh (s3 cp por tipo + sync --delete)"]
     PUBSH --> INV["Invalidacion /* y espera Completed"]
     INV --> SMOKE["scripts/deploy/smoke.mjs contra SITE_URL"]
     SMOKE --> MAN["manifest.mjs - deploy-manifest.json<br/>upload-manifest.sh - s3://bucket/_deploy/manifest.json"]
 
-    ROLL["rollback.yml (manual: ref + reason)"] -.-> REL
+    ROLL["rollback.yml (manual: ref + reason)<br/>jobs resolve, stack"] -.-> BUILD
 ```
+
+Cadena de jobs de `Deploy staging`: `ci → synth → infra → publish (build → publish)`.
 
 Puntos clave:
 
 - **CI no usa credenciales de AWS**; corre igual en forks. En `main` no hay una corrida de CI aparte: `deploy.yml` llama a `ci.yml` y solo despliega si pasa.
 - **Una sola operación a la vez**: `deploy.yml` y `rollback.yml` comparten el grupo de concurrencia `landing-staging` y no cancelan una corrida en curso.
-- El build del sitio se hace **antes** de tomar las credenciales de AWS en `publish.yml`.
+- **El código de las dependencias nunca ve el token OIDC.** `npm ci`, `cdk synth` y `next build` corren en jobs sin `environment` ni `id-token` (`synth` y `build`). Los jobs con el rol (`infra` y `publish`) descargan el artefacto por id, verifican su sha256 y no instalan paquetes, salvo el CLI de CDK con `npm ci --ignore-scripts`. Las variables del environment (`PLATFORM_URL`, `CONTACT_*`) viajan a `build` como entradas, porque ese job no declara environment.
+- **Ningún rol del bootstrap compartido de CDK** (`cdk-hnb659fds-*`) interviene: el CLI usa las credenciales del job, sube la plantilla al bucket de assets propio y CloudFormation ejecuta como `m3tric-staging-landing-cfn-exec` (sin IAM). El rol de GitHub solo puede crear change sets que pasen ese rol.
 - El rollback no toca la infraestructura: reconstruye un commit anterior y pasa por el mismo `publish.yml` (ADR-007).
 - Todas las *actions* están fijadas por SHA de 40 caracteres (ver sección 15, «Inventario de actions»).
 
@@ -80,9 +87,15 @@ AWS_PROFILE=flypark npx cdk deploy m3tric-staging-LandingDeliveryIdentityStack \
   -c env=staging -c gitSha=$(git rev-parse HEAD) -c releaseId=identity-<YYYYMMDD>
 ```
 
-CDK pedirá confirmar los cambios de IAM: revisarlos contra `docs/SPEC.md` §10.1 antes de aceptar. La salida `RoleArn` es el valor de la variable `AWS_DEPLOY_ROLE_ARN` (sección 5).
+CDK pedirá confirmar los cambios de IAM: revisarlos contra `docs/SPEC.md` §10.1 antes de aceptar. Salidas: `RoleArn` es el valor de la variable `AWS_DEPLOY_ROLE_ARN` y `CfnExecRoleArn` el de `AWS_CFN_EXEC_ROLE_ARN` (sección 5); `AssetsBucketName` es el bucket de assets propio.
 
-El stack tiene protección de terminación. Orden de retiro: primero el stack del sitio, después el de identidad (desactivar antes su protección). Al revés, IAM rechaza borrar un rol con una política en línea de otro stack.
+El stack tiene protección de terminación. Orden de retiro: primero el stack del sitio (una persona, con `--role-arn` de un rol de administración: el rol de GitHub no tiene `DeleteStack`), después el de identidad (desactivar antes su protección). Al revés, el stack del sitio quedaría asociado a un rol de ejecución inexistente.
+
+La migración del 2026-10-01 al modelo actual (pasos a–f: identidad, `sub` OIDC del repositorio, sitio con el rol anterior por última vez, sitio con el rol acotado, variable de GitHub, merge) está en `infra/README.md`, «Runbook de migración», y su resultado en `docs/evidence/live/security-hardening.md`. Un cambio del stack del sitio que necesite permisos nuevos falla con `AccessDenied` hasta que una persona amplíe el rol de ejecución en el stack de identidad: es el comportamiento buscado.
+
+### 4.1 Si se recrea la distribución de CloudFront (o su OAC o su política de cabeceras)
+
+El rol de ejecución está **fijado por ID** a la distribución, el OAC y la política de cabeceras actuales y no puede crear recursos de CloudFront. Los IDs viven en `infra/config/staging.json › siteCloudFront` (`distributionId`, `originAccessControlId`, `responseHeadersPolicyId`). Un cambio que cree o reemplace uno de esos recursos falla en CloudFormation y se revierte: es intencional. El procedimiento (desplegar con un rol de administración, copiar los IDs nuevos a `staging.json` junto con su prueba, redesplegar la identidad y re-asociar el rol acotado) está en `infra/README.md`, «Recrear el stack del sitio o reemplazar un recurso de CloudFront».
 
 ## 5. Environment de GitHub `landing-staging`
 
@@ -92,6 +105,7 @@ Configuración en el repositorio `Alexic12/m3tric-landing` → *Settings → Env
 |---|---|
 | Política de ramas | solo `main` (el `sub` del OIDC incluye el nombre del environment) |
 | Variable `AWS_DEPLOY_ROLE_ARN` | `arn:aws:iam::147997127433:role/m3tric/delivery/m3tric-staging-landing-github-deploy` |
+| Variable `AWS_CFN_EXEC_ROLE_ARN` | `arn:aws:iam::147997127433:role/m3tric/delivery/m3tric-staging-landing-cfn-exec` (salida `CfnExecRoleArn` del stack de identidad; `deploy.yml` falla si no coincide con ese formato) |
 | Variable `AWS_REGION` | `us-east-2` |
 | Variable `PLATFORM_URL` | URL del login de la plataforma de staging (ver sección 3) |
 | Variable opcional `CONTACT_EMAIL` | correo aprobado; si está vacía, el sitio muestra «Los canales de contacto se publicarán con el dominio oficial.» |
@@ -99,7 +113,24 @@ Configuración en el repositorio `Alexic12/m3tric-landing` → *Settings → Env
 
 Todas son **variables**, no secretos: ningún valor es sensible y el repositorio es público. No existen llaves de acceso de AWS en ninguna parte (solo OIDC).
 
-El workflow depende de que el environment se llame exactamente `landing-staging`: la confianza del rol exige `sub = repo:Alexic12/m3tric-landing:environment:landing-staging` y `aud = sts.amazonaws.com`.
+El workflow depende de que el environment se llame exactamente `landing-staging`. La confianza del rol (`StringEquals`) exige `aud = sts.amazonaws.com` y uno de tres `sub`, con este formato (el repositorio personaliza el `sub` con `include_claim_keys: ["repo","context","ref","job_workflow_ref"]`):
+
+```
+repo:Alexic12/m3tric-landing:environment:landing-staging:ref:refs/heads/main:job_workflow_ref:Alexic12/m3tric-landing/.github/workflows/<workflow>.yml@refs/heads/main
+```
+
+con `<workflow>` = `deploy`, `publish` o `rollback`. Es decir: solo jobs con environment `landing-staging`, desde `main` y desde esos tres workflows pueden asumir el rol.
+
+### 5.1 Gobernanza del repositorio (aplicada el 2026-10-01)
+
+| Ajuste | Valor |
+|---|---|
+| Ruleset `main-protegida` (id `24312349`) | PR obligatorio (0 aprobaciones: un solo mantenedor); checks obligatorios `Hygiene`, `Infra (CDK)`, `Release gate (staging)`, `Release gate (production)`, `E2E (chromium)`, `E2E (firefox)`, `E2E (webkit)`; sin borrado de la rama; sin *force-push*; sin actores con *bypass* |
+| Environment `landing-staging` | `can_admins_bypass = false`; política de ramas: solo `main` |
+| Actions permitidas | las de GitHub y `aws-actions/configure-aws-credentials@*`; `sha_pinning_required = true` |
+| Workflows de PR desde forks | requieren aprobación (`all_external_contributors`) |
+
+Si se renombra un job de `ci.yml`, hay que actualizar la lista de checks obligatorios del ruleset: un nombre que ya no existe bloquea todos los merges. Detalle y riesgos residuales: `docs/evidence/live/security-hardening.md` §5 y §7.
 
 ## 6. Cómo desplegar
 
@@ -110,8 +141,11 @@ El workflow depende de que el environment se llame exactamente `landing-staging`
 Qué hace el workflow (`.github/workflows/deploy.yml` y `publish.yml`):
 
 1. Job `ci`: `ci.yml` completo.
-2. Job `infra` (environment `landing-staging`): identificador de release `deploy-<run_number>-<sha7>`; asume el rol por OIDC; `npx cdk deploy m3tric-staging-LandingSiteStack -c env=staging -c gitSha=$GITHUB_SHA -c releaseId=<release_id> --require-approval never`; lee las salidas del stack (`SiteBucketName`, `DistributionId`, `SiteUrl`; rechaza una `SiteUrl` que no sea `https`).
-3. Job `publish` (`publish.yml`, también en el environment): comprueba que el commit tenga `publish.sh`, `smoke.mjs`, `manifest.mjs` y `upload-manifest.sh`; `npm ci`; `npm run release` con `RELEASE_PROFILE=staging`; asume el rol; `publish.sh`; `smoke.mjs`; `manifest.mjs`; `upload-manifest.sh`; sube el artefacto `deploy-manifest-<release_id>` (90 días) y escribe el resumen del job.
+2. Job `synth` (sin environment ni `id-token`): identificador de release `deploy-<run_number>-<sha7>`; `npm ci` en `infra/`; `cdk synth` (con cdk-nag); sha256 de cada archivo de `cdk.out`; sube el artefacto `cdk-out-<run>-<intento>` (1 día).
+3. Job `infra` (environment `landing-staging`, `id-token: write`): comprueba que `vars.AWS_CFN_EXEC_ROLE_ARN` tenga el formato del rol de ejecución; descarga el artefacto por id y verifica el sha256 de la lista, de cada archivo y que no sobre ninguno; `npm ci --ignore-scripts` (solo para el CLI de CDK fijado); asume el rol por OIDC; `npx cdk deploy m3tric-staging-LandingSiteStack --app cdk.out --exclusively --role-arn "$AWS_CFN_EXEC_ROLE_ARN" --method=change-set --require-approval never --no-notices --outputs-file cdk-outputs.json`; lee las salidas del stack (`SiteBucketName`, `DistributionId`, `SiteUrl`; rechaza una `SiteUrl` que no sea `https`) y las variables `PLATFORM_URL`, `CONTACT_EMAIL`, `CONTACT_PHONE`.
+4. `publish.yml` en dos jobs:
+   - `build` (sin environment ni `id-token`): comprueba que el commit tenga `publish.sh`, `smoke.mjs`, `manifest.mjs` y `upload-manifest.sh`; `npm ci`; `npm run release` con `RELEASE_PROFILE=staging`; sha256 de `out/`; sube el artefacto `site-out-<release_id>-<intento>` (1 día).
+   - `publish` (environment `landing-staging`, `id-token: write`): comprueba que el checkout sea el commit construido; descarga el artefacto por id y verifica los sha256; asume el rol; `publish.sh`; `smoke.mjs`; `manifest.mjs`; `upload-manifest.sh`; sube el artefacto `deploy-manifest-<release_id>` (90 días) y escribe el resumen del job. No instala paquetes de npm.
 
 El **primer** despliegue del stack tarda varios minutos por la creación de la distribución. El manifiesto se registra aunque el smoke falle (la versión queda publicada en ambos casos y el manifiesto dice si pasó).
 
@@ -124,9 +158,9 @@ El **primer** despliegue del stack tarda varios minutos por la creación de la d
 | `ref` | SHA o *tag* a publicar. Solo `[A-Za-z0-9._/-]`, máximo 100 caracteres, empezando por letra o dígito. Debe estar en el historial de `main` y contener `scripts/deploy/publish.sh` |
 | `reason` | Motivo (obligatorio; queda en el resumen) |
 
-El workflow valida la referencia, lee las salidas del stack y ejecuta `publish.yml` con el identificador `rollback-<run_id>-<sha7>`: reconstruye ese commit con el perfil staging, lo publica, invalida, ejecuta el smoke y registra el manifiesto. No toca la infraestructura (ADR-007).
+El workflow valida la referencia (job `resolve`), lee las salidas del stack con el rol de GitHub (job `stack`, environment `landing-staging`) y ejecuta `publish.yml` con el identificador `rollback-<run_id>-<sha7>`: reconstruye ese commit con el perfil staging (job `build`, sin token), lo publica, invalida, ejecuta el smoke y registra el manifiesto. No toca la infraestructura (ADR-007).
 
-Después de un rollback, verifique con la sección 8: `releaseId` del manifiesto debe empezar por `rollback-` y `commit` debe ser el solicitado. La prueba de rollback exigida por REQ-A12 se registra en `docs/TRACEABILITY.md`.
+Después de un rollback, verifique con la sección 8: `releaseId` del manifiesto debe empezar por `rollback-` y `commit` debe ser el solicitado. La prueba de rollback exigida por REQ-A12 se hizo el 2026-10-01 (run `36870809775`, `rollback-36870809775-f4bdc1c`, smoke 10/10; ver ADR-007 y `docs/TRACEABILITY.md`).
 
 Los *deploys* fallidos del stack se revierten solos (rollback de CloudFormation).
 
@@ -209,7 +243,9 @@ Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
 X-Robots-Tag: noindex, nofollow        # solo mientras robotsNoindex sea true (staging)
 ```
 
-`'unsafe-inline'` en `script-src` y `style-src` es necesario porque la exportación estática de Next.js incrusta sus scripts y estilos de arranque; es un riesgo aceptado y documentado. Las pruebas `site.test › «sends the exact SPEC §10.2 security headers…»` fijan estos valores literalmente.
+`'unsafe-inline'` en `script-src` y `style-src` es necesario porque la exportación estática de Next.js incrusta sus scripts y estilos de arranque; es un riesgo aceptado y documentado (en producción: CSP con *hashes*). Las pruebas `site.test › «sends the exact SPEC §10.2 security headers…»` fijan estos valores literalmente.
+
+La misma política **quita** las cabeceras de implementación del origen: `server`, `x-amz-version-id`, `x-amz-server-side-encryption`, `x-amz-request-id` y `x-amz-id-2`. Verificado en vivo el 2026-10-01: las tres primeras ya no aparecen (las otras dos CloudFront ya las quita en orígenes S3). `server: CloudFront` sí permanece: lo agrega CloudFront y no revela nada del origen. Para comprobarlo: `curl -sSI https://<dominio>.cloudfront.net/ | grep -iE '^(server|x-amz-)'` debe mostrar solo `server: CloudFront`.
 
 Otros ajustes de la distribución: origen S3 con OAC (sin OAI), `index.html` como raíz, HTTP/2 y HTTP/3, `redirect-to-https`, `PriceClass_100`, compresión, solo `GET`/`HEAD`; errores 403 y 404 se resuelven como 404 con `/404.html` (TTL de error de 60 s); logs estándar en `LogsBucket/cloudfront/`.
 
@@ -250,7 +286,9 @@ Otras pruebas:
 | `npm run test:unit` | Pruebas `node --test` de las reglas de configuración, reglas de artefacto, higiene y manifiesto |
 | `npm run hygiene` | Acciones fijadas por SHA, archivos prohibidos (`.env*` salvo `.env.example`, `*.pem`, `*.key`, `cdk.out`, `node_modules`, `out`, `.next`) y marcadores de conflicto |
 | `npm run test:e2e` | Build con perfil production y dominios de verificación, suite Playwright (chromium, firefox, webkit, chrome) y conversión de capturas |
-| `npm run test:e2e:ci` | Lo mismo en chromium, firefox y webkit sin comparar snapshots (ADR-006) |
+| `npm run test:e2e:ci` | Lo mismo en chromium, firefox y webkit sin comparar snapshots (ADR-006). En CI cada motor corre en su propio job (`E2E (chromium)`, `E2E (firefox)`, `E2E (webkit)`), instala solo su navegador; WebKit corre en `macos-15` porque el espejo de Ubuntu detuvo dos veces la instalación de sus dependencias de sistema, y `apt` usa reintentos y plazos cortos |
+| `npm run test:live` | Suite Playwright contra la URL de CloudFront (`playwright.live.config.ts`, `LIVE_URL` opcional); capturas en `docs/evidence/live/screenshots/` |
+| `npm run evidence:live-lighthouse` | Lighthouse 12 móvil y escritorio ×3 contra la URL en vivo → `docs/evidence/live/` |
 | `npm run test:e2e:update` | Regenera los snapshots de regresión visual (solo chromium) |
 | `npm run evidence:lighthouse` | Lighthouse móvil y escritorio → `docs/evidence/` |
 | `npm run evidence:contrast` | Contraste medido sobre fotografía → `docs/evidence/contrast-hero.md` |
@@ -288,9 +326,11 @@ aws sns subscribe --topic-arn arn:aws:sns:us-east-2:147997127433:m3tric-staging-
 
 | Síntoma | Causa probable | Qué hacer |
 |---|---|---|
-| `Not authorized to perform sts:AssumeRoleWithWebIdentity` | La confianza del rol exige `aud = sts.amazonaws.com` y `sub = repo:Alexic12/m3tric-landing:environment:landing-staging` | Verifique que el job declara `environment: landing-staging` (nombre exacto); que corre desde `main` (la política de ramas del environment); que el repositorio y el propietario son `Alexic12/m3tric-landing`; que `AWS_DEPLOY_ROLE_ARN` es el ARN correcto y que el job tiene `id-token: write`. Si el repositorio activó el formato de `sub` inmutable, hay que actualizar `githubOidcSubject` y redesplegar la identidad |
-| `cdk deploy` falla por versión de bootstrap | La plantilla exige bootstrap ≥ 6; la cuenta tiene la versión 31 (`app.test › «requires a CDK bootstrap version the account has (31)»`) | Compruebe `/cdk-bootstrap/hnb659fds/version` en SSM de `us-east-2`; no cambie el qualifier |
-| `cdk deploy` falla al adjuntar la política de publicación | El stack de identidad no existe: la política se adjunta por nombre al rol | Despliegue primero `m3tric-staging-LandingDeliveryIdentityStack` (sección 4) |
+| `Not authorized to perform sts:AssumeRoleWithWebIdentity` | La confianza del rol exige `aud = sts.amazonaws.com` y uno de tres `sub` con el formato `repo:Alexic12/m3tric-landing:environment:landing-staging:ref:refs/heads/main:job_workflow_ref:Alexic12/m3tric-landing/.github/workflows/<deploy\|publish\|rollback>.yml@refs/heads/main` (sección 5) | Verifique que el job declara `environment: landing-staging` (nombre exacto); que corre desde `refs/heads/main`; que el job pertenece a `deploy.yml`, `publish.yml` o `rollback.yml` (un workflow nuevo o renombrado no está en la confianza); que la personalización del `sub` del repositorio sigue siendo `include_claim_keys: ["repo","context","ref","job_workflow_ref"]` con `use_immutable_subject: false` (`gh api repos/Alexic12/m3tric-landing/actions/oidc/customization/sub`); que `AWS_DEPLOY_ROLE_ARN` es el ARN correcto y que el job tiene `id-token: write`. Si el repositorio activó el formato de `sub` inmutable (`repo:Alexic12@<id>/…`), hay que actualizar `githubOidcSubjects()` en `infra/lib/delivery-identity-stack.ts` y redesplegar la identidad |
+| `deploy.yml` falla en «Check the execution role variable» | `AWS_CFN_EXEC_ROLE_ARN` falta en el environment o no es el rol de ejecución | Defínala con la salida `CfnExecRoleArn` del stack de identidad (sección 5) |
+| `cdk deploy` falla con `AccessDenied` durante la ejecución del change set | El rol de ejecución no tiene un permiso que la plantilla nueva necesita (otro tipo de recurso o una propiedad no usada antes), o la plantilla intenta crear/reemplazar un recurso de CloudFront (el rol está fijado por ID) | CloudFormation revierte solo. Busque la acción en los eventos del stack (`aws cloudformation describe-stack-events`, filtro `FAILED`). Una persona debe ampliar el rol (`infra/lib/delivery-identity-stack.ts`, política `LandingSiteResources`) y redesplegar la identidad, o seguir la sección 4.1 si se recreó un recurso de CloudFront |
+| `cdk deploy` falla creando el change set (`AccessDenied` en `CreateChangeSet`) | El comando no pasó `--role-arn`, o pasó un rol distinto del de ejecución: el rol de GitHub solo puede crear change sets con ese rol (condición `cloudformation:RoleArn`) | Use el comando de la sección 6 sin modificar |
+| Falla la descarga del artefacto por digest (`digest-mismatch: error`), la verificación de sha256, o aparece `cdk.out holds files the synth job did not hash` / `out/ holds files the build job did not hash` | El artefacto descargado no es el que subió el job anterior (o fue alterado) | No reintente a mano: reejecute el workflow completo; si persiste, trátelo como un incidente de integridad |
 | La publicación «tarda» tras `publish: 7/7` | `aws cloudfront wait invalidation-completed` espera el estado `Completed` (minutos) | Esperar. Si excede el tiempo del job (30 min), reejecutar el workflow |
 | Smoke: falla un check pero la versión ya está publicada | La versión queda viva aunque el smoke falle; `deploy-manifest.json` registra `smoke.passed: false` | Lea el detalle del check en el resumen del job; corrija y vuelva a desplegar, o ejecute el rollback (sección 7) |
 | Smoke: check 10 en `skipped` | `BUCKET_NAME` o `AWS_REGION` no definidos | No cuenta como aprobado; verifique el GET directo al bucket a mano (debe ser 403) |
@@ -311,7 +351,7 @@ Hoy el repositorio solo tiene configuración y workflows de **staging** (`infra/
 3. **Configuración**: `infra/config/production.json` con `environment: "production"` y `robotsNoindex: false`.
 4. **Perfil de release**: `RELEASE_PROFILE=production` y `NEXT_PUBLIC_RELEASE_PROFILE=production`, `NEXT_PUBLIC_SITE_URL` = dominio oficial, `NEXT_PUBLIC_PLATFORM_URL` oficial y **`NEXT_PUBLIC_CONTACT_EMAIL` obligatorio** (el gate falla sin él). En producción el sitio es indexable y `robots.txt` anuncia el sitemap.
 5. **Workflows y environment propios**: parametrizar `deploy.yml`/`publish.yml` (hoy fijos a staging), crear un environment (`landing-production`) con **revisores obligatorios** y un rol de identidad propio con su `sub` exacto.
-6. **Endurecer antes de abrir producción** (ADR-002): bootstrap con política de ejecución de CloudFormation acotada en lugar de `AdministratorAccess`.
+6. **Cadena de entrega propia del entorno** (ADR-002): el modelo endurecido ya está implementado para staging (rol de ejecución acotado sin IAM, bucket de assets propio, `sub` OIDC por rama y workflow, sin roles del bootstrap compartido). Producción necesita su propio rol de GitHub, rol de ejecución, bucket de assets e **IDs de CloudFront** (el rol de ejecución se fija a ellos; para un entorno nuevo se crea primero el sitio con un rol de administración y después la identidad, ver `infra/README.md`, «Recrear el stack del sitio…»). Antes de abrir producción, además: subject OIDC inmutable, CSP con *hashes* en lugar de `'unsafe-inline'`, revisores obligatorios y aprobaciones en el ruleset de `main` (`docs/evidence/live/security-hardening.md` §7).
 7. **Verificación**: smoke con `EXPECT_PROFILE=production` (sin `X-Robots-Tag`), Lighthouse y E2E contra el dominio, y smoke manual en Safari real y Edge (`docs/evidence/browser-matrix.md`).
 
 ## 15. Referencias
@@ -322,13 +362,15 @@ Hoy el repositorio solo tiene configuración y workflows de **staging** (`infra/
 |---|---|---|---|
 | `actions/checkout` | v7.0.1 | `3d3c42e5aac5ba805825da76410c181273ba90b1` | `ci`, `deploy`, `publish`, `rollback` |
 | `actions/setup-node` | v7.0.0 | `820762786026740c76f36085b0efc47a31fe5020` | `ci`, `deploy`, `publish` |
-| `actions/upload-artifact` | v7.0.1 | `043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` | `ci`, `publish` |
+| `actions/upload-artifact` | v7.0.1 | `043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` | `ci`, `deploy`, `publish` |
+| `actions/download-artifact` | v8.0.1 | `3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c` | `deploy`, `publish` |
 | `aws-actions/configure-aws-credentials` | v6.3.0 | `e1253824e5c10ff9df46874f81ed3ec929e19cfd` | `deploy`, `publish`, `rollback` |
 
 ### Documentos
 
 - `docs/SPEC.md` §9 (perfiles), §10 (IaC), §11 (CI/CD), §12 (seguridad).
-- `infra/README.md` (stacks, supresiones de `cdk-nag`, riesgos aceptados, retiro).
+- `infra/README.md` (stacks, runbook de migración, recreación de recursos de CloudFront, supresiones de `cdk-nag`, riesgos aceptados, retiro).
+- `docs/evidence/live/security-hardening.md` (auditoría de seguridad, migración, simulación de políticas, gobernanza de GitHub, riesgos residuales).
 - `docs/adr/ADR-002`, `ADR-003`, `ADR-004`, `ADR-005`, `ADR-006`, `ADR-007`.
 - `docs/TRACEABILITY.md` (estado de los requisitos y brechas).
 - AWS CLI: [s3 cp](https://docs.aws.amazon.com/cli/latest/reference/s3/cp.html), [s3 sync](https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html), [cloudfront create-invalidation](https://docs.aws.amazon.com/cli/latest/reference/cloudfront/create-invalidation.html).
