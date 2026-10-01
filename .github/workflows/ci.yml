@@ -69,12 +69,21 @@ jobs:
   # on macOS and fonts/antialiasing differ on Linux (ADR-006). Everything else is asserted.
   e2e:
     name: E2E (${{ matrix.project }})
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 25
     strategy:
       fail-fast: false
       matrix:
-        project: [chromium, firefox, webkit]
+        # WebKit runs on macOS: on Ubuntu its system dependencies (gstreamer,
+        # ffmpeg) are the packages the runners' mirror kept stalling on, and
+        # macOS WebKit needs no apt step and is closer to real Safari.
+        include:
+          - project: chromium
+            os: ubuntu-latest
+          - project: firefox
+            os: ubuntu-latest
+          - project: webkit
+            os: macos-15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -92,6 +101,7 @@ jobs:
       # limit. Short timeouts plus retries make a stall fail over quickly, and
       # each matrix job installs only its own browser's system dependencies.
       - name: Install system dependencies (${{ matrix.project }})
+        if: runner.os == 'Linux'
         timeout-minutes: 15
         env:
           PROJECT: ${{ matrix.project }}
