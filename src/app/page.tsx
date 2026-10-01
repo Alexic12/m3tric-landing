@@ -1,27 +1,31 @@
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
-import Hero from "@/components/sections/Hero";
-import PlatformSection from "@/components/sections/PlatformSection";
-import ScalesSection from "@/components/sections/ScalesSection";
-import ProductsSection from "@/components/sections/ProductsSection";
-import FeaturesSection from "@/components/sections/FeaturesSection";
-import TechnologySection from "@/components/sections/TechnologySection";
-import UseCasesSection from "@/components/sections/UseCasesSection";
-import CTASection from "@/components/sections/CTASection";
+import { Footer } from "@/components/layout/Footer";
+import { Header } from "@/components/layout/Header";
+import { SkipLink } from "@/components/layout/SkipLink";
+import { Capabilities } from "@/components/sections/Capabilities";
+import { Contact } from "@/components/sections/Contact";
+import { Hero } from "@/components/sections/Hero";
+import { Platform } from "@/components/sections/Platform";
+import { Products } from "@/components/sections/Products";
+import { Proposal } from "@/components/sections/Proposal";
+import { Scales } from "@/components/sections/Scales";
+import { Technology } from "@/components/sections/Technology";
+import { UseCases } from "@/components/sections/UseCases";
 
 export default function Home() {
   return (
     <>
-      <Navbar />
-      <main>
+      <SkipLink />
+      <Header />
+      <main id="contenido" tabIndex={-1} className="outline-none">
         <Hero />
-        <PlatformSection />
-        <ScalesSection />
-        <ProductsSection />
-        <FeaturesSection />
-        <TechnologySection />
-        <UseCasesSection />
-        <CTASection />
+        <Proposal />
+        <Platform />
+        <Scales />
+        <Products />
+        <Capabilities />
+        <Technology />
+        <UseCases />
+        <Contact />
       </main>
       <Footer />
     </>
