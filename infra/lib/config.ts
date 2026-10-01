@@ -36,6 +36,26 @@ const GitHubConfigSchema = z
   })
   .strict();
 
+// IDs CloudFront assigned to the site stack's resources at creation. The identity
+// stack pins the publish policy and the CloudFormation execution role to them:
+// the account hosts other projects' distributions, and `distribution/*` would let
+// a workflow-controlled template rewrite those. Interpolated into ARNs, so only
+// CloudFront's own ID alphabets are accepted (no `*`, `?` or `/`).
+const SiteCloudFrontSchema = z
+  .object({
+    distributionId: z.string().regex(/^E[A-Z0-9]{8,20}$/, 'siteCloudFront.distributionId must be a CloudFront distribution ID'),
+    originAccessControlId: z
+      .string()
+      .regex(/^E[A-Z0-9]{8,20}$/, 'siteCloudFront.originAccessControlId must be a CloudFront origin access control ID'),
+    responseHeadersPolicyId: z
+      .string()
+      .regex(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+        'siteCloudFront.responseHeadersPolicyId must be a CloudFront response headers policy ID',
+      ),
+  })
+  .strict();
+
 export const LandingConfigSchema = z
   .object({
     account: z.string().regex(/^\d{12}$/, 'account must be a 12-digit AWS account ID'),
@@ -57,7 +77,9 @@ export const LandingConfigSchema = z
       .strict(),
     github: GitHubConfigSchema,
     oidcProviderArn: z.string(),
+    // Only the identity stack (deployed by a human) still uses the shared bootstrap.
     cdkQualifier: z.string().regex(/^[a-z0-9]{1,10}$/, 'cdkQualifier must be 1-10 lowercase alphanumerics'),
+    siteCloudFront: SiteCloudFrontSchema,
     budgetMonthlyUsd: z.number().positive().max(1000),
     robotsNoindex: z.boolean(),
     logRetentionDays: z.number().int().min(1).max(3650),

@@ -3,6 +3,10 @@ name: Publish site
 # Reusable: builds the given ref with the staging profile, publishes it, invalidates, smokes and records
 # the manifest. Called by deploy.yml (after cdk deploy) and rollback.yml. No concurrency block here: the
 # callers serialize the whole run on the group landing-staging, and a nested group would deadlock.
+#
+# Two jobs on purpose (audit M1): `build` runs npm ci (lifecycle scripts) and the Next build with no
+# environment and no id-token permission, so no dependency can ever obtain the AWS role; `publish` holds
+# the role but runs no npm package at all, only the repository's own scripts on the verified artifact.
 on:
   workflow_call:
     inputs:
@@ -22,6 +26,19 @@ on:
       release_id:
         type: string
         required: true
+      # Environment variables of landing-staging, read by the caller's environment job: the build job
+      # declares no environment, so it cannot read them itself.
+      platform_url:
+        type: string
+        required: true
+      contact_email:
+        type: string
+        required: false
+        default: ""
+      contact_phone:
+        type: string
+        required: false
+        default: ""
       reason:
         type: string
         required: false
@@ -35,23 +52,16 @@ env:
   STACK_NAME: m3tric-staging-LandingSiteStack
 
 jobs:
-  publish:
-    name: Publish ${{ inputs.release_id }}
+  build:
+    name: Build ${{ inputs.release_id }}
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    environment: landing-staging
+    timeout-minutes: 20
     permissions:
-      id-token: write
       contents: read
-    env:
-      BUCKET_NAME: ${{ inputs.bucket }}
-      DISTRIBUTION_ID: ${{ inputs.distribution_id }}
-      SITE_URL: ${{ inputs.site_url }}
-      RELEASE_ID: ${{ inputs.release_id }}
-      REASON: ${{ inputs.reason }}
-      PLATFORM_URL: ${{ vars.PLATFORM_URL }}
-      SMOKE_OUT: smoke-result.json
-      MANIFEST_OUT: deploy-manifest.json
+    outputs:
+      commit: ${{ steps.commit.outputs.commit }}
+      artifact_id: ${{ steps.upload.outputs.artifact-id }}
+      sums_sha256: ${{ steps.sums.outputs.sha256 }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -59,9 +69,10 @@ jobs:
           persist-credentials: false
 
       - name: Resolve commit and check the ref carries the pipeline
+        id: commit
         run: |
           set -euo pipefail
-          echo "COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           # A rollback target older than this pipeline cannot be built or published with it.
           for f in scripts/deploy/publish.sh scripts/deploy/smoke.mjs scripts/deploy/manifest.mjs scripts/deploy/upload-manifest.sh; do
             test -f "$f" || { echo "::error::$f missing at $(git rev-parse HEAD): cannot publish this ref"; exit 1; }
@@ -75,17 +86,90 @@ jobs:
 
       - run: npm ci
 
-      # Build before taking AWS credentials: the role is only held while it is needed.
       - name: Release build (staging profile)
         run: npm run release
         env:
           RELEASE_PROFILE: staging
           NEXT_PUBLIC_RELEASE_PROFILE: staging
           NEXT_PUBLIC_SITE_URL: ${{ inputs.site_url }}
-          NEXT_PUBLIC_PLATFORM_URL: ${{ vars.PLATFORM_URL }}
+          NEXT_PUBLIC_PLATFORM_URL: ${{ inputs.platform_url }}
           NEXT_PUBLIC_RELEASE_ID: ${{ inputs.release_id }}
-          NEXT_PUBLIC_CONTACT_EMAIL: ${{ vars.CONTACT_EMAIL }}
-          NEXT_PUBLIC_CONTACT_PHONE: ${{ vars.CONTACT_PHONE }}
+          NEXT_PUBLIC_CONTACT_EMAIL: ${{ inputs.contact_email }}
+          NEXT_PUBLIC_CONTACT_PHONE: ${{ inputs.contact_phone }}
+
+      # Inline rather than a script on purpose: a rollback checks out an older ref, which would not have it.
+      - name: Hash the export
+        id: sums
+        run: |
+          set -euo pipefail
+          find out -type f -print0 | LC_ALL=C sort -z | xargs -0 sha256sum > site-out.sha256
+          echo "sha256=$(sha256sum site-out.sha256 | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload the export
+        id: upload
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: site-out-${{ inputs.release_id }}-${{ github.run_attempt }}
+          path: |
+            out/
+            site-out.sha256
+          if-no-files-found: error
+          retention-days: 1
+
+  publish:
+    name: Publish ${{ inputs.release_id }}
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: landing-staging
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      BUCKET_NAME: ${{ inputs.bucket }}
+      DISTRIBUTION_ID: ${{ inputs.distribution_id }}
+      SITE_URL: ${{ inputs.site_url }}
+      RELEASE_ID: ${{ inputs.release_id }}
+      REASON: ${{ inputs.reason }}
+      PLATFORM_URL: ${{ inputs.platform_url }}
+      COMMIT: ${{ needs.build.outputs.commit }}
+      SMOKE_OUT: smoke-result.json
+      MANIFEST_OUT: deploy-manifest.json
+    steps:
+      # Only for the repository's own deploy scripts of that commit (no package is installed here).
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.build.outputs.commit }}
+          persist-credentials: false
+
+      - name: Check the checkout is the commit that was built
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$COMMIT" || { echo "::error::checked out $(git rev-parse HEAD), built $COMMIT"; exit 1; }
+
+      # By id, not by name: only the artifact the build job uploaded, whose digest the action verifies.
+      - name: Download the export
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          artifact-ids: ${{ needs.build.outputs.artifact_id }}
+          path: .
+          digest-mismatch: error
+
+      - name: Verify every file against the build job's hashes
+        env:
+          EXPECTED_SUMS_SHA256: ${{ needs.build.outputs.sums_sha256 }}
+        run: |
+          set -euo pipefail
+          printf '%s  site-out.sha256\n' "$EXPECTED_SUMS_SHA256" | sha256sum --check --strict --quiet -
+          sha256sum --check --strict --quiet site-out.sha256
+          # --check ignores files that are not listed; an extra file must fail too.
+          diff <(find out -type f -print | LC_ALL=C sort) <(sed -E 's/^[0-9a-f]{64}  //' site-out.sha256 | LC_ALL=C sort) \
+            || { echo "::error::out/ holds files the build job did not hash"; exit 1; }
+
+      # smoke.mjs and manifest.mjs use Node built-ins only (no npm ci in this job).
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
       - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
@@ -105,6 +189,7 @@ jobs:
           EXPECT_RELEASE_ID: ${{ inputs.release_id }}
 
       # Recorded even when the smoke failed: the version is live either way, and the manifest says whether it passed.
+      # It hashes out/ again, i.e. exactly the verified files that were published.
       - name: Deploy manifest
         id: manifest
         if: ${{ !cancelled() && steps.publish.outcome == 'success' }}
