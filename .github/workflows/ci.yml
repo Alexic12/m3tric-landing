@@ -108,10 +108,17 @@ jobs:
         run: |
           printf 'Acquire::Retries "5";\nAcquire::http::Timeout "20";\nAcquire::https::Timeout "20";\n' \
             | sudo tee /etc/apt/apt.conf.d/80-ci-retries >/dev/null
+          # A stalled apt hangs instead of failing, so each attempt is bounded
+          # with `timeout`; from the second attempt on, switch from the Azure
+          # mirror to the main Ubuntu archive in case the mirror is the culprit.
           for attempt in 1 2 3; do
-            if npx playwright install-deps "$PROJECT"; then exit 0; fi
-            echo "::warning::playwright install-deps failed (attempt $attempt of 3); retrying"
-            sleep $((attempt * 15))
+            if [ "$attempt" -gt 1 ]; then
+              sudo sed -i 's|http://azure.archive.ubuntu.com/ubuntu|http://archive.ubuntu.com/ubuntu|g' \
+                /etc/apt/sources.list.d/ubuntu.sources /etc/apt/sources.list 2>/dev/null || true
+            fi
+            if timeout 240 npx playwright install-deps "$PROJECT"; then exit 0; fi
+            echo "::warning::playwright install-deps failed or hung (attempt $attempt of 3); retrying"
+            sleep $((attempt * 10))
           done
           exit 1
       - name: Install Playwright browser (${{ matrix.project }})
