@@ -4,6 +4,11 @@ Todas las versiones de la landing de M3TRIC.
 
 ---
 
+## [3.2.1] - 2026-10-02
+
+### Cambiado
+- `brand/tokens.json › chartSeries`: orden de la paleta de series con los tonos oscuros primero y los pálidos (`#74C69D`, `#B7E3C7`) al final, por legibilidad de líneas sobre blanco (hallazgo de la verificación en navegador de la plataforma).
+
 ## [3.2.0] - 2026-10-02
 
 Identidad compartida entre la landing y la plataforma: kit de marca versionado y decisiones registradas. Especificación: `docs/SPEC-UNIFICACION.md` (v1.0); `docs/SPEC.md` pasa a la versión 3.3. Sin cambios visuales en el sitio.
