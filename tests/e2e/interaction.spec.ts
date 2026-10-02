@@ -237,7 +237,7 @@ test("header switches from transparent to solid after scrolling", async ({ page 
 });
 
 for (const height of [900, 700, 560]) {
-  for (const name of ["Hablar con el equipo", "Abrir plataforma"]) {
+  for (const name of ["Abrir plataforma"]) {
     test(`hero CTA "${name}" is not overlapped at 1280x${height}`, async ({ page }) => {
       await page.setViewportSize({ width: 1280, height });
       await page.goto("/");

@@ -4,6 +4,11 @@ Todas las versiones de la landing de M3TRIC.
 
 ---
 
+## [3.1.2] - 2026-10-01
+
+### Cambiado
+- Se retira el botón «Hablar con el equipo» de toda la página (hero y banda tras los casos de uso; la barra superior ya no lo tenía desde 3.1.1). El contacto se alcanza por el enlace «Contacto» de la navegación. En el hero, «Abrir plataforma» queda como único CTA, en estilo primario. La banda «¿Su caso es uno de estos? Hablemos.» se retira porque sin botón no cumplía función.
+
 ## [3.1.1] - 2026-10-01
 
 ### Cambiado

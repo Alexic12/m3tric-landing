@@ -13,7 +13,7 @@
     "orientationAngle": 0,
     "orientationType": "landscape-primary"
   },
-  "timestamp": "2026-10-02T02:53:28.412Z",
+  "timestamp": "2026-10-02T03:17:01.351Z",
   "url": "http://127.0.0.1:4173/",
   "toolOptions": {
     "runOnly": {
@@ -1588,7 +1588,7 @@
           "impact": null,
           "html": "<span aria-hidden=\"true\" class=\"inline-flex\">",
           "target": [
-            ".pt-10 > .hover\\:bg-white.bg-m3-green-200.tracking-wide > .inline-flex"
+            ".pt-10 > .hover\\:bg-white.tracking-wide.duration-200 > .inline-flex"
           ]
         },
         {
@@ -1780,39 +1780,7 @@
           "impact": null,
           "html": "<span aria-hidden=\"true\" class=\"inline-flex\">",
           "target": [
-            ".flex-wrap.mt-10.gap-3 > .hover\\:bg-white.bg-m3-green-200[href$=\"#contacto\"] > .inline-flex"
-          ]
-        },
-        {
-          "any": [],
-          "all": [
-            {
-              "id": "focusable-modal-open",
-              "data": null,
-              "relatedNodes": [],
-              "impact": "serious",
-              "message": "No focusable elements while a modal is open"
-            },
-            {
-              "id": "focusable-disabled",
-              "data": null,
-              "relatedNodes": [],
-              "impact": "serious",
-              "message": "No focusable elements contained within element"
-            },
-            {
-              "id": "focusable-not-tabbable",
-              "data": null,
-              "relatedNodes": [],
-              "impact": "serious",
-              "message": "No focusable elements contained within element"
-            }
-          ],
-          "none": [],
-          "impact": null,
-          "html": "<span aria-hidden=\"true\" class=\"inline-flex\">",
-          "target": [
-            ".flex-wrap.mt-10.gap-3 > .border-m3-green-200\\/60.hover\\:bg-white\\/10.tracking-wide > .inline-flex"
+            ".mt-10.flex-wrap.gap-3 > .hover\\:bg-white.tracking-wide.duration-200 > .inline-flex"
           ]
         },
         {
@@ -2738,70 +2706,6 @@
           ],
           "none": [],
           "impact": null,
-          "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 800 500\" aria-hidden=\"true\" focusable=\"false\" preserveAspectRatio=\"xMidYMid slice\" class=\"absolute inset-0 -z-10 size-full opacity-25\">",
-          "target": [
-            ".sm\\:px-10 > .opacity-25[viewBox=\"0 0 800 500\"][preserveAspectRatio=\"xMidYMid slice\"]"
-          ]
-        },
-        {
-          "any": [],
-          "all": [
-            {
-              "id": "focusable-modal-open",
-              "data": null,
-              "relatedNodes": [],
-              "impact": "serious",
-              "message": "No focusable elements while a modal is open"
-            },
-            {
-              "id": "focusable-disabled",
-              "data": null,
-              "relatedNodes": [],
-              "impact": "serious",
-              "message": "No focusable elements contained within element"
-            },
-            {
-              "id": "focusable-not-tabbable",
-              "data": null,
-              "relatedNodes": [],
-              "impact": "serious",
-              "message": "No focusable elements contained within element"
-            }
-          ],
-          "none": [],
-          "impact": null,
-          "html": "<span aria-hidden=\"true\" class=\"inline-flex\">",
-          "target": [
-            ".md\\:self-auto > .inline-flex"
-          ]
-        },
-        {
-          "any": [],
-          "all": [
-            {
-              "id": "focusable-modal-open",
-              "data": null,
-              "relatedNodes": [],
-              "impact": "serious",
-              "message": "No focusable elements while a modal is open"
-            },
-            {
-              "id": "focusable-disabled",
-              "data": null,
-              "relatedNodes": [],
-              "impact": "serious",
-              "message": "No focusable elements contained within element"
-            },
-            {
-              "id": "focusable-not-tabbable",
-              "data": null,
-              "relatedNodes": [],
-              "impact": "serious",
-              "message": "No focusable elements contained within element"
-            }
-          ],
-          "none": [],
-          "impact": null,
           "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 91.7 99.08\" aria-hidden=\"true\" focusable=\"false\" class=\"w-4 shrink-0 text-m3-green-900\" style=\"height:auto\" fill=\"currentColor\">",
           "target": [
             "#como-funciona > .max-w-\\[1280px\\].sm\\:px-6.lg\\:px-8 > div[data-reveal=\"\"]:nth-child(1) > .max-w-4xl > .text-m3-green-700.text-meta.gap-3 > .w-4[viewBox=\"0 0 91.7 99.08\"][fill=\"currentColor\"]"
@@ -2964,7 +2868,7 @@
           "impact": null,
           "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 800 500\" aria-hidden=\"true\" focusable=\"false\" preserveAspectRatio=\"xMidYMid slice\" class=\"absolute inset-0 -z-10 size-full opacity-25\">",
           "target": [
-            "#escalas > .opacity-25[viewBox=\"0 0 800 500\"][preserveAspectRatio=\"xMidYMid slice\"]"
+            ".opacity-25"
           ]
         },
         {
@@ -4660,7 +4564,7 @@
           "impact": null,
           "html": "<span aria-hidden=\"true\" class=\"inline-flex\">",
           "target": [
-            ".mt-10[data-reveal=\"\"] > .flex-wrap.gap-3.flex > .hover\\:bg-white.bg-m3-green-200.tracking-wide > .inline-flex"
+            ".mt-10[data-reveal=\"\"] > .flex-wrap.gap-3.flex > .hover\\:bg-white.tracking-wide.duration-200 > .inline-flex"
           ]
         },
         {
@@ -4692,7 +4596,7 @@
           "impact": null,
           "html": "<span aria-hidden=\"true\" class=\"inline-flex\">",
           "target": [
-            ".mt-10[data-reveal=\"\"] > .flex-wrap.gap-3.flex > .border-m3-green-200\\/60.hover\\:bg-white\\/10.tracking-wide > .inline-flex"
+            ".border-m3-green-200\\/60 > .inline-flex"
           ]
         },
         {
@@ -5973,7 +5877,7 @@
           "impact": null,
           "html": "<a href=\"https://app.m3tric-test.co/login\" class=\"inline-flex items-center justify-center gap-2 rounded-full font-bold tracking-wide transition-colors duration-200 bg-m3-green-200 text-m3-green-900 hover:bg-white min-h-12 px-7 text-base \">",
           "target": [
-            ".pt-10 > .hover\\:bg-white.bg-m3-green-200.tracking-wide"
+            ".pt-10 > .hover\\:bg-white.tracking-wide.duration-200"
           ]
         }
       ]
@@ -6655,7 +6559,7 @@
           "impact": null,
           "html": "<a href=\"https://app.m3tric-test.co/login\" class=\"inline-flex items-center justify-center gap-2 rounded-full font-bold tracking-wide transition-colors duration-200 bg-m3-green-200 text-m3-green-900 hover:bg-white min-h-12 px-7 text-base \">",
           "target": [
-            ".pt-10 > .hover\\:bg-white.bg-m3-green-200.tracking-wide"
+            ".pt-10 > .hover\\:bg-white.tracking-wide.duration-200"
           ]
         }
       ]
@@ -6691,7 +6595,7 @@
           "impact": null,
           "html": "<ul class=\"flex flex-col\">",
           "target": [
-            ".min-h-full > ul"
+            ".min-h-full > .flex-col:nth-child(1)"
           ]
         }
       ]

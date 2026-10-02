@@ -1,9 +1,7 @@
-import { ArrowRight, Leaf, Mountain, Route, Droplets, type LucideIcon } from "lucide-react";
-import { NodeNetwork } from "@/components/brand/NodeNetwork";
-import { Button } from "@/components/ui/Button";
+import { Leaf, Mountain, Route, Droplets, type LucideIcon } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { cta, useCases, type CaseIcon } from "@/content/landing";
+import { useCases, type CaseIcon } from "@/content/landing";
 
 const ICONS: Record<CaseIcon, LucideIcon> = {
   risk: Mountain,
@@ -96,23 +94,6 @@ export function UseCases() {
           })}
         </ul>
 
-        <Reveal className="relative isolate mt-10 overflow-hidden rounded-3xl bg-m3-green-900 px-7 py-10 text-white sm:px-10 md:mt-12 md:py-12">
-          <NodeNetwork className="absolute inset-0 -z-10 size-full opacity-25" seed={7} nodes={22} />
-          <div className="on-dark flex flex-col gap-6 md:flex-row md:items-center md:justify-between md:gap-10">
-            <p className="text-h3 max-w-xl md:text-[clamp(1.5rem,1.1rem+1.4vw,2.25rem)] md:leading-tight">
-              {useCases.band.title}
-            </p>
-            <Button
-              href="#contacto"
-              variant="primary-on-dark"
-              size="lg"
-              icon={<ArrowRight size={20} strokeWidth={1.5} />}
-              className="self-start md:self-auto"
-            >
-              {cta.team}
-            </Button>
-          </div>
-        </Reveal>
       </div>
     </section>
   );
