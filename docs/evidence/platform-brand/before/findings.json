@@ -1,0 +1,2984 @@
+{
+  "startedAt": "2026-10-02T03:34:56.976Z",
+  "base": "https://d3pz2gipvkcx1b.cloudfront.net",
+  "browser": "153.0.8010.12",
+  "screenshots": [
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/login-1440.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/login-390.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/dashboard-1440.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/map-1440.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/menu-open-map-1440.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/modal-sensors-1-tutorial-1440.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/sensors-1440.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/live-1440.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/alerts-1440.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/reports-1440.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/settings-1440.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/live-raw-1440.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/extra-tutorial-slide3-1440.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/extra-tutorial-slide5-1440.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/extra-wizard-step0-1440.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/extra-wizard-step1-1440.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/extra-wizard-exit-confirm-1440.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/dashboard-390.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/map-390.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/sensors-390.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/live-390.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/alerts-390.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/reports-390.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/settings-390.png",
+    "/private/tmp/claude-501/-Users-alejandropuerta-Documents-TRABAJO-EAFIT-WEB-LANDING/0e9db25c-2df9-4050-b7fd-c4ac42e139f7/scratchpad/platform-before/live-raw-390.png"
+  ],
+  "notes": [],
+  "routes": {
+    "/login": {
+      "source": "known",
+      "httpStatus": 200,
+      "finalPath": "/login",
+      "title": "M3TRIC | Geospatial Analytics Platform",
+      "lang": "en",
+      "url": "/login",
+      "body": {
+        "tag": "body",
+        "classes": "bg-m3tric-surface text-slate-900 antialiased",
+        "sample": "Connected PlatformM3TRICContinue from the public landing int",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "lineHeight": "24px",
+        "letterSpacing": "normal",
+        "color": "rgb(15, 23, 42)",
+        "textTransform": "none"
+      },
+      "h1": {
+        "tag": "h1",
+        "classes": "text-4xl font-bold tracking-tight",
+        "sample": "M3TRIC",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "36px",
+        "fontWeight": "700",
+        "lineHeight": "40px",
+        "letterSpacing": "-0.9px",
+        "color": "rgb(255, 255, 255)",
+        "textTransform": "none"
+      },
+      "h2": {
+        "tag": "h2",
+        "classes": "text-3xl font-bold tracking-tight text-[color:var(--app-text)]",
+        "sample": "Welcome back",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "30px",
+        "fontWeight": "700",
+        "lineHeight": "36px",
+        "letterSpacing": "-0.75px",
+        "color": "rgb(27, 67, 50)",
+        "textTransform": "none"
+      },
+      "h3": null,
+      "eyebrow": {
+        "tag": "span",
+        "classes": "app-eyebrow",
+        "sample": "Secure sign in",
+        "fontFamily": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", monospace",
+        "fontSize": "11px",
+        "fontWeight": "400",
+        "lineHeight": "16.5px",
+        "letterSpacing": "3.08px",
+        "color": "rgb(58, 138, 92)",
+        "textTransform": "uppercase"
+      },
+      "navLink": null,
+      "button": {
+        "tag": "button",
+        "classes": "btn-primary w-full justify-center py-3",
+        "sample": "Sign In",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "lineHeight": "20px",
+        "letterSpacing": "normal",
+        "color": "rgb(255, 255, 255)",
+        "textTransform": "none"
+      },
+      "familyCounts": {
+        "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif": 16,
+        "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", monospace": 1
+      },
+      "fontCheck": {
+        "Inter": true,
+        "JetBrainsMono": false
+      },
+      "fontFacesLoaded": [
+        "Inter 400 normal [loaded]",
+        "Inter 500 normal [loaded]",
+        "Inter 600 normal [loaded]",
+        "Inter 700 normal [loaded]"
+      ],
+      "fontFacesAll": [
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [loaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [loaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [loaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [loaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]"
+      ],
+      "bodyBackgroundImage": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.1), rgba(0, 0, 0, 0) 24%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+      "htmlBackgroundImage": "none",
+      "gradientElements": 5,
+      "gradientPseudoElements": 0,
+      "distinctGradients": [
+        {
+          "value": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.1), rgba(0, 0, 0, 0) 24%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "body.bg-m3tric-surface text-slate-900 antialiased"
+          ]
+        },
+        {
+          "value": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.16), rgba(0, 0, 0, 0) 28%)",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "div.absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(46,204,11"
+          ]
+        },
+        {
+          "value": "radial-gradient(circle at 100% 100%, rgba(58, 138, 92, 0.12), rgba(0, 0, 0, 0) 24%)",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "div.absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(58,13"
+          ]
+        },
+        {
+          "value": "linear-gradient(145deg, rgba(27, 67, 50, 0.98), rgba(58, 138, 92, 0.92))",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "div.hidden rounded-[2rem] border border-[color:var(--app-border)] bg-[line"
+          ]
+        },
+        {
+          "value": "linear-gradient(135deg, rgb(27, 67, 50), rgb(58, 138, 92))",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "button.btn-primary w-full justify-center py-3"
+          ]
+        }
+      ],
+      "backdropBlurElements": 1,
+      "shellText": [],
+      "shellKind": "header/nav (no sidebar)",
+      "asideWidth": null,
+      "headings": [
+        {
+          "tag": "h1",
+          "text": "M3TRIC"
+        },
+        {
+          "tag": "h2",
+          "text": "Welcome back"
+        }
+      ],
+      "buttons": [
+        "Sign In"
+      ],
+      "placeholders": [
+        "usuario",
+        "••••••••"
+      ],
+      "texts": [
+        "Connected Platform",
+        "M3TRIC",
+        "Continue from the public landing into the operational workspace for sensors, analytics, alerts, reports, and geospatial monitoring.",
+        "Live",
+        "Sensors",
+        "Metric",
+        "Analytics",
+        "CSV",
+        "Reports",
+        "Sign-in is backed by Amazon Cognito. This screen only changes the visual system, not the auth flow.",
+        "Secure sign in",
+        "Welcome back",
+        "Sign in to access the connected M3TRIC workspace.",
+        "Usuario",
+        "Password",
+        "Sign In",
+        "Protected routes will redirect here automatically when the session expires."
+      ],
+      "stillShowsLoadingText": false,
+      "scrollHeight": 900,
+      "webgl": true,
+      "menuProbe": {
+        "ariaHaspopup": 0,
+        "roleMenu": 0,
+        "listboxOrCombobox": 0,
+        "details": 0,
+        "selects": 0,
+        "ariaExpanded": 0,
+        "userMenuLikeButtons": []
+      },
+      "cssVars": {
+        "--app-bg": "#ffffff",
+        "--app-bg-alt": "#f7faf8",
+        "--app-surface": "rgba(255, 255, 255, .97)",
+        "--app-surface-solid": "#ffffff",
+        "--app-surface-soft": "#f0f5f2",
+        "--app-border": "#d0ddd5",
+        "--app-border-strong": "rgba(27, 67, 50, .12)",
+        "--app-text": "#1b4332",
+        "--app-text-muted": "#4a6e5a",
+        "--app-text-dim": "#557761",
+        "--app-accent": "#2ecc71",
+        "--app-accent-strong": "#1b4332",
+        "--app-accent-mid": "#3a8a5c",
+        "--app-accent-teal": "#1abc9c",
+        "--app-accent-blue": "#2980b9",
+        "--app-accent-amber": "#f39c12",
+        "--app-success": "#2f9e62",
+        "--app-warning": "#b7791f",
+        "--app-danger": "#c05621",
+        "--app-shadow": "0 10px 30px rgba(27, 67, 50, .08)",
+        "--app-shadow-soft": "0 2px 10px rgba(27, 67, 50, .05)"
+      },
+      "screenshot1440": "login-1440.png",
+      "screenshot390": "login-390.png"
+    },
+    "/dashboard": {
+      "source": "post-login landing",
+      "httpStatus": 200,
+      "finalPath": "/dashboard",
+      "title": "M3TRIC | Geospatial Analytics Platform",
+      "lang": "en",
+      "url": "/dashboard",
+      "body": {
+        "tag": "body",
+        "classes": "bg-m3tric-surface text-slate-900 antialiased",
+        "sample": "M3M3TRICConnected PlatformOperational intelligence across se",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "lineHeight": "24px",
+        "letterSpacing": "normal",
+        "color": "rgb(15, 23, 42)",
+        "textTransform": "none"
+      },
+      "h1": {
+        "tag": "h1",
+        "classes": "page-title",
+        "sample": "Inicio",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "36px",
+        "fontWeight": "700",
+        "lineHeight": "40px",
+        "letterSpacing": "-0.9px",
+        "color": "rgb(27, 67, 50)",
+        "textTransform": "none"
+      },
+      "h2": {
+        "tag": "h2",
+        "classes": "mt-1 text-lg font-semibold text-[color:var(--app-text)]",
+        "sample": "Tendencia",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "18px",
+        "fontWeight": "600",
+        "lineHeight": "28px",
+        "letterSpacing": "normal",
+        "color": "rgb(27, 67, 50)",
+        "textTransform": "none"
+      },
+      "h3": null,
+      "eyebrow": {
+        "tag": "div",
+        "classes": "app-eyebrow",
+        "sample": "Connected Platform",
+        "fontFamily": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", monospace",
+        "fontSize": "11px",
+        "fontWeight": "400",
+        "lineHeight": "16.5px",
+        "letterSpacing": "3.08px",
+        "color": "rgb(58, 138, 92)",
+        "textTransform": "uppercase"
+      },
+      "navLink": {
+        "tag": "a",
+        "classes": "app-nav-link app-nav-link-active",
+        "sample": "Inicio",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "500",
+        "lineHeight": "20px",
+        "letterSpacing": "normal",
+        "color": "rgb(27, 67, 50)",
+        "textTransform": "none"
+      },
+      "button": {
+        "tag": "button",
+        "classes": "btn-secondary w-full justify-center",
+        "sample": "Log out",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "lineHeight": "20px",
+        "letterSpacing": "normal",
+        "color": "rgb(27, 67, 50)",
+        "textTransform": "none"
+      },
+      "familyCounts": {
+        "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif": 30,
+        "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", monospace": 9,
+        "\"Helvetica Neue\", Arial, Helvetica, sans-serif": 4
+      },
+      "fontCheck": {
+        "Inter": true,
+        "JetBrainsMono": false
+      },
+      "fontFacesLoaded": [
+        "Inter 400 normal [loaded]",
+        "Inter 500 normal [loaded]",
+        "Inter 600 normal [loaded]",
+        "Inter 700 normal [loaded]"
+      ],
+      "fontFacesAll": [
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [loaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [loaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [loaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [loaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]"
+      ],
+      "bodyBackgroundImage": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.1), rgba(0, 0, 0, 0) 24%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+      "htmlBackgroundImage": "none",
+      "gradientElements": 8,
+      "gradientPseudoElements": 0,
+      "distinctGradients": [
+        {
+          "value": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.1), rgba(0, 0, 0, 0) 24%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "body.bg-m3tric-surface text-slate-900 antialiased"
+          ]
+        },
+        {
+          "value": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.12), rgba(0, 0, 0, 0) 18%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "div.app-shell"
+          ]
+        },
+        {
+          "value": "linear-gradient(135deg, rgba(46, 204, 113, 0.18), rgba(58, 138, 92, 0.1))",
+          "count": 5,
+          "pseudoCount": 0,
+          "samples": [
+            "div.app-brand-mark",
+            "span.app-brand-mark shrink-0",
+            "span.app-brand-mark shrink-0"
+          ]
+        },
+        {
+          "value": "linear-gradient(135deg, rgba(46, 204, 113, 0.14), rgba(26, 188, 156, 0.08))",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "a.app-nav-link app-nav-link-active"
+          ]
+        }
+      ],
+      "backdropBlurElements": 5,
+      "shellText": [
+        "M3",
+        "M3TRIC",
+        "Connected Platform",
+        "Operational intelligence across sensors, territory, and environmental signals.",
+        "Navigation",
+        "Inicio",
+        "Mapa",
+        "Sensores",
+        "Análisis",
+        "Alertas",
+        "Reportes",
+        "Configuración",
+        "Session",
+        "Hola, smoke-ui-1790911726",
+        "Rol: Administrador — Puedes crear, editar y administrar todo en la plataforma.",
+        "Log out",
+        "v0.1.0 · landing-aligned UI"
+      ],
+      "shellKind": "aside",
+      "asideWidth": 288,
+      "headings": [
+        {
+          "tag": "h1",
+          "text": "Inicio"
+        },
+        {
+          "tag": "h2",
+          "text": "Tendencia"
+        }
+      ],
+      "buttons": [
+        "Log out",
+        "Actualizar"
+      ],
+      "placeholders": [],
+      "texts": [
+        "M3",
+        "M3TRIC",
+        "Connected Platform",
+        "Operational intelligence across sensors, territory, and environmental signals.",
+        "Navigation",
+        "Inicio",
+        "Mapa",
+        "Sensores",
+        "Análisis",
+        "Alertas",
+        "Reportes",
+        "Configuración",
+        "Session",
+        "Hola, smoke-ui-1790911726",
+        "Rol: Administrador — Puedes crear, editar y administrar todo en la plataforma.",
+        "Log out",
+        "v0.1.0 · landing-aligned UI",
+        "Mi Campo",
+        "Inicio",
+        "Un vistazo rápido, en español simple, al estado de tu estación y tu terreno.",
+        "Actualizar",
+        "Sin datos",
+        "La estación no envía datos desde hace un rato. Revisa que tenga batería y señal.",
+        "Humedad del suelo",
+        "Sin datos",
+        "Sin dato",
+        "Tensión del suelo",
+        "Sin datos",
+        "Sin dato",
+        "Movimiento del terreno",
+        "Sin datos",
+        "Sin dato",
+        "Estación",
+        "Sin conexión",
+        "hace 37 h",
+        "Sin dato",
+        "-47 dBm",
+        "MapLibre",
+        "| ©",
+        "AWS",
+        ",",
+        "HERE",
+        "Últimos 7 días",
+        "Tendencia"
+      ],
+      "stillShowsLoadingText": false,
+      "scrollHeight": 1439,
+      "webgl": true,
+      "menuProbe": {
+        "ariaHaspopup": 0,
+        "roleMenu": 0,
+        "listboxOrCombobox": 0,
+        "details": 1,
+        "selects": 1,
+        "ariaExpanded": 0,
+        "userMenuLikeButtons": []
+      },
+      "screenshot1440": "dashboard-1440.png",
+      "screenshot390": "dashboard-390.png"
+    },
+    "/map": {
+      "source": "link on /dashboard (aside: \"Mapa\")",
+      "httpStatus": 200,
+      "finalPath": "/map",
+      "title": "M3TRIC | Geospatial Analytics Platform",
+      "lang": "en",
+      "url": "/map",
+      "body": {
+        "tag": "body",
+        "classes": "bg-m3tric-surface text-slate-900 antialiased",
+        "sample": "M3M3TRICConnected PlatformOperational intelligence across se",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "lineHeight": "24px",
+        "letterSpacing": "normal",
+        "color": "rgb(15, 23, 42)",
+        "textTransform": "none"
+      },
+      "h1": {
+        "tag": "h1",
+        "classes": "page-title",
+        "sample": "Mapa",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "36px",
+        "fontWeight": "700",
+        "lineHeight": "40px",
+        "letterSpacing": "-0.9px",
+        "color": "rgb(27, 67, 50)",
+        "textTransform": "none"
+      },
+      "h2": null,
+      "h3": null,
+      "eyebrow": {
+        "tag": "div",
+        "classes": "app-eyebrow",
+        "sample": "Connected Platform",
+        "fontFamily": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", monospace",
+        "fontSize": "11px",
+        "fontWeight": "400",
+        "lineHeight": "16.5px",
+        "letterSpacing": "3.08px",
+        "color": "rgb(58, 138, 92)",
+        "textTransform": "uppercase"
+      },
+      "navLink": {
+        "tag": "a",
+        "classes": "app-nav-link",
+        "sample": "Inicio",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "500",
+        "lineHeight": "20px",
+        "letterSpacing": "normal",
+        "color": "rgb(74, 110, 90)",
+        "textTransform": "none"
+      },
+      "button": {
+        "tag": "button",
+        "classes": "btn-secondary w-full justify-center",
+        "sample": "Log out",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "lineHeight": "20px",
+        "letterSpacing": "normal",
+        "color": "rgb(27, 67, 50)",
+        "textTransform": "none"
+      },
+      "familyCounts": {
+        "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif": 29,
+        "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", monospace": 4,
+        "\"Helvetica Neue\", Arial, Helvetica, sans-serif": 4
+      },
+      "fontCheck": {
+        "Inter": true,
+        "JetBrainsMono": false
+      },
+      "fontFacesLoaded": [
+        "Inter 400 normal [loaded]",
+        "Inter 500 normal [loaded]",
+        "Inter 600 normal [loaded]",
+        "Inter 700 normal [loaded]"
+      ],
+      "fontFacesAll": [
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [loaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [loaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [loaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [loaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]"
+      ],
+      "bodyBackgroundImage": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.1), rgba(0, 0, 0, 0) 24%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+      "htmlBackgroundImage": "none",
+      "gradientElements": 4,
+      "gradientPseudoElements": 0,
+      "distinctGradients": [
+        {
+          "value": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.1), rgba(0, 0, 0, 0) 24%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "body.bg-m3tric-surface text-slate-900 antialiased"
+          ]
+        },
+        {
+          "value": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.12), rgba(0, 0, 0, 0) 18%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "div.app-shell"
+          ]
+        },
+        {
+          "value": "linear-gradient(135deg, rgba(46, 204, 113, 0.18), rgba(58, 138, 92, 0.1))",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "div.app-brand-mark"
+          ]
+        },
+        {
+          "value": "linear-gradient(135deg, rgba(46, 204, 113, 0.14), rgba(26, 188, 156, 0.08))",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "a.app-nav-link app-nav-link-active"
+          ]
+        }
+      ],
+      "backdropBlurElements": 6,
+      "shellText": [
+        "M3",
+        "M3TRIC",
+        "Connected Platform",
+        "Operational intelligence across sensors, territory, and environmental signals.",
+        "Navigation",
+        "Inicio",
+        "Mapa",
+        "Sensores",
+        "Análisis",
+        "Alertas",
+        "Reportes",
+        "Configuración",
+        "Session",
+        "Hola, smoke-ui-1790911726",
+        "Rol: Administrador — Puedes crear, editar y administrar todo en la plataforma.",
+        "Log out",
+        "v0.1.0 · landing-aligned UI"
+      ],
+      "shellKind": "aside",
+      "asideWidth": 288,
+      "headings": [
+        {
+          "tag": "h1",
+          "text": "Mapa"
+        }
+      ],
+      "buttons": [
+        "Log out",
+        "Zoom in",
+        "Zoom out",
+        "Reset bearing to north",
+        "Mapa",
+        "Satélite",
+        "Híbrido",
+        "ke-test-01keRegistrado",
+        "Estación SmartNode 01smartnode-multisensorActivo",
+        "Micro",
+        "Meso",
+        "Macro"
+      ],
+      "placeholders": [],
+      "texts": [
+        "M3",
+        "M3TRIC",
+        "Connected Platform",
+        "Operational intelligence across sensors, territory, and environmental signals.",
+        "Navigation",
+        "Inicio",
+        "Mapa",
+        "Sensores",
+        "Análisis",
+        "Alertas",
+        "Reportes",
+        "Configuración",
+        "Session",
+        "Hola, smoke-ui-1790911726",
+        "Rol: Administrador — Puedes crear, editar y administrar todo en la plataforma.",
+        "Log out",
+        "v0.1.0 · landing-aligned UI",
+        "Mapa de la plataforma",
+        "Mapa",
+        "Ubica tus sensores en el mapa, revisa su estado y última actividad, y navega entre las escalas micro, meso y macro.",
+        "MapLibre",
+        "| ©",
+        "AWS",
+        ",",
+        "HERE",
+        "Mapa",
+        "Satélite",
+        "Híbrido",
+        "Las capas de imagen de tus lotes (Mi Campo) están disponibles en las escalas Meso y Macro. Cambia de escala arriba a la derecha para verlas.",
+        "Sensores en el mapa (",
+        "2",
+        ")",
+        "ke-test-01",
+        "ke",
+        "Registrado",
+        "Estación SmartNode 01",
+        "smartnode-multisensor",
+        "Activo",
+        "Micro",
+        "Meso",
+        "Macro"
+      ],
+      "stillShowsLoadingText": false,
+      "scrollHeight": 900,
+      "webgl": true,
+      "menuProbe": {
+        "ariaHaspopup": 0,
+        "roleMenu": 0,
+        "listboxOrCombobox": 0,
+        "details": 2,
+        "selects": 0,
+        "ariaExpanded": 0,
+        "userMenuLikeButtons": []
+      },
+      "screenshot1440": "map-1440.png",
+      "screenshot390": "map-390.png"
+    },
+    "/sensors": {
+      "source": "link on /dashboard (aside: \"Sensores\")",
+      "httpStatus": 200,
+      "finalPath": "/sensors",
+      "title": "M3TRIC | Geospatial Analytics Platform",
+      "lang": "en",
+      "url": "/sensors",
+      "body": {
+        "tag": "body",
+        "classes": "bg-m3tric-surface text-slate-900 antialiased",
+        "sample": "M3M3TRICConnected PlatformOperational intelligence across se",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "lineHeight": "24px",
+        "letterSpacing": "normal",
+        "color": "rgb(15, 23, 42)",
+        "textTransform": "none"
+      },
+      "h1": {
+        "tag": "h1",
+        "classes": "page-title",
+        "sample": "Sensores",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "36px",
+        "fontWeight": "700",
+        "lineHeight": "40px",
+        "letterSpacing": "-0.9px",
+        "color": "rgb(27, 67, 50)",
+        "textTransform": "none"
+      },
+      "h2": null,
+      "h3": {
+        "tag": "h3",
+        "classes": "text-lg font-semibold text-[color:var(--app-text)]",
+        "sample": "Prefijo de tus sensores",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "18px",
+        "fontWeight": "600",
+        "lineHeight": "28px",
+        "letterSpacing": "normal",
+        "color": "rgb(27, 67, 50)",
+        "textTransform": "none"
+      },
+      "eyebrow": {
+        "tag": "div",
+        "classes": "app-eyebrow",
+        "sample": "Connected Platform",
+        "fontFamily": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", monospace",
+        "fontSize": "11px",
+        "fontWeight": "400",
+        "lineHeight": "16.5px",
+        "letterSpacing": "3.08px",
+        "color": "rgb(58, 138, 92)",
+        "textTransform": "uppercase"
+      },
+      "navLink": {
+        "tag": "a",
+        "classes": "app-nav-link",
+        "sample": "Inicio",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "500",
+        "lineHeight": "20px",
+        "letterSpacing": "normal",
+        "color": "rgb(74, 110, 90)",
+        "textTransform": "none"
+      },
+      "button": {
+        "tag": "button",
+        "classes": "btn-secondary w-full justify-center",
+        "sample": "Log out",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "lineHeight": "20px",
+        "letterSpacing": "normal",
+        "color": "rgb(27, 67, 50)",
+        "textTransform": "none"
+      },
+      "familyCounts": {
+        "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif": 34,
+        "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", monospace": 4,
+        "ui-monospace, SFMono-Regular, monospace": 4
+      },
+      "fontCheck": {
+        "Inter": true,
+        "JetBrainsMono": false
+      },
+      "fontFacesLoaded": [
+        "Inter 400 normal [loaded]",
+        "Inter 500 normal [loaded]",
+        "Inter 600 normal [loaded]",
+        "Inter 700 normal [loaded]"
+      ],
+      "fontFacesAll": [
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [loaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [loaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [loaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [loaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]"
+      ],
+      "bodyBackgroundImage": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.1), rgba(0, 0, 0, 0) 24%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+      "htmlBackgroundImage": "none",
+      "gradientElements": 5,
+      "gradientPseudoElements": 0,
+      "distinctGradients": [
+        {
+          "value": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.1), rgba(0, 0, 0, 0) 24%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "body.bg-m3tric-surface text-slate-900 antialiased"
+          ]
+        },
+        {
+          "value": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.12), rgba(0, 0, 0, 0) 18%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "div.app-shell"
+          ]
+        },
+        {
+          "value": "linear-gradient(135deg, rgba(46, 204, 113, 0.18), rgba(58, 138, 92, 0.1))",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "div.app-brand-mark"
+          ]
+        },
+        {
+          "value": "linear-gradient(135deg, rgba(46, 204, 113, 0.14), rgba(26, 188, 156, 0.08))",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "a.app-nav-link app-nav-link-active"
+          ]
+        },
+        {
+          "value": "linear-gradient(135deg, rgb(27, 67, 50), rgb(58, 138, 92))",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "button.btn-primary"
+          ]
+        }
+      ],
+      "backdropBlurElements": 4,
+      "shellText": [
+        "M3",
+        "M3TRIC",
+        "Connected Platform",
+        "Operational intelligence across sensors, territory, and environmental signals.",
+        "Navigation",
+        "Inicio",
+        "Mapa",
+        "Sensores",
+        "Análisis",
+        "Alertas",
+        "Reportes",
+        "Configuración",
+        "Session",
+        "Hola, smoke-ui-1790911726",
+        "Rol: Administrador — Puedes crear, editar y administrar todo en la plataforma.",
+        "Log out",
+        "v0.1.0 · landing-aligned UI"
+      ],
+      "shellKind": "aside",
+      "asideWidth": 288,
+      "headings": [
+        {
+          "tag": "h1",
+          "text": "Sensores"
+        },
+        {
+          "tag": "h3",
+          "text": "Prefijo de tus sensores"
+        },
+        {
+          "tag": "h3",
+          "text": "ke-test-01"
+        },
+        {
+          "tag": "h3",
+          "text": "Estación SmartNode 01"
+        }
+      ],
+      "buttons": [
+        "Log out",
+        "¿Cómo funciona?",
+        "Guardar prefijo",
+        "ke-test-01Registradoke • Escala Micro",
+        "Copiar topic de ke-test-01",
+        "Estación SmartNode 01ActivoSensor realsmartnode-multisensor • Escala Micro",
+        "Copiar topic de Estación SmartNode 01",
+        "Reanudar registro"
+      ],
+      "placeholders": [
+        "finca-"
+      ],
+      "texts": [
+        "M3",
+        "M3TRIC",
+        "Connected Platform",
+        "Operational intelligence across sensors, territory, and environmental signals.",
+        "Navigation",
+        "Inicio",
+        "Mapa",
+        "Sensores",
+        "Análisis",
+        "Alertas",
+        "Reportes",
+        "Configuración",
+        "Session",
+        "Hola, smoke-ui-1790911726",
+        "Rol: Administrador — Puedes crear, editar y administrar todo en la plataforma.",
+        "Log out",
+        "v0.1.0 · landing-aligned UI",
+        "Inventario operativo",
+        "Sensores",
+        "Sensores registrados en la plataforma, con su estado, parámetros y fórmulas activas.",
+        "¿Cómo funciona?",
+        "Prefijo de tus sensores",
+        "Todavía no tienes un prefijo asignado. Va delante del nombre de cada sensor que crees: con el prefijo",
+        "finca-",
+        ", un sensor llamado «Norte» queda como",
+        "finca-norte",
+        ", y esa es también la dirección a la que ese dispositivo envía sus datos.",
+        "Sin un prefijo asignado no puedes crear sensores",
+        "— asígnalo aquí abajo para empezar.",
+        "Antes de guardar: en cuanto crees tu primer sensor, el prefijo queda fijo para siempre. Cambiarlo después dejaría un dispositivo ya instalado enviando sus datos a una dirección que dejó de existir.",
+        "Prefijo",
+        "Guardar prefijo",
+        "Todavía no puedes crear sensores: asigna primero un prefijo para tu cuenta, arriba en «Prefijo de tus sensores».",
+        "ke-test-01",
+        "Registrado",
+        "ke",
+        "• Escala",
+        "Micro",
+        "m3tric/staging/devices/m3tric-ke-test-01/raw",
+        "6.1986, -75.5791",
+        "Estación SmartNode 01",
+        "Activo",
+        "Sensor real",
+        "smartnode-multisensor",
+        "• Escala",
+        "Micro",
+        "m3tric/staging/devices/m3tric-scn-test-01/raw",
+        "6.2242, -75.5544",
+        "Reanudar registro"
+      ],
+      "stillShowsLoadingText": false,
+      "scrollHeight": 1018,
+      "webgl": true,
+      "menuProbe": {
+        "ariaHaspopup": 0,
+        "roleMenu": 0,
+        "listboxOrCombobox": 0,
+        "details": 0,
+        "selects": 2,
+        "ariaExpanded": 2,
+        "userMenuLikeButtons": []
+      },
+      "screenshot1440": "sensors-1440.png",
+      "screenshot390": "sensors-390.png"
+    },
+    "/live": {
+      "source": "link on /dashboard (aside: \"Análisis\")",
+      "httpStatus": 200,
+      "finalPath": "/live",
+      "title": "M3TRIC | Geospatial Analytics Platform",
+      "lang": "en",
+      "url": "/live",
+      "body": {
+        "tag": "body",
+        "classes": "bg-m3tric-surface text-slate-900 antialiased",
+        "sample": "M3TRIC PlatformTus dispositivosEscoge uno para ver cómo está",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "lineHeight": "24px",
+        "letterSpacing": "normal",
+        "color": "rgb(15, 23, 42)",
+        "textTransform": "none"
+      },
+      "h1": {
+        "tag": "h1",
+        "classes": "",
+        "sample": "Tus dispositivos",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "60px",
+        "fontWeight": "750",
+        "lineHeight": "60px",
+        "letterSpacing": "-2.4px",
+        "color": "rgb(27, 67, 50)",
+        "textTransform": "none"
+      },
+      "h2": null,
+      "h3": null,
+      "eyebrow": {
+        "tag": "p",
+        "classes": "app-eyebrow mt-4",
+        "sample": "M3TRIC Platform",
+        "fontFamily": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", monospace",
+        "fontSize": "11px",
+        "fontWeight": "400",
+        "lineHeight": "16.5px",
+        "letterSpacing": "3.08px",
+        "color": "rgb(58, 138, 92)",
+        "textTransform": "uppercase"
+      },
+      "navLink": null,
+      "button": {
+        "tag": "button",
+        "classes": "live-metric-card h-full w-full text-left",
+        "sample": "CalladoEstación SmartNode 01Se le oyó hace 1 díaSin una cifr",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "lineHeight": "24px",
+        "letterSpacing": "normal",
+        "color": "rgb(15, 23, 42)",
+        "textTransform": "none"
+      },
+      "familyCounts": {
+        "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", monospace": 3,
+        "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif": 10
+      },
+      "fontCheck": {
+        "Inter": true,
+        "JetBrainsMono": false
+      },
+      "fontFacesLoaded": [
+        "Inter 400 normal [loaded]",
+        "Inter 600 normal [loaded]",
+        "Inter 700 normal [loaded]"
+      ],
+      "fontFacesAll": [
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [loaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [loaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [loaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]"
+      ],
+      "bodyBackgroundImage": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.1), rgba(0, 0, 0, 0) 24%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+      "htmlBackgroundImage": "none",
+      "gradientElements": 4,
+      "gradientPseudoElements": 0,
+      "distinctGradients": [
+        {
+          "value": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.1), rgba(0, 0, 0, 0) 24%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "body.bg-m3tric-surface text-slate-900 antialiased"
+          ]
+        },
+        {
+          "value": "linear-gradient(135deg, rgba(46, 204, 113, 0.18), rgba(58, 138, 92, 0.1))",
+          "count": 3,
+          "pseudoCount": 0,
+          "samples": [
+            "span.app-brand-mark",
+            "span.app-brand-mark shrink-0",
+            "span.app-brand-mark shrink-0"
+          ]
+        }
+      ],
+      "backdropBlurElements": 0,
+      "shellText": [
+        "M3TRIC Platform",
+        "Tus dispositivos",
+        "Escoge uno para ver cómo está."
+      ],
+      "shellKind": "header/nav (no sidebar)",
+      "asideWidth": null,
+      "headings": [
+        {
+          "tag": "h1",
+          "text": "Tus dispositivos"
+        }
+      ],
+      "buttons": [
+        "CalladoEstación SmartNode 01Se le oyó hace 1 díaSin una cifra todavíaLa estación",
+        "Calladoke-test-01Se le oyó hace 1 díaSin una cifra todavíaLa estación no envía d"
+      ],
+      "placeholders": [],
+      "texts": [
+        "M3TRIC Platform",
+        "Tus dispositivos",
+        "Escoge uno para ver cómo está.",
+        "Callado",
+        "Estación SmartNode 01",
+        "Se le oyó",
+        "hace 1 día",
+        "Sin una cifra todavía",
+        "La estación no envía datos desde hace un rato. Revisa que tenga batería y señal.",
+        "Callado",
+        "ke-test-01",
+        "Se le oyó",
+        "hace 1 día",
+        "Sin una cifra todavía",
+        "La estación no envía datos desde hace un rato. Revisa que tenga batería y señal."
+      ],
+      "stillShowsLoadingText": false,
+      "scrollHeight": 900,
+      "webgl": true,
+      "menuProbe": {
+        "ariaHaspopup": 0,
+        "roleMenu": 0,
+        "listboxOrCombobox": 0,
+        "details": 0,
+        "selects": 0,
+        "ariaExpanded": 0,
+        "userMenuLikeButtons": []
+      },
+      "screenshot1440": "live-1440.png",
+      "screenshot390": "live-390.png"
+    },
+    "/alerts": {
+      "source": "link on /dashboard (aside: \"Alertas\")",
+      "httpStatus": 200,
+      "finalPath": "/alerts",
+      "title": "M3TRIC | Geospatial Analytics Platform",
+      "lang": "en",
+      "url": "/alerts",
+      "body": {
+        "tag": "body",
+        "classes": "bg-m3tric-surface text-slate-900 antialiased",
+        "sample": "M3M3TRICConnected PlatformOperational intelligence across se",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "lineHeight": "24px",
+        "letterSpacing": "normal",
+        "color": "rgb(15, 23, 42)",
+        "textTransform": "none"
+      },
+      "h1": {
+        "tag": "h1",
+        "classes": "page-title",
+        "sample": "Alertas",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "36px",
+        "fontWeight": "700",
+        "lineHeight": "40px",
+        "letterSpacing": "-0.9px",
+        "color": "rgb(27, 67, 50)",
+        "textTransform": "none"
+      },
+      "h2": null,
+      "h3": null,
+      "eyebrow": {
+        "tag": "div",
+        "classes": "app-eyebrow",
+        "sample": "Connected Platform",
+        "fontFamily": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", monospace",
+        "fontSize": "11px",
+        "fontWeight": "400",
+        "lineHeight": "16.5px",
+        "letterSpacing": "3.08px",
+        "color": "rgb(58, 138, 92)",
+        "textTransform": "uppercase"
+      },
+      "navLink": {
+        "tag": "a",
+        "classes": "app-nav-link",
+        "sample": "Inicio",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "500",
+        "lineHeight": "20px",
+        "letterSpacing": "normal",
+        "color": "rgb(74, 110, 90)",
+        "textTransform": "none"
+      },
+      "button": {
+        "tag": "button",
+        "classes": "btn-secondary w-full justify-center",
+        "sample": "Log out",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "lineHeight": "20px",
+        "letterSpacing": "normal",
+        "color": "rgb(27, 67, 50)",
+        "textTransform": "none"
+      },
+      "familyCounts": {
+        "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif": 18,
+        "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", monospace": 4
+      },
+      "fontCheck": {
+        "Inter": true,
+        "JetBrainsMono": false
+      },
+      "fontFacesLoaded": [
+        "Inter 400 normal [loaded]",
+        "Inter 500 normal [loaded]",
+        "Inter 600 normal [loaded]",
+        "Inter 700 normal [loaded]"
+      ],
+      "fontFacesAll": [
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [loaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [loaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [loaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [loaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]"
+      ],
+      "bodyBackgroundImage": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.1), rgba(0, 0, 0, 0) 24%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+      "htmlBackgroundImage": "none",
+      "gradientElements": 4,
+      "gradientPseudoElements": 0,
+      "distinctGradients": [
+        {
+          "value": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.1), rgba(0, 0, 0, 0) 24%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "body.bg-m3tric-surface text-slate-900 antialiased"
+          ]
+        },
+        {
+          "value": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.12), rgba(0, 0, 0, 0) 18%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "div.app-shell"
+          ]
+        },
+        {
+          "value": "linear-gradient(135deg, rgba(46, 204, 113, 0.18), rgba(58, 138, 92, 0.1))",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "div.app-brand-mark"
+          ]
+        },
+        {
+          "value": "linear-gradient(135deg, rgba(46, 204, 113, 0.14), rgba(26, 188, 156, 0.08))",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "a.app-nav-link app-nav-link-active"
+          ]
+        }
+      ],
+      "backdropBlurElements": 3,
+      "shellText": [
+        "M3",
+        "M3TRIC",
+        "Connected Platform",
+        "Operational intelligence across sensors, territory, and environmental signals.",
+        "Navigation",
+        "Inicio",
+        "Mapa",
+        "Sensores",
+        "Análisis",
+        "Alertas",
+        "Reportes",
+        "Configuración",
+        "Session",
+        "Hola, smoke-ui-1790911726",
+        "Rol: Administrador — Puedes crear, editar y administrar todo en la plataforma.",
+        "Log out",
+        "v0.1.0 · landing-aligned UI"
+      ],
+      "shellKind": "aside",
+      "asideWidth": 288,
+      "headings": [
+        {
+          "tag": "h1",
+          "text": "Alertas"
+        }
+      ],
+      "buttons": [
+        "Log out"
+      ],
+      "placeholders": [],
+      "texts": [
+        "M3",
+        "M3TRIC",
+        "Connected Platform",
+        "Operational intelligence across sensors, territory, and environmental signals.",
+        "Navigation",
+        "Inicio",
+        "Mapa",
+        "Sensores",
+        "Análisis",
+        "Alertas",
+        "Reportes",
+        "Configuración",
+        "Session",
+        "Hola, smoke-ui-1790911726",
+        "Rol: Administrador — Puedes crear, editar y administrar todo en la plataforma.",
+        "Log out",
+        "v0.1.0 · landing-aligned UI",
+        "En construcción",
+        "Alertas",
+        "Las alertas conectadas al registry y a las reglas de calidad llegan en una fase posterior del programa.",
+        "Fases posteriores",
+        "Esta sección todavía no está disponible en este ambiente. Se habilitará como parte de",
+        "Fases posteriores",
+        "del programa Enterprise Agro."
+      ],
+      "stillShowsLoadingText": false,
+      "scrollHeight": 900,
+      "webgl": true,
+      "menuProbe": {
+        "ariaHaspopup": 0,
+        "roleMenu": 0,
+        "listboxOrCombobox": 0,
+        "details": 0,
+        "selects": 0,
+        "ariaExpanded": 0,
+        "userMenuLikeButtons": []
+      },
+      "screenshot1440": "alerts-1440.png",
+      "screenshot390": "alerts-390.png"
+    },
+    "/reports": {
+      "source": "link on /dashboard (aside: \"Reportes\")",
+      "httpStatus": 200,
+      "finalPath": "/reports",
+      "title": "M3TRIC | Geospatial Analytics Platform",
+      "lang": "en",
+      "url": "/reports",
+      "body": {
+        "tag": "body",
+        "classes": "bg-m3tric-surface text-slate-900 antialiased",
+        "sample": "M3M3TRICConnected PlatformOperational intelligence across se",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "lineHeight": "24px",
+        "letterSpacing": "normal",
+        "color": "rgb(15, 23, 42)",
+        "textTransform": "none"
+      },
+      "h1": {
+        "tag": "h1",
+        "classes": "page-title",
+        "sample": "Reportes",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "36px",
+        "fontWeight": "700",
+        "lineHeight": "40px",
+        "letterSpacing": "-0.9px",
+        "color": "rgb(27, 67, 50)",
+        "textTransform": "none"
+      },
+      "h2": null,
+      "h3": null,
+      "eyebrow": {
+        "tag": "div",
+        "classes": "app-eyebrow",
+        "sample": "Connected Platform",
+        "fontFamily": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", monospace",
+        "fontSize": "11px",
+        "fontWeight": "400",
+        "lineHeight": "16.5px",
+        "letterSpacing": "3.08px",
+        "color": "rgb(58, 138, 92)",
+        "textTransform": "uppercase"
+      },
+      "navLink": {
+        "tag": "a",
+        "classes": "app-nav-link",
+        "sample": "Inicio",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "500",
+        "lineHeight": "20px",
+        "letterSpacing": "normal",
+        "color": "rgb(74, 110, 90)",
+        "textTransform": "none"
+      },
+      "button": {
+        "tag": "button",
+        "classes": "btn-secondary w-full justify-center",
+        "sample": "Log out",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "lineHeight": "20px",
+        "letterSpacing": "normal",
+        "color": "rgb(27, 67, 50)",
+        "textTransform": "none"
+      },
+      "familyCounts": {
+        "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif": 18,
+        "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", monospace": 4
+      },
+      "fontCheck": {
+        "Inter": true,
+        "JetBrainsMono": false
+      },
+      "fontFacesLoaded": [
+        "Inter 400 normal [loaded]",
+        "Inter 500 normal [loaded]",
+        "Inter 600 normal [loaded]",
+        "Inter 700 normal [loaded]"
+      ],
+      "fontFacesAll": [
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [loaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [loaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [loaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [loaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]"
+      ],
+      "bodyBackgroundImage": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.1), rgba(0, 0, 0, 0) 24%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+      "htmlBackgroundImage": "none",
+      "gradientElements": 4,
+      "gradientPseudoElements": 0,
+      "distinctGradients": [
+        {
+          "value": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.1), rgba(0, 0, 0, 0) 24%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "body.bg-m3tric-surface text-slate-900 antialiased"
+          ]
+        },
+        {
+          "value": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.12), rgba(0, 0, 0, 0) 18%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "div.app-shell"
+          ]
+        },
+        {
+          "value": "linear-gradient(135deg, rgba(46, 204, 113, 0.18), rgba(58, 138, 92, 0.1))",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "div.app-brand-mark"
+          ]
+        },
+        {
+          "value": "linear-gradient(135deg, rgba(46, 204, 113, 0.14), rgba(26, 188, 156, 0.08))",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "a.app-nav-link app-nav-link-active"
+          ]
+        }
+      ],
+      "backdropBlurElements": 3,
+      "shellText": [
+        "M3",
+        "M3TRIC",
+        "Connected Platform",
+        "Operational intelligence across sensors, territory, and environmental signals.",
+        "Navigation",
+        "Inicio",
+        "Mapa",
+        "Sensores",
+        "Análisis",
+        "Alertas",
+        "Reportes",
+        "Configuración",
+        "Session",
+        "Hola, smoke-ui-1790911726",
+        "Rol: Administrador — Puedes crear, editar y administrar todo en la plataforma.",
+        "Log out",
+        "v0.1.0 · landing-aligned UI"
+      ],
+      "shellKind": "aside",
+      "asideWidth": 288,
+      "headings": [
+        {
+          "tag": "h1",
+          "text": "Reportes"
+        }
+      ],
+      "buttons": [
+        "Log out"
+      ],
+      "placeholders": [],
+      "texts": [
+        "M3",
+        "M3TRIC",
+        "Connected Platform",
+        "Operational intelligence across sensors, territory, and environmental signals.",
+        "Navigation",
+        "Inicio",
+        "Mapa",
+        "Sensores",
+        "Análisis",
+        "Alertas",
+        "Reportes",
+        "Configuración",
+        "Session",
+        "Hola, smoke-ui-1790911726",
+        "Rol: Administrador — Puedes crear, editar y administrar todo en la plataforma.",
+        "Log out",
+        "v0.1.0 · landing-aligned UI",
+        "En construcción",
+        "Reportes",
+        "La generación de reportes conectada al backend nuevo llega en una fase posterior del programa.",
+        "Fases posteriores",
+        "Esta sección todavía no está disponible en este ambiente. Se habilitará como parte de",
+        "Fases posteriores",
+        "del programa Enterprise Agro."
+      ],
+      "stillShowsLoadingText": false,
+      "scrollHeight": 900,
+      "webgl": true,
+      "menuProbe": {
+        "ariaHaspopup": 0,
+        "roleMenu": 0,
+        "listboxOrCombobox": 0,
+        "details": 0,
+        "selects": 0,
+        "ariaExpanded": 0,
+        "userMenuLikeButtons": []
+      },
+      "screenshot1440": "reports-1440.png",
+      "screenshot390": "reports-390.png"
+    },
+    "/settings": {
+      "source": "link on /dashboard (aside: \"Configuración\")",
+      "httpStatus": 200,
+      "finalPath": "/settings",
+      "title": "M3TRIC | Geospatial Analytics Platform",
+      "lang": "en",
+      "url": "/settings",
+      "body": {
+        "tag": "body",
+        "classes": "bg-m3tric-surface text-slate-900 antialiased",
+        "sample": "M3M3TRICConnected PlatformOperational intelligence across se",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "lineHeight": "24px",
+        "letterSpacing": "normal",
+        "color": "rgb(15, 23, 42)",
+        "textTransform": "none"
+      },
+      "h1": {
+        "tag": "h1",
+        "classes": "page-title",
+        "sample": "Configuración",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "36px",
+        "fontWeight": "700",
+        "lineHeight": "40px",
+        "letterSpacing": "-0.9px",
+        "color": "rgb(27, 67, 50)",
+        "textTransform": "none"
+      },
+      "h2": {
+        "tag": "h2",
+        "classes": "text-lg font-semibold text-[color:var(--app-text)]",
+        "sample": "Sesión",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "18px",
+        "fontWeight": "600",
+        "lineHeight": "28px",
+        "letterSpacing": "normal",
+        "color": "rgb(27, 67, 50)",
+        "textTransform": "none"
+      },
+      "h3": null,
+      "eyebrow": {
+        "tag": "div",
+        "classes": "app-eyebrow",
+        "sample": "Connected Platform",
+        "fontFamily": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", monospace",
+        "fontSize": "11px",
+        "fontWeight": "400",
+        "lineHeight": "16.5px",
+        "letterSpacing": "3.08px",
+        "color": "rgb(58, 138, 92)",
+        "textTransform": "uppercase"
+      },
+      "navLink": {
+        "tag": "a",
+        "classes": "app-nav-link",
+        "sample": "Inicio",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "500",
+        "lineHeight": "20px",
+        "letterSpacing": "normal",
+        "color": "rgb(74, 110, 90)",
+        "textTransform": "none"
+      },
+      "button": {
+        "tag": "button",
+        "classes": "btn-secondary w-full justify-center",
+        "sample": "Log out",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "lineHeight": "20px",
+        "letterSpacing": "normal",
+        "color": "rgb(27, 67, 50)",
+        "textTransform": "none"
+      },
+      "familyCounts": {
+        "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif": 53,
+        "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", monospace": 4
+      },
+      "fontCheck": {
+        "Inter": true,
+        "JetBrainsMono": false
+      },
+      "fontFacesLoaded": [
+        "Inter 400 normal [loaded]",
+        "Inter 500 normal [loaded]",
+        "Inter 600 normal [loaded]",
+        "Inter 700 normal [loaded]"
+      ],
+      "fontFacesAll": [
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [loaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [loaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [loaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [loaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]"
+      ],
+      "bodyBackgroundImage": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.1), rgba(0, 0, 0, 0) 24%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+      "htmlBackgroundImage": "none",
+      "gradientElements": 5,
+      "gradientPseudoElements": 0,
+      "distinctGradients": [
+        {
+          "value": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.1), rgba(0, 0, 0, 0) 24%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "body.bg-m3tric-surface text-slate-900 antialiased"
+          ]
+        },
+        {
+          "value": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.12), rgba(0, 0, 0, 0) 18%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "div.app-shell"
+          ]
+        },
+        {
+          "value": "linear-gradient(135deg, rgba(46, 204, 113, 0.18), rgba(58, 138, 92, 0.1))",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "div.app-brand-mark"
+          ]
+        },
+        {
+          "value": "linear-gradient(135deg, rgba(46, 204, 113, 0.14), rgba(26, 188, 156, 0.08))",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "a.app-nav-link app-nav-link-active"
+          ]
+        },
+        {
+          "value": "linear-gradient(135deg, rgb(27, 67, 50), rgb(58, 138, 92))",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "button.btn-primary"
+          ]
+        }
+      ],
+      "backdropBlurElements": 2,
+      "shellText": [
+        "M3",
+        "M3TRIC",
+        "Connected Platform",
+        "Operational intelligence across sensors, territory, and environmental signals.",
+        "Navigation",
+        "Inicio",
+        "Mapa",
+        "Sensores",
+        "Análisis",
+        "Alertas",
+        "Reportes",
+        "Configuración",
+        "Session",
+        "Hola, smoke-ui-1790911726",
+        "Rol: Administrador — Puedes crear, editar y administrar todo en la plataforma.",
+        "Log out",
+        "v0.1.0 · landing-aligned UI"
+      ],
+      "shellKind": "aside",
+      "asideWidth": 288,
+      "headings": [
+        {
+          "tag": "h1",
+          "text": "Configuración"
+        },
+        {
+          "tag": "h2",
+          "text": "Sesión"
+        },
+        {
+          "tag": "h2",
+          "text": "Cuenta"
+        },
+        {
+          "tag": "h2",
+          "text": "Datos"
+        },
+        {
+          "tag": "h2",
+          "text": "Permisos"
+        },
+        {
+          "tag": "h2",
+          "text": "Notificaciones"
+        }
+      ],
+      "buttons": [
+        "Log out",
+        "Guardar prefijo"
+      ],
+      "placeholders": [
+        "finca-"
+      ],
+      "texts": [
+        "M3",
+        "M3TRIC",
+        "Connected Platform",
+        "Operational intelligence across sensors, territory, and environmental signals.",
+        "Navigation",
+        "Inicio",
+        "Mapa",
+        "Sensores",
+        "Análisis",
+        "Alertas",
+        "Reportes",
+        "Configuración",
+        "Session",
+        "Hola, smoke-ui-1790911726",
+        "Rol: Administrador — Puedes crear, editar y administrar todo en la plataforma.",
+        "Log out",
+        "v0.1.0 · landing-aligned UI",
+        "Cuenta y plataforma",
+        "Configuración",
+        "Tu sesión, el prefijo de tu cuenta, las políticas de datos y lo que tu rol puede hacer aquí.",
+        "Sesión",
+        "Usuario:",
+        "smoke-ui-1790911726",
+        "Rol:",
+        "Administrador",
+        "Acceso completo: ves y gestionas los sensores, lotes y prefijos de todas las cuentas.",
+        "Cuenta",
+        "Esta cuenta todavía no tiene un prefijo asignado.",
+        "En cuanto se cree el primer sensor de esta cuenta, el prefijo queda fijo para siempre — puedes editarlo desde aquí o desde Sensores mientras eso no haya pasado.",
+        "Prefijo",
+        "Guardar prefijo",
+        "Datos",
+        "Cuánto tiempo conserva la plataforma cada tipo de dato. Es información de la política vigente, no un control que puedas cambiar aquí.",
+        "Lecturas procesadas (frames):",
+        "se conservan 30 días desde su recepción.",
+        "Datos crudos del dispositivo (raw):",
+        "se conservan 90 días desde su recepción.",
+        "Alertas:",
+        "cuando el módulo de Alertas esté disponible, un episodio resuelto se conservará 30 días adicionales; uno activo o reconocido nunca se borra por antigüedad.",
+        "Permisos",
+        "Lo que tu rol actual (",
+        "Administrador",
+        ") puede hacer en esta plataforma.",
+        "Acción",
+        "Estado",
+        "Ver sensores y su estado",
+        "Permitido",
+        "Crear y editar sensores",
+        "Permitido",
+        "Ver y asignar el prefijo de la cuenta",
+        "Permitido",
+        "Ver lotes en el mapa",
+        "Permitido",
+        "Crear y editar lotes",
+        "Permitido",
+        "Ver y gestionar cuentas distintas a la propia",
+        "Permitido",
+        "Notificaciones",
+        "Las notificaciones todavía no están configuradas para esta cuenta. Esta plataforma no envía avisos por correo, SMS ni push todavía."
+      ],
+      "stillShowsLoadingText": false,
+      "scrollHeight": 1473,
+      "webgl": true,
+      "menuProbe": {
+        "ariaHaspopup": 0,
+        "roleMenu": 0,
+        "listboxOrCombobox": 0,
+        "details": 0,
+        "selects": 0,
+        "ariaExpanded": 0,
+        "userMenuLikeButtons": []
+      },
+      "screenshot1440": "settings-1440.png",
+      "screenshot390": "settings-390.png"
+    },
+    "/live/raw": {
+      "source": "known from source, not linked in the shell",
+      "httpStatus": 200,
+      "finalPath": "/live/raw",
+      "title": "M3TRIC | Geospatial Analytics Platform",
+      "lang": "en",
+      "url": "/live/raw",
+      "body": {
+        "tag": "body",
+        "classes": "bg-m3tric-surface text-slate-900 antialiased",
+        "sample": "M3TRIC PlatformPreview público de conectividadTelemetría rec",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "lineHeight": "24px",
+        "letterSpacing": "normal",
+        "color": "rgb(15, 23, 42)",
+        "textTransform": "none"
+      },
+      "h1": {
+        "tag": "h1",
+        "classes": "max-w-3xl text-3xl font-bold tracking-tight text-[color:var(--app-text)] md:text-5xl",
+        "sample": "Telemetría recibida en AWS",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "48px",
+        "fontWeight": "700",
+        "lineHeight": "48px",
+        "letterSpacing": "-1.2px",
+        "color": "rgb(27, 67, 50)",
+        "textTransform": "none"
+      },
+      "h2": {
+        "tag": "h2",
+        "classes": "mt-2 text-xl font-semibold text-[color:var(--app-text)]",
+        "sample": "Recepciones visibles",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "20px",
+        "fontWeight": "600",
+        "lineHeight": "28px",
+        "letterSpacing": "normal",
+        "color": "rgb(27, 67, 50)",
+        "textTransform": "none"
+      },
+      "h3": {
+        "tag": "h3",
+        "classes": "mt-4 font-semibold text-[color:var(--app-text)]",
+        "sample": "Aún no hay llegadas",
+        "fontFamily": "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "fontSize": "16px",
+        "fontWeight": "600",
+        "lineHeight": "24px",
+        "letterSpacing": "normal",
+        "color": "rgb(27, 67, 50)",
+        "textTransform": "none"
+      },
+      "eyebrow": {
+        "tag": "p",
+        "classes": "app-eyebrow",
+        "sample": "M3TRIC Platform",
+        "fontFamily": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", monospace",
+        "fontSize": "11px",
+        "fontWeight": "400",
+        "lineHeight": "16.5px",
+        "letterSpacing": "3.08px",
+        "color": "rgb(58, 138, 92)",
+        "textTransform": "uppercase"
+      },
+      "navLink": null,
+      "button": null,
+      "familyCounts": {
+        "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", monospace": 5,
+        "Inter, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif": 12
+      },
+      "fontCheck": {
+        "Inter": true,
+        "JetBrainsMono": false
+      },
+      "fontFacesLoaded": [
+        "Inter 400 normal [loaded]",
+        "Inter 600 normal [loaded]",
+        "Inter 700 normal [loaded]"
+      ],
+      "fontFacesAll": [
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [unloaded]",
+        "Inter 400 normal [loaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 500 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [unloaded]",
+        "Inter 600 normal [loaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [unloaded]",
+        "Inter 700 normal [loaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 400 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]",
+        "JetBrains Mono 500 normal [unloaded]"
+      ],
+      "bodyBackgroundImage": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.1), rgba(0, 0, 0, 0) 24%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+      "htmlBackgroundImage": "none",
+      "gradientElements": 5,
+      "gradientPseudoElements": 0,
+      "distinctGradients": [
+        {
+          "value": "radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.1), rgba(0, 0, 0, 0) 24%), linear-gradient(rgb(255, 255, 255) 0%, rgb(247, 250, 248) 100%)",
+          "count": 1,
+          "pseudoCount": 0,
+          "samples": [
+            "body.bg-m3tric-surface text-slate-900 antialiased"
+          ]
+        },
+        {
+          "value": "linear-gradient(135deg, rgba(46, 204, 113, 0.18), rgba(58, 138, 92, 0.1))",
+          "count": 4,
+          "pseudoCount": 0,
+          "samples": [
+            "span.app-brand-mark",
+            "span.app-brand-mark shrink-0",
+            "span.app-brand-mark shrink-0"
+          ]
+        }
+      ],
+      "backdropBlurElements": 1,
+      "shellText": [
+        "M3TRIC Platform",
+        "Preview público de conectividad",
+        "Telemetría recibida en AWS",
+        "Ventana operativa acotada de llegadas MQTT almacenadas. Por seguridad, esta vista muestra solo metadatos y nunca expone el contenido raw ni su representación Base64.",
+        "Telemetría raw · sin parsear",
+        "Actualización cada 15 segundos"
+      ],
+      "shellKind": "header/nav (no sidebar)",
+      "asideWidth": null,
+      "headings": [
+        {
+          "tag": "h1",
+          "text": "Telemetría recibida en AWS"
+        },
+        {
+          "tag": "h2",
+          "text": "Recepciones visibles"
+        },
+        {
+          "tag": "h3",
+          "text": "Aún no hay llegadas"
+        }
+      ],
+      "buttons": [],
+      "placeholders": [],
+      "texts": [
+        "M3TRIC Platform",
+        "Preview público de conectividad",
+        "Telemetría recibida en AWS",
+        "Ventana operativa acotada de llegadas MQTT almacenadas. Por seguridad, esta vista muestra solo metadatos y nunca expone el contenido raw ni su representación Base64.",
+        "Telemetría raw · sin parsear",
+        "Actualización cada 15 segundos",
+        "Objetos inspeccionados",
+        "0",
+        "Última recepción visible",
+        "Sin recepciones",
+        "Dispositivo",
+        "Sin dispositivo",
+        "Arrivals",
+        "Recepciones visibles",
+        "Máximo 20 registros · solo metadatos",
+        "Aún no hay llegadas",
+        "Esta vista se actualizará automáticamente cuando AWS registre telemetría nueva."
+      ],
+      "stillShowsLoadingText": false,
+      "scrollHeight": 900,
+      "webgl": true,
+      "menuProbe": {
+        "ariaHaspopup": 0,
+        "roleMenu": 0,
+        "listboxOrCombobox": 0,
+        "details": 0,
+        "selects": 0,
+        "ariaExpanded": 0,
+        "userMenuLikeButtons": []
+      },
+      "screenshot1440": "live-raw-1440.png",
+      "screenshot390": "live-raw-390.png"
+    }
+  },
+  "modals": [
+    {
+      "phase": "sensors",
+      "widthLabel": "1440",
+      "order": 1,
+      "kind": "tutorial",
+      "screenshot": "modal-sensors-1-tutorial-1440.png",
+      "dismissedWith": "aria-label \"Cerrar tutorial\": clicked \"Cerrar tutorial\"",
+      "dialog": {
+        "role": "dialog",
+        "ariaLabel": null,
+        "heading": "1. Crea el sensor",
+        "zIndex": 50,
+        "depth": 8,
+        "size": {
+          "w": 512,
+          "h": 345
+        },
+        "text": "CÓMO FUNCIONA · PASO 1 DE 5 1. Crea el sensor Dale un nombre a tu dispositivo y elige su tipo y escala. La plataforma genera automáticamente un identificador y una dirección de conexión, que puedes ajustar antes de confirmar. Anterior Siguiente Ver luego",
+        "buttons": [
+          {
+            "text": "",
+            "aria": "Cerrar tutorial"
+          },
+          {
+            "text": "",
+            "aria": "Ir al paso 1: 1. Crea el sensor"
+          },
+          {
+            "text": "",
+            "aria": "Ir al paso 2: 2. Genera las credenciales"
+          },
+          {
+            "text": "",
+            "aria": "Ir al paso 3: 3. Guarda el archivo .zip"
+          },
+          {
+            "text": "",
+            "aria": "Ir al paso 4: 4. Configura el dispositivo"
+          },
+          {
+            "text": "",
+            "aria": "Ir al paso 5: 5. Ve llegar el primer dato"
+          },
+          {
+            "text": "Anterior",
+            "aria": null
+          },
+          {
+            "text": "Siguiente",
+            "aria": null
+          },
+          {
+            "text": "Ver luego",
+            "aria": null
+          }
+        ]
+      },
+      "allOpenDialogs": [
+        {
+          "role": "dialog",
+          "ariaLabel": null,
+          "heading": "1. Crea el sensor",
+          "zIndex": 50
+        }
+      ]
+    }
+  ],
+  "extras": [
+    {
+      "name": "tutorial slide 3 (danger notice)",
+      "file": "extra-tutorial-slide3-1440.png"
+    },
+    {
+      "name": "tutorial slide 5 (Empezar visible)",
+      "file": "extra-tutorial-slide5-1440.png"
+    },
+    {
+      "name": "wizard step 0",
+      "file": "extra-wizard-step0-1440.png"
+    },
+    {
+      "name": "wizard step 1 (sensor details form)",
+      "file": "extra-wizard-step1-1440.png"
+    },
+    {
+      "name": "wizard exit confirmation",
+      "file": "extra-wizard-exit-confirm-1440.png"
+    }
+  ],
+  "menus": {
+    "probeByRoute": {
+      "/dashboard": {
+        "ariaHaspopup": 0,
+        "roleMenu": 0,
+        "listboxOrCombobox": 0,
+        "details": 1,
+        "selects": 1,
+        "ariaExpanded": 0,
+        "userMenuLikeButtons": []
+      },
+      "/map": {
+        "ariaHaspopup": 0,
+        "roleMenu": 0,
+        "listboxOrCombobox": 0,
+        "details": 2,
+        "selects": 0,
+        "ariaExpanded": 0,
+        "userMenuLikeButtons": []
+      },
+      "/sensors": {
+        "ariaHaspopup": 0,
+        "roleMenu": 0,
+        "listboxOrCombobox": 0,
+        "details": 0,
+        "selects": 2,
+        "ariaExpanded": 2,
+        "userMenuLikeButtons": []
+      },
+      "/live": {
+        "ariaHaspopup": 0,
+        "roleMenu": 0,
+        "listboxOrCombobox": 0,
+        "details": 0,
+        "selects": 0,
+        "ariaExpanded": 0,
+        "userMenuLikeButtons": []
+      },
+      "/alerts": {
+        "ariaHaspopup": 0,
+        "roleMenu": 0,
+        "listboxOrCombobox": 0,
+        "details": 0,
+        "selects": 0,
+        "ariaExpanded": 0,
+        "userMenuLikeButtons": []
+      },
+      "/reports": {
+        "ariaHaspopup": 0,
+        "roleMenu": 0,
+        "listboxOrCombobox": 0,
+        "details": 0,
+        "selects": 0,
+        "ariaExpanded": 0,
+        "userMenuLikeButtons": []
+      },
+      "/settings": {
+        "ariaHaspopup": 0,
+        "roleMenu": 0,
+        "listboxOrCombobox": 0,
+        "details": 0,
+        "selects": 0,
+        "ariaExpanded": 0,
+        "userMenuLikeButtons": []
+      },
+      "/live/raw": {
+        "ariaHaspopup": 0,
+        "roleMenu": 0,
+        "listboxOrCombobox": 0,
+        "details": 0,
+        "selects": 0,
+        "ariaExpanded": 0,
+        "userMenuLikeButtons": []
+      }
+    },
+    "captured": {
+      "route": "/map",
+      "selector": "main details:not([open]) > summary",
+      "label": "Sensores en el mapa (2)",
+      "screenshot": "menu-open-map-1440.png"
+    }
+  },
+  "redirects": {
+    "/": "/dashboard",
+    "/analytics": "/live"
+  },
+  "consoleErrors": {},
+  "consoleWarnings": {
+    "/post-login@1440": [
+      {
+        "text": "[.WebGL-0x11c0044f800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "url": "https://d3pz2gipvkcx1b.cloudfront.net/dashboard"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/dfa2eae9-facd-4a03-877b-452b6dda66b0"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/dfa2eae9-facd-4a03-877b-452b6dda66b0"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/dfa2eae9-facd-4a03-877b-452b6dda66b0"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/dfa2eae9-facd-4a03-877b-452b6dda66b0"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/dfa2eae9-facd-4a03-877b-452b6dda66b0"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/dfa2eae9-facd-4a03-877b-452b6dda66b0"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/dfa2eae9-facd-4a03-877b-452b6dda66b0"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/dfa2eae9-facd-4a03-877b-452b6dda66b0"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/dfa2eae9-facd-4a03-877b-452b6dda66b0"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/dfa2eae9-facd-4a03-877b-452b6dda66b0"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/dfa2eae9-facd-4a03-877b-452b6dda66b0"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/dfa2eae9-facd-4a03-877b-452b6dda66b0"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/dfa2eae9-facd-4a03-877b-452b6dda66b0"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/dfa2eae9-facd-4a03-877b-452b6dda66b0"
+      },
+      {
+        "text": "[.WebGL-0x11c0044f800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "url": "https://d3pz2gipvkcx1b.cloudfront.net/dashboard"
+      },
+      {
+        "text": "[.WebGL-0x11c0044f800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "url": "https://d3pz2gipvkcx1b.cloudfront.net/dashboard"
+      },
+      {
+        "text": "[.WebGL-0x11c0044f800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)",
+        "url": "https://d3pz2gipvkcx1b.cloudfront.net/dashboard"
+      }
+    ],
+    "/dashboard@1440": [
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/20412ad2-c0a2-4b4f-8b11-2e93f34f1fda"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/20412ad2-c0a2-4b4f-8b11-2e93f34f1fda"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/20412ad2-c0a2-4b4f-8b11-2e93f34f1fda"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/20412ad2-c0a2-4b4f-8b11-2e93f34f1fda"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/20412ad2-c0a2-4b4f-8b11-2e93f34f1fda"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/20412ad2-c0a2-4b4f-8b11-2e93f34f1fda"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/20412ad2-c0a2-4b4f-8b11-2e93f34f1fda"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/20412ad2-c0a2-4b4f-8b11-2e93f34f1fda"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/20412ad2-c0a2-4b4f-8b11-2e93f34f1fda"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/20412ad2-c0a2-4b4f-8b11-2e93f34f1fda"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/20412ad2-c0a2-4b4f-8b11-2e93f34f1fda"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/20412ad2-c0a2-4b4f-8b11-2e93f34f1fda"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/20412ad2-c0a2-4b4f-8b11-2e93f34f1fda"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/20412ad2-c0a2-4b4f-8b11-2e93f34f1fda"
+      }
+    ],
+    "/map@1440": [
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/cddfedd1-7359-4709-b1aa-f53a796b40ab"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/cddfedd1-7359-4709-b1aa-f53a796b40ab"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/cddfedd1-7359-4709-b1aa-f53a796b40ab"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/cddfedd1-7359-4709-b1aa-f53a796b40ab"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/cddfedd1-7359-4709-b1aa-f53a796b40ab"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/cddfedd1-7359-4709-b1aa-f53a796b40ab"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/cddfedd1-7359-4709-b1aa-f53a796b40ab"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/cddfedd1-7359-4709-b1aa-f53a796b40ab"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/cddfedd1-7359-4709-b1aa-f53a796b40ab"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/cddfedd1-7359-4709-b1aa-f53a796b40ab"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/cddfedd1-7359-4709-b1aa-f53a796b40ab"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/cddfedd1-7359-4709-b1aa-f53a796b40ab"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/cddfedd1-7359-4709-b1aa-f53a796b40ab"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/cddfedd1-7359-4709-b1aa-f53a796b40ab"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/cddfedd1-7359-4709-b1aa-f53a796b40ab"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/cddfedd1-7359-4709-b1aa-f53a796b40ab"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/cddfedd1-7359-4709-b1aa-f53a796b40ab"
+      }
+    ],
+    "/@redirect-probe": [
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/636e3a2e-f99a-4568-885f-efc0ad71908f"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/636e3a2e-f99a-4568-885f-efc0ad71908f"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/636e3a2e-f99a-4568-885f-efc0ad71908f"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/636e3a2e-f99a-4568-885f-efc0ad71908f"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/636e3a2e-f99a-4568-885f-efc0ad71908f"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/636e3a2e-f99a-4568-885f-efc0ad71908f"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/636e3a2e-f99a-4568-885f-efc0ad71908f"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/636e3a2e-f99a-4568-885f-efc0ad71908f"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/636e3a2e-f99a-4568-885f-efc0ad71908f"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/636e3a2e-f99a-4568-885f-efc0ad71908f"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/636e3a2e-f99a-4568-885f-efc0ad71908f"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/636e3a2e-f99a-4568-885f-efc0ad71908f"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/636e3a2e-f99a-4568-885f-efc0ad71908f"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/636e3a2e-f99a-4568-885f-efc0ad71908f"
+      }
+    ],
+    "/dashboard@390": [
+      {
+        "text": "Map cannot fit within canvas with the given bounds, padding, and/or offset.",
+        "url": "https://d3pz2gipvkcx1b.cloudfront.net/assets/maplibre-gl-DzqwSKPX.js"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/d8b859f4-53ed-4ef0-a446-d9107a4e0272"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/d8b859f4-53ed-4ef0-a446-d9107a4e0272"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/d8b859f4-53ed-4ef0-a446-d9107a4e0272"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/d8b859f4-53ed-4ef0-a446-d9107a4e0272"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/d8b859f4-53ed-4ef0-a446-d9107a4e0272"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/d8b859f4-53ed-4ef0-a446-d9107a4e0272"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/d8b859f4-53ed-4ef0-a446-d9107a4e0272"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/d8b859f4-53ed-4ef0-a446-d9107a4e0272"
+      }
+    ],
+    "/map@390": [
+      {
+        "text": "Map cannot fit within canvas with the given bounds, padding, and/or offset.",
+        "url": "https://d3pz2gipvkcx1b.cloudfront.net/assets/maplibre-gl-DzqwSKPX.js"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/993b2b71-43d5-42da-ae6d-e0585ba94a60"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/993b2b71-43d5-42da-ae6d-e0585ba94a60"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/993b2b71-43d5-42da-ae6d-e0585ba94a60"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/993b2b71-43d5-42da-ae6d-e0585ba94a60"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/993b2b71-43d5-42da-ae6d-e0585ba94a60"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/993b2b71-43d5-42da-ae6d-e0585ba94a60"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/993b2b71-43d5-42da-ae6d-e0585ba94a60"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/993b2b71-43d5-42da-ae6d-e0585ba94a60"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/993b2b71-43d5-42da-ae6d-e0585ba94a60"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/993b2b71-43d5-42da-ae6d-e0585ba94a60"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/993b2b71-43d5-42da-ae6d-e0585ba94a60"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/993b2b71-43d5-42da-ae6d-e0585ba94a60"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/993b2b71-43d5-42da-ae6d-e0585ba94a60"
+      },
+      {
+        "text": "Expected value to be of type number, but found null instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/993b2b71-43d5-42da-ae6d-e0585ba94a60"
+      },
+      {
+        "text": "Expected value to be of type number, but found string instead.",
+        "url": "blob:https://d3pz2gipvkcx1b.cloudfront.net/993b2b71-43d5-42da-ae6d-e0585ba94a60"
+      }
+    ]
+  },
+  "network": {},
+  "mobileOverflow": {
+    "/login": {
+      "innerWidth": 390,
+      "docScrollWidth": 390,
+      "docClientWidth": 390,
+      "overflowsHorizontally": false,
+      "asideWidth": null,
+      "mainWidth": null,
+      "scrollHeight": 844
+    },
+    "/dashboard": {
+      "innerWidth": 390,
+      "docScrollWidth": 390,
+      "docClientWidth": 390,
+      "overflowsHorizontally": false,
+      "asideWidth": 288,
+      "mainWidth": 102,
+      "scrollHeight": 3282
+    },
+    "/map": {
+      "innerWidth": 390,
+      "docScrollWidth": 390,
+      "docClientWidth": 390,
+      "overflowsHorizontally": false,
+      "asideWidth": 288,
+      "mainWidth": 102,
+      "scrollHeight": 1264
+    },
+    "/sensors": {
+      "innerWidth": 390,
+      "docScrollWidth": 390,
+      "docClientWidth": 390,
+      "overflowsHorizontally": false,
+      "asideWidth": 288,
+      "mainWidth": 102,
+      "scrollHeight": 3927
+    },
+    "/live": {
+      "innerWidth": 390,
+      "docScrollWidth": 390,
+      "docClientWidth": 390,
+      "overflowsHorizontally": false,
+      "asideWidth": null,
+      "mainWidth": 390,
+      "scrollHeight": 844
+    },
+    "/alerts": {
+      "innerWidth": 390,
+      "docScrollWidth": 390,
+      "docClientWidth": 390,
+      "overflowsHorizontally": false,
+      "asideWidth": 288,
+      "mainWidth": 102,
+      "scrollHeight": 1123
+    },
+    "/reports": {
+      "innerWidth": 390,
+      "docScrollWidth": 390,
+      "docClientWidth": 390,
+      "overflowsHorizontally": false,
+      "asideWidth": 288,
+      "mainWidth": 102,
+      "scrollHeight": 1099
+    },
+    "/settings": {
+      "innerWidth": 390,
+      "docScrollWidth": 390,
+      "docClientWidth": 390,
+      "overflowsHorizontally": false,
+      "asideWidth": 288,
+      "mainWidth": 102,
+      "scrollHeight": 5084
+    },
+    "/live/raw": {
+      "innerWidth": 390,
+      "docScrollWidth": 390,
+      "docClientWidth": 390,
+      "overflowsHorizontally": false,
+      "asideWidth": null,
+      "mainWidth": 390,
+      "scrollHeight": 1271
+    }
+  },
+  "storageKeys": {
+    "localStorage": [
+      "m3tric_onboarding_tutorial_seen",
+      "m3tric_auth_session"
+    ],
+    "sessionStorage": []
+  },
+  "loginResult": {
+    "ok": true,
+    "landedOn": "/dashboard"
+  },
+  "landingLinks": [
+    {
+      "href": "/dashboard",
+      "text": "Inicio",
+      "where": "aside"
+    },
+    {
+      "href": "/map",
+      "text": "Mapa",
+      "where": "aside"
+    },
+    {
+      "href": "/sensors",
+      "text": "Sensores",
+      "where": "aside"
+    },
+    {
+      "href": "/live",
+      "text": "Análisis",
+      "where": "aside"
+    },
+    {
+      "href": "/alerts",
+      "text": "Alertas",
+      "where": "aside"
+    },
+    {
+      "href": "/reports",
+      "text": "Reportes",
+      "where": "aside"
+    },
+    {
+      "href": "/settings",
+      "text": "Configuración",
+      "where": "aside"
+    }
+  ],
+  "finishedAt": "2026-10-02T03:36:21.142Z"
+}

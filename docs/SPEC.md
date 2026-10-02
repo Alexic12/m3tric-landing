@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Versión | 3.3 · 2026-10-02 (§3.3 y §3.4 remiten a ADR-010 y al kit `brand/`, DEC-53; §14 y §15 incluyen SPEC-UNIFICACION y ADR-008..010; sin otros cambios) · 3.2 · 2026-10-01 (§10, §11 y §12 actualizados al diseño endurecido tras la auditoría de seguridad: sintetizador con credenciales del CLI, rol de ejecución acotado, `sub` OIDC por rama y workflow, jobs sin token) (v2: 2026-09-30, en el historial de git como `docs/SPEC-landing-v2.md`) |
+| Versión | 3.4 · 2026-10-02 (§3.3 y §3.4 remiten a ADR-010 y al kit `brand/`, DEC-53; §14 y §15 incluyen SPEC-UNIFICACION y ADR-008..010; sin otros cambios) · 3.2 · 2026-10-01 (§10, §11 y §12 actualizados al diseño endurecido tras la auditoría de seguridad: sintetizador con credenciales del CLI, rol de ejecución acotado, `sub` OIDC por rama y workflow, jobs sin token) (v2: 2026-09-30, en el historial de git como `docs/SPEC-landing-v2.md`) |
 | Alcance | Producto/UX, marca, frontend, calidad, infraestructura como código, CI/CD, publicación en AWS y trazabilidad |
 | Fuentes de verdad | `docs/20260428_Manual de marca - Metric.pptx` (raíz del workspace) · `docs/entregables/Anexo_1_Alcance_Tecnico_Landing_AWS_M3TRIC_2026-09-23.pdf` · `README.md` raíz del workspace (capacidades vs. límites) · instrucciones del owner (sesiones 2026-09-30 y 2026-10-01) |
 | Precedencia ante conflicto | Anexo 1 (qué se entrega) > instrucciones del owner > Manual de marca (cómo se ve y suena) > README (qué se puede afirmar) > esta spec |
@@ -120,7 +120,7 @@ Página única, `lang="es-CO"`. Dos zonas: **zona de valor** (lenguaje llano) y 
 | 9 | `#contacto` | Hablemos | **Contacto** + **CTA** | Valor |
 | — | — | Footer | — | — |
 
-Navegación (desktop ≥ 1280 px): Beneficios · Casos de uso · Cómo funciona · Escalas · Preguntas · Técnico · Contacto. A la derecha: enlace **Abrir plataforma**. Sin botón «Hablar con el equipo» en ninguna parte de la página: duplicaba el enlace **Contacto** (decisión del owner, 2026-10-01). En móvil: logo y menú (diálogo modal accesible con la navegación, incluido Contacto, y el CTA **Abrir plataforma**).
+Navegación (desktop ≥ 1280 px): Beneficios · Casos de uso · Cómo funciona · Escalas · Preguntas · Técnico · Contacto. A la derecha: enlace **Abrir plataforma**. **Co-marca:** a la derecha del logo M3TRIC, separado por un hairline, el wordmark de la **Universidad EAFIT** (`src/components/brand/EafitLogo.tsx`; trazado del PNG institucional, pendiente de reemplazo por el vector oficial) en azul EAFIT `#004B85` (RGB 0/75/133, Pantone 294C) sobre la barra blanca y en blanco sobre el hero, con nombre accesible «Universidad EAFIT» y sin enlace (decisión del owner, 2026-10-02; ADR-011). Sin botón «Hablar con el equipo» en ninguna parte de la página: duplicaba el enlace **Contacto** (decisión del owner, 2026-10-01). En móvil: logo y menú (diálogo modal accesible con la navegación, incluido Contacto, y el CTA **Abrir plataforma**).
 
 ### 4.1 Patrones *enterprise* que se aplican
 - Ritmo y retícula: 12 columnas, contenedor 1280 px, márgenes 16/24/32 px, secciones de 96–128 px de alto de respiro.
@@ -329,7 +329,7 @@ Modelo de entrega endurecido (auditoría de seguridad del 2026-10-01, ADR-002; e
 - **ADR-010** DIN 2014 Rounded: licencia y servicio de los archivos (bucket privado; nunca en git).
 
 ## 16. Dependencias del cliente (bloquean producción, no staging)
-1. Dominio productivo + ACM + Route 53 (TLS 1.2+, apex/www) · 2. URL oficial del login de producción · 3. Correo/teléfono de contacto aprobados · 4. Destinatario institucional de la alerta presupuestal · 5. Validación del favicon derivado · 6. Aprobación del copy de Infraestructura y Ambiente (ronda 1) · 7. Licencia web DIN 2014 Rounded (opcional) · 8. Menciones institucionales/aliados · 9. Smoke manual en Safari real y Edge.
+1. Dominio productivo + ACM + Route 53 (TLS 1.2+, apex/www) · 2. URL oficial del login de producción · 3. Correo/teléfono de contacto aprobados · 4. Destinatario institucional de la alerta presupuestal · 5. Validación del favicon derivado · 6. Aprobación del copy de Infraestructura y Ambiente (ronda 1) · 7. Licencia web DIN 2014 Rounded (opcional) · 8. Otros aliados (la Universidad EAFIT ya está autorizada por el owner, 2026-10-02: co-marca en la barra superior; el vector oficial sustituirá al trazado) · 9. Smoke manual en Safari real y Edge.
 
 ## 17. Unidades de trabajo v3
 | WU | Alcance | Modelo |
