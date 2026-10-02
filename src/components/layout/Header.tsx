@@ -166,17 +166,6 @@ export function Header() {
             {cta.platform}
             <ArrowUpRight size={16} strokeWidth={1.5} aria-hidden="true" />
           </a>
-          <Button
-            href="#contacto"
-            variant={solid ? "primary-on-light" : "primary-on-dark"}
-            onClick={open ? closeForNavigation : undefined}
-            className="max-sm:px-4"
-          >
-            <span>
-              {cta.teamVerb}
-              <span className="sr-only xl:not-sr-only"> {cta.teamRest}</span>
-            </span>
-          </Button>
           <button
             ref={buttonRef}
             type="button"
@@ -219,10 +208,7 @@ export function Header() {
             ))}
           </ul>
           <div className="mt-auto flex flex-col gap-3 pt-10 sm:flex-row">
-            <Button href="#contacto" variant="primary-on-dark" size="lg" onClick={closeForNavigation}>
-              {cta.team}
-            </Button>
-            <Button href={siteConfig.platformUrl} variant="ghost-on-dark" size="lg" icon={<ArrowUpRight size={20} strokeWidth={1.5} />}>
+            <Button href={siteConfig.platformUrl} variant="primary-on-dark" size="lg" icon={<ArrowUpRight size={20} strokeWidth={1.5} />}>
               {cta.platform}
             </Button>
           </div>

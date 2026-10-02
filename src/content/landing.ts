@@ -44,9 +44,6 @@ const TEAM_REST = "con el equipo";
 export const cta = {
   platform: `${PLATFORM_VERB} ${PLATFORM_NOUN}`,
   team: `${TEAM_VERB} ${TEAM_REST}`,
-  /** Split form for the compact header button, where the tail is visually hidden on narrow screens. */
-  teamVerb: TEAM_VERB,
-  teamRest: TEAM_REST,
   writeTeam: "Escribir al equipo",
   mailSubject: "Contacto desde el sitio M3TRIC",
 } as const;

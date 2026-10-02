@@ -4,6 +4,11 @@ Todas las versiones de la landing de M3TRIC.
 
 ---
 
+## [3.1.1] - 2026-10-01
+
+### Cambiado
+- Barra superior: se retira el botón «Hablar con el equipo» (escritorio, móvil y menú) porque duplicaba el enlace «Contacto». El CTA se mantiene en el hero, en la banda tras los casos de uso y en la sección de contacto. En el menú móvil, «Abrir plataforma» pasa a ser el CTA principal.
+
 ## [3.1.0] - 2026-10-01
 
 Endurecimiento de seguridad de la cadena de entrega tras la auditoría, robustez de CI y QA en vivo contra CloudFront. Especificación: `docs/SPEC.md` (v3.2). Release en vivo: `deploy-3-7c618b7`.
