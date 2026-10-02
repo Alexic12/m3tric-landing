@@ -4,6 +4,43 @@ Todas las versiones de la landing de M3TRIC.
 
 ---
 
+## [3.2.0] - 2026-10-02
+
+Identidad compartida entre la landing y la plataforma: kit de marca versionado y decisiones registradas. Especificación: `docs/SPEC-UNIFICACION.md` (v1.0); `docs/SPEC.md` pasa a la versión 3.3. Sin cambios visuales en el sitio.
+
+### Agregado
+
+- **Kit de marca** `brand/` (ADR-008, DEC-53), con dos fuentes editables y todo lo demás generado o copiado:
+  - Fuentes: `tokens.json` (paleta exacta del manual, niveles de alerta, tipografía, radios, foco, sombra, geometría de las tres barras y serie de colores para gráficos) y `logo/paths.json` (vectores del wordmark).
+  - Generado: `tokens.css`, los cuatro SVG del logo (`color`, `reverse`, `mono-dark` y `mono-light`), `motifs/triple-bar.svg` y `manifest.json` (`version`, `generatedAt` y el sha256 de cada archivo; no lleva commit de origen: lo registra la plataforma al sincronizar).
+  - Copiado byte a byte: `logo/m3tric-mark.svg` (de `src/app/icon.svg`) y tres fotografías del manual sin texto incrustado (de `public/images/`).
+  - Espacio documentado para DIN 2014 Rounded (`fonts/README.md`), sin archivos de fuente.
+  - El directorio no se publica en el sitio: no pasa por `public/` ni por `out/`. La plataforma lo copia por commit con sha256.
+- **`npm run brand:build`** (`scripts/brand-build.mjs`): genera lo derivado y las copias a partir de las dos fuentes. Es idempotente y rechaza cualquier archivo que no esté en el inventario del kit, lo que mantiene los archivos de fuente con licencia fuera del repositorio público.
+- **Pruebas de deriva** (`scripts/brand-kit.test.mjs`, 60 pruebas, dentro de `test:unit` y por tanto de `npm run release`): fallan si los colores de `src/app/globals.css` o de `src/config/brand.ts` difieren de `tokens.json`, si un SVG o `Logo.tsx` difieren de `paths.json`, si `manifest.json` no coincide con los archivos o si aparece un archivo de fuente bajo `brand/`.
+- **`.gitattributes`**: `brand/** text eol=lf`.
+- **Decisiones**: ADR-008 (kit de marca compartido), ADR-009 (español único en la plataforma) y ADR-010 (DIN 2014 Rounded: licencia y servicio desde un bucket privado; sus archivos nunca entran a git).
+- **`docs/SPEC-UNIFICACION.md`**: especificación end to end de la identidad compartida (REQ-U01..U05, DEC-53..58, kit, sistema visual, español, tipografía, pruebas y despliegue).
+- **Trazabilidad** (`docs/TRACEABILITY.md`, sección 7): filas REQ-U01..U05 en estado Preparado, con sus brechas. Sin evidencia ejecutada.
+
+### Cambiado
+- `docs/ASSETS.md`: inventario del kit `brand/` (fuentes, generados, copias y licencias), logo desde `brand/logo/paths.json`, DIN 2014 Rounded según ADR-010 y `npm run brand:build` en scripts y checklist.
+
+- `src/components/brand/Logo.tsx` importa los trazados de `brand/logo/paths.json` y ya no los contiene.
+- `docs/SPEC.md` 3.3: §3.3 y §3.4 remiten a ADR-010 y al kit `brand/` (el logo tiene una sola fuente, `brand/logo/paths.json`); §14 y §15 incluyen `docs/SPEC-UNIFICACION.md`, `brand/README.md` y ADR-008..010.
+- `docs/CONTENIDOS.md` (Logo, Favicons, Tokens, Fuente, Imágenes y referencia rápida): el logo y los colores se cambian en el kit y se regeneran con `npm run brand:build`; los archivos de DIN 2014 Rounded nunca se agregan al repositorio (ADR-010).
+- `docs/adr/ADR-001`: referencia a ADR-010, que reemplaza el procedimiento de agregar los `.woff2` con `next/font/local`.
+- `README.md`: `brand/`, `npm run brand:build`, `docs/SPEC-UNIFICACION.md`, `brand/README.md` y ADR-001 a ADR-010.
+- `docs/TRACEABILITY.md`: el resumen por estado pasa a 46 requisitos (5 nuevos en Preparado); REQ-O05 y REQ-B03 apuntan a SPEC 3.3 y a ADR-010.
+
+### Conocido / Pendiente
+
+- Barlow sigue siendo la tipografía de la landing. DIN 2014 Rounded requiere licencia web (dependencia del cliente n.º 7); nada de su diseño de servicio se despliega antes de tenerla.
+- Los cambios en la plataforma (repositorio privado) se registran allí: `docs/enterprise-agro/26-identidad-compartida.md` y `docs/platform-live-dashboard/07-decisiones-owner.md` (DEC-53..58).
+- Pendientes del Owner: confirmar el título «M3TRIC | Plataforma» (DEC-56, aplicada por defecto) y aprobar el copy en español del inicio de sesión. Estado y brechas: `docs/TRACEABILITY.md`.
+
+---
+
 ## [3.1.2] - 2026-10-01
 
 ### Cambiado

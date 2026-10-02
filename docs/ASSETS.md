@@ -1,6 +1,6 @@
 # Inventario de activos y licencias
 
-Catálogo completo de archivos del proyecto (imágenes, iconos, fuentes, componentes) con origen, dimensiones, licencias y propósito.
+Catálogo completo de archivos del proyecto (imágenes, iconos, fuentes, componentes, kit de marca) con origen, dimensiones, licencias y propósito.
 
 ---
 
@@ -44,10 +44,12 @@ Fotos de marca optimizadas en WebP. Generadas desde PNG originales del manual de
 
 ### Favicon e iconos (`public/icon.*`, `public/apple-icon.png`)
 
+Las rutas `public/icon.*` y `public/apple-icon.png` del encabezado y de otros documentos son las rutas servidas: `icon.svg` y `apple-icon.png` están en `src/app/` y Next.js los sirve en `/icon.svg` y `/apple-icon.png`; `icon-192.png` e `icon-512.png` están en `public/`.
+
 | Archivo | Dimensiones | Origen | Licencia | Propósito | Nota |
 |---|---|---|---|---|---|
-| `icon.svg` | Viewbox sin límite | Manual lámina 8 (tres barras del logo) + colores de marca | Propiedad M3TRIC | Favicon vectorial (navegadores modernos) | Mantener SVG exacto sin simplificar |
-| `apple-icon.png` | 180 × 180 px | Derivado de icon.svg | Propiedad M3TRIC | Icono para iOS home screen (retina) | PNG sin transparencia (fondo sólido) |
+| `icon.svg` | Viewbox sin límite | Manual lámina 8 (tres barras del logo) + colores de marca | Propiedad M3TRIC | Favicon vectorial (navegadores modernos) | Mantener SVG exacto sin simplificar. Servido en /icon.svg desde `src/app/icon.svg`; el kit guarda una copia byte a byte (`brand/logo/m3tric-mark.svg`) |
+| `apple-icon.png` | 180 × 180 px | Derivado de icon.svg | Propiedad M3TRIC | Icono para iOS home screen (retina) | PNG sin transparencia (fondo sólido). Servido en /apple-icon.png desde `src/app/apple-icon.png` |
 | `icon-192.png` | 192 × 192 px | Derivado de icon.svg | Propiedad M3TRIC | Web Manifest + Android launcher | Usado en Progressive Web App |
 | `icon-512.png` | 512 × 512 px | Derivado de icon.svg | Propiedad M3TRIC | Web Manifest (pantalla de carga) | Resolución máxima para Chrome/Edge |
 
@@ -61,7 +63,9 @@ Fotos de marca optimizadas en WebP. Generadas desde PNG originales del manual de
 
 **Vectores originales**: Manual de marca M3TRIC, lámina 8
 
-**Código fuente**: `/src/components/brand/Logo.tsx` — componente React que renderiza cuatro variantes:
+**Fuente de los trazados**: `brand/logo/paths.json` (única fuente: `viewBox`, `body` y `bars`). Los cuatro SVG de `brand/logo/` se generan de ese archivo con `npm run brand:build`.
+
+**Código fuente**: `/src/components/brand/Logo.tsx` — componente React que importa `brand/logo/paths.json` (ya no contiene trazados) y renderiza cuatro variantes:
 
 | Variante | Cuerpo | Barras | Fondo | Uso |
 |---|---|---|---|---|
@@ -108,6 +112,34 @@ Fotos de marca optimizadas en WebP. Generadas desde PNG originales del manual de
 
 ---
 
+## Kit de marca (`brand/`)
+
+Fuente única de la identidad visual que comparten la landing y la plataforma (ADR-008). Hay dos archivos fuente escritos a mano; el resto se genera o se copia. Detalle de uso y de actualización: `brand/README.md`.
+
+| Archivo | Clase | Origen | Licencia | Propósito |
+|---|---|---|---|---|
+| `tokens.json` | Fuente (escrito a mano) | Manual de identidad M3TRIC (abril 2026), interpretado en `docs/SPEC.md` §3 | Proyecto (autoría propia; los valores de marca son los del manual) | Única lista de hex del kit; además, niveles de alerta, tipografía (pila, pesos y estado de DIN), radios, foco, sombra, geometría de las tres barras y serie de gráficos |
+| `logo/paths.json` | Fuente (escrito a mano) | Manual, lámina 8 (formas libres del wordmark) | Propiedad M3TRIC | Única fuente de los trazados del logo; no se redibuja |
+| `tokens.css` | Generado de `tokens.json` | — | Proyecto | Las mismas variables como `:root` (`--m3-*`) |
+| `logo/m3tric-logo-{color,reverse,mono-dark,mono-light}.svg` | Generado de `paths.json` | Manual, láminas 8 y 11 | Propiedad M3TRIC | Variantes del wordmark |
+| `motifs/triple-bar.svg` | Generado de `tokens.json` (geometría de las tres barras) | Manual, lámina 8 (el «3» como tres barras) | Propiedad M3TRIC | Motivo decorativo en `currentColor` |
+| `manifest.json` | Generado | — | Proyecto | `version`, `generatedAt` (solo fecha) y sha256 de cada archivo del kit salvo él mismo |
+| `logo/m3tric-mark.svg` | Copia byte a byte de `src/app/icon.svg` | Tres barras del logo sobre cuadrado `#004124` | Propiedad M3TRIC | Marca para favicon; pendiente de validación de marca (dependencia del cliente n.º 5) |
+| `images/aerial-wide-1280.webp`, `images/aerial-tall-747.webp` | Copia byte a byte de `public/images/` | Manual, lámina 12 | Propiedad M3TRIC | Fotografía del manual sin texto incrustado |
+| `images/globe-1000.webp` | Copia byte a byte de `public/images/` | Manual, lámina 3 | Propiedad M3TRIC | Fotografía del manual sin texto incrustado |
+| `README.md`, `fonts/README.md` | Escritos a mano | — | Proyecto | Documentación del kit; `fonts/README.md` reserva el espacio de DIN 2014 Rounded, **sin archivos de fuente** |
+
+**Reglas:**
+
+- **Inventario explícito**: `scripts/brand-build.mjs` solo acepta los archivos de la tabla. Cualquier otro archivo bajo `brand/` hace fallar `npm run brand:build` y `scripts/brand-kit.test.mjs`; así no entran archivos de fuente con licencia (`.woff`, `.woff2`, `.ttf`, `.otf`, …) a un repositorio público (ADR-010).
+- **No se publica en el sitio**: `brand/` vive en la raíz del repositorio y no pasa por `public/` ni por `out/`.
+- **Las copias no se editan**: `logo/m3tric-mark.svg` e `images/*.webp` se regeneran con `npm run brand:build` cuando cambia su origen, y las pruebas fallan si difieren.
+- **Fin de línea**: `.gitattributes` fija `brand/** text eol=lf`.
+- **Espejos en la landing**: `src/app/globals.css` (`@theme`), `src/config/brand.ts`, los colores de `Logo.tsx` y la geometría de `TripleBar.tsx` repiten valores del kit; las pruebas fallan si dejan de coincidir.
+- **Plataforma**: copia el kit por commit con sha256 (ADR-008).
+
+---
+
 ## Fuentes (`src/app/layout.tsx`, `next/font/google`)
 
 ### Barlow (producción)
@@ -147,11 +179,12 @@ const barlow = Barlow({
 
 | Propiedad | Valor | Nota |
 |---|---|---|
-| **Fuente** | DIN 2014 Rounded | Licencia comercial (NO incluida en repo) |
+| **Fuente** | DIN 2014 Rounded | Licencia comercial de Paratype (NO incluida en el repositorio ni en el sitio; ADR-010) |
 | **Tipo** | Tipografía corporativa de Metric | Definida en manual de marca §3.3 |
-| **Si se licencia** | Agregar `.woff2` vía `next/font/local` | Ver `docs/CONTENIDOS.md` para procedimiento |
+| **Estado** | Pendiente de licencia | Hoy la tipografía efectiva es Barlow; `font.din.status` es `pending-license` en `brand/tokens.json` |
+| **Si se licencia** | Los `.woff2` **nunca se agregan al repositorio** (es público y las licencias de fuentes comerciales prohíben redistribuirlos). Se sirven bajo `/fonts/*` desde un bucket privado compartido con la plataforma y el `@font-face` se activa por configuración | Diseño en `docs/adr/ADR-010-din-2014-rounded-licencia-y-servicio.md` y `brand/fonts/README.md`; todavía no está implementado |
 
-**La pila NO cambia** si se agrega DIN 2014 — Next.js inyecta la variable automáticamente.
+**La pila CSS no cambia** si se licencia DIN 2014 Rounded: ya la nombra en primer lugar y, sin el archivo, cae en Barlow. `npm run brand:build` y `scripts/brand-kit.test.mjs` fallan si aparece un archivo de fuente bajo `brand/`.
 
 ---
 
@@ -226,11 +259,15 @@ Permite modificación, distribución comercial. Requiere declaración de cambios
 | `scripts/check-artifact.mjs` | Validación de artefacto `out/` | Proyecto |
 | `scripts/serve-out.mjs` | Servidor estático para `out/` | Proyecto |
 | `scripts/optimize-images.py` | Conversión PNG → WebP | Proyecto |
+| `scripts/brand-build.mjs` (`npm run brand:build`) | Genera el kit de marca (`brand/`) desde `brand/tokens.json` y `brand/logo/paths.json`; es idempotente y rechaza archivos fuera del inventario del kit | Proyecto |
+| `scripts/brand-kit.test.mjs` | Pruebas de deriva del kit: paleta, logo, motivo, `tokens.css`, manifiesto, inventario exacto y ausencia de archivos de fuente; parte de `npm run test:unit` | Proyecto |
 | `scripts/lib/release-config.mjs`, `scripts/lib/artifact-rules.mjs` | Reglas compartidas del gate de release y del smoke | Proyecto |
 | `scripts/hygiene.sh` | Higiene del repositorio (acciones fijadas, archivos prohibidos) | Proyecto |
 | `scripts/deploy/{publish.sh,smoke.mjs,manifest.mjs,upload-manifest.sh}` | Publicación, verificación y manifiesto de despliegue | Proyecto |
 | `infra/**` | App AWS CDK (stacks de identidad y de sitio) | Proyecto |
 | `.github/workflows/{ci,deploy,publish,rollback}.yml` | Pipeline CI/CD | Proyecto |
+| `.gitattributes` | Fija `brand/** text eol=lf` | Proyecto |
+| `brand/**` | Kit de marca compartido con la plataforma | Ver «Kit de marca» |
 
 ---
 
@@ -298,11 +335,13 @@ Cuando actualices activos:
 - [ ] Reemplazar PNG en directorio temporal
 - [ ] Correr `python3 scripts/optimize-images.py <dir>`
 - [ ] Verificar que los `.webp` aparecen en `public/images/`
+- [ ] Si cambió `aerial-wide-1280`, `aerial-tall-747` o `globe-1000`: `npm run brand:build` (el kit las copia byte a byte)
 - [ ] Si cambiaron proporciones: buscar componentes que usen `width/height` fijos y actualizar
 - [ ] Ejecutar `npm run dev` y verificar visualmente en 3 anchos de pantalla
-- [ ] Si actualizaste logo: validar con equipo de marca (Anexo 1 §14.4)
-- [ ] Si actualizaste tokens de color: verificar contrastes (WCAG AA mínimo)
-- [ ] `npm run release` en local y abrir un PR; la publicación la hace `Deploy staging` al fusionar a `main` (`docs/OPERACION.md` §6)
+- [ ] Si actualizaste el logo: editar `brand/logo/paths.json`, ejecutar `npm run brand:build` y validar con equipo de marca (Anexo 1 §14.4)
+- [ ] Si cambió `src/app/icon.svg`: `npm run brand:build` (`brand/logo/m3tric-mark.svg` es una copia byte a byte)
+- [ ] Si actualizaste tokens de color: editar `brand/tokens.json`, ejecutar `npm run brand:build`, repetir el valor en `@theme` y `src/config/brand.ts`, y verificar contrastes (WCAG AA mínimo)
+- [ ] `npm run release` en local (incluye las pruebas de deriva del kit) y abrir un PR; la publicación la hace `Deploy staging` al fusionar a `main` (`docs/OPERACION.md` §6)
 
 ---
 

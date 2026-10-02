@@ -72,10 +72,11 @@ En desarrollo (`npm run dev`), si faltan `NEXT_PUBLIC_SITE_URL` o `NEXT_PUBLIC_P
 | `npm run start` | `npm run serve:out` | Sirve `out/` en http://localhost:4173 |
 | `npm run lint` | `eslint` | Valida estilo de código |
 | `npm run typecheck` | `tsc --noEmit` | Valida tipos sin generar archivos |
-| `npm run test:unit` | `node --test "scripts/**/*.test.mjs"` | Pruebas de reglas de configuración, reglas de artefacto, higiene y manifiesto |
+| `npm run test:unit` | `node --test "scripts/**/*.test.mjs"` | Pruebas de reglas de configuración, reglas de artefacto, higiene, manifiesto y deriva del kit de marca (`scripts/brand-kit.test.mjs`) |
 | `npm run check:config` | `node scripts/check-config.mjs` | Valida las variables públicas según el perfil |
 | `npm run check:artifact` | `node scripts/check-artifact.mjs` | Valida `out/`: archivos requeridos, texto prohibido, enlaces exactos, JSON-LD y coherencia del perfil |
 | `npm run hygiene` | `bash scripts/hygiene.sh` | Acciones fijadas por SHA, archivos prohibidos y marcadores de conflicto (requiere estar en un worktree de git) |
+| `npm run brand:build` | `node scripts/brand-build.mjs` | Genera el kit de marca (`brand/`) a partir de `brand/tokens.json` y `brand/logo/paths.json`; es idempotente. Ver `brand/README.md` |
 | `npm run release` | ver abajo | Pipeline de release completo (*fail-closed*) |
 | `npm run serve:out` | `node scripts/serve-out.mjs` | Servidor estático para `out/` (preview local y pruebas) |
 | `npm run build:e2e` | `RELEASE_PROFILE=production … next build` | Build con perfil production y dominios de verificación (`m3tric-test.co`) para la suite E2E |
@@ -141,26 +142,29 @@ src/
 ├── app/                      # Next.js App Router
 │   ├── layout.tsx            # Metadatos, Barlow, JSON-LD (Organization, WebSite, FAQPage), meta m3tric:release
 │   ├── page.tsx              # Ensamble de secciones
-│   ├── globals.css           # Tokens de color y tipografía, utilidades
+│   ├── globals.css           # Tokens de color y tipografía, utilidades (@theme repite brand/tokens.json)
 │   ├── robots.ts             # robots.txt según perfil
 │   ├── sitemap.ts            # sitemap.xml
 │   ├── not-found.tsx         # 404 propio
 │   └── icon.svg, apple-icon.png
 ├── config/
 │   ├── site.ts               # Lector único de variables públicas y perfil de release
-│   └── brand.ts              # Constantes de marca que no pueden ser tokens CSS
+│   └── brand.ts              # Constantes de marca que no pueden ser tokens CSS (deben coincidir con brand/tokens.json)
 ├── content/
 │   └── landing.ts            # Todo el copy del sitio — fuente única
 ├── components/
-│   ├── brand/                # Logo, TripleBar, NodeNetwork
+│   ├── brand/                # Logo (importa brand/logo/paths.json), TripleBar, NodeNetwork
 │   ├── ui/                   # Button, SectionHeading, StatusBadge, Reveal
 │   ├── layout/               # Header, Footer, SkipLink, HydrationMarker
 │   ├── sections/             # Hero, Benefits, UseCases, HowItWorks, Scales,
 │   │                         # WhyM3tric, Faq, TechnicalZone, Contact
 │   └── three/                # TerrainScene (3D) y TerrainFallback (SVG)
 public/                       # images/*.webp, og.png, iconos
+brand/                        # Kit de marca compartido con la plataforma (tokens, logo, motivos, imágenes, manifiesto); no se publica en el sitio
 scripts/
 ├── check-config.mjs, check-artifact.mjs, serve-out.mjs, hygiene.sh, optimize-images.py
+├── brand-build.mjs           # Genera el kit de marca (npm run brand:build)
+├── brand-kit.test.mjs        # Pruebas de deriva del kit (parte de test:unit)
 ├── lib/                      # release-config.mjs, artifact-rules.mjs (reglas compartidas)
 └── deploy/                   # publish.sh, smoke.mjs, manifest.mjs, upload-manifest.sh
 infra/                        # App CDK (bin/, lib/, config/, test/)
@@ -168,7 +172,7 @@ tests/
 ├── e2e/                      # Playwright: content, links, responsive, visual, interaction, resilience, a11y, three
 └── helpers/                  # env, page, lighthouse, contrast, serve-gzip
 .github/workflows/            # ci, deploy, publish, rollback
-docs/                         # SPEC, TRACEABILITY, OPERACION, CONTENIDOS, ASSETS, adr/, evidence/
+docs/                         # SPEC, SPEC-UNIFICACION, TRACEABILITY, OPERACION, CONTENIDOS, ASSETS, adr/, evidence/
 ```
 
 ### Activos
@@ -179,20 +183,23 @@ docs/                         # SPEC, TRACEABILITY, OPERACION, CONTENIDOS, ASSET
 | `public/og.png` | Open Graph 1200×630 | Regenerar si cambia la identidad visual |
 | `public/icon.svg` y `.png` | Favicon e íconos | Derivados del logo; el favicon derivado espera validación de marca |
 | `src/content/landing.ts` | Textos, títulos, CTA | Editar aquí; no hay texto en JSX |
-| `src/app/globals.css` | Tokens de color y tipografía | Mantener sincronizado con el manual de marca |
+| `src/app/globals.css` | Tokens de color y tipografía | Mantener sincronizado con el manual de marca y con `brand/tokens.json`; una prueba falla si difieren |
+| `brand/` | Kit de marca: tokens, logo, motivos, tres imágenes y manifiesto | Se edita `tokens.json` o `logo/paths.json` y se ejecuta `npm run brand:build`; ver `brand/README.md`. No se publica en el sitio |
 
 ## Documentación
 
 | Documento | Contenido |
 |---|---|
 | `docs/SPEC.md` | Especificación end-to-end (v3), con los IDs de requisito |
+| `docs/SPEC-UNIFICACION.md` | Identidad compartida landing ↔ plataforma: requisitos REQ-U, decisiones DEC-53..58, kit, sistema visual, español, tipografía, pruebas y despliegue |
 | `docs/TRACEABILITY.md` | Matriz requisito → spec → implementación → verificación → evidencia, y brechas abiertas |
-| `docs/adr/` | Decisiones de arquitectura ADR-001 a ADR-007 |
+| `docs/adr/` | Decisiones de arquitectura ADR-001 a ADR-010 |
 | `docs/OPERACION.md` | Pipeline de publicación, bootstrap, rollback, verificación, caché, cabeceras, costos y resolución de problemas |
 | `docs/CONTENIDOS.md` | Cómo actualizar textos, imágenes, contacto y marca |
 | `docs/ASSETS.md` | Inventario de activos, dependencias y licencias |
 | `docs/evidence/` | Capturas, informes de QA, axe, Lighthouse, matrices; `live/` con la QA contra CloudFront |
 | `docs/evidence/live/security-hardening.md` | Auditoría de seguridad, migración, simulación de políticas IAM, cabeceras del borde, gobernanza de GitHub y riesgos residuales |
+| `brand/README.md` | Kit de marca: contenido, uso, sincronización con la plataforma y cómo actualizarlo |
 | `infra/README.md` | Infraestructura como código: stacks, seguridad, costos |
 | `CHANGELOG.md` | Historial de versiones |
 

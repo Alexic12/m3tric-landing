@@ -1,4 +1,6 @@
 @import "tailwindcss";
+/* The brand kit is data (tokens.json, SVG sources), not markup: keep Tailwind from scanning it. */
+@source not "../../brand";
 
 @theme {
   --color-m3-green-950: #002a17;

@@ -1,16 +1,16 @@
 # Matriz de trazabilidad — M3TRIC Landing v3
 
-Corte: 2026-10-01 · `main` en `7c618b7` · Release en vivo `deploy-3-7c618b7` en `https://d21guxd9tjai7a.cloudfront.net` (run `36920298884`).
+Corte: 2026-10-01 · `main` en `7c618b7` · Release en vivo `deploy-3-7c618b7` en `https://d21guxd9tjai7a.cloudfront.net` (run `36920298884`). El grupo **REQ-U** (identidad compartida con la plataforma, sección 7) se agregó el 2026-10-02: está en estado Preparado y sin evidencia ejecutada; las demás filas conservan este corte.
 
-Esta matriz enlaza cada requisito de `docs/SPEC.md` §0 con la sección de la spec, los archivos que lo implementan, la prueba que lo verifica y la evidencia. Es un documento de **auditoría**: dice lo que está comprobado y lo que no.
+Esta matriz enlaza cada requisito de `docs/SPEC.md` §0 (y los REQ-U de `docs/SPEC-UNIFICACION.md` §0) con la sección de la spec, los archivos que lo implementan, la prueba que lo verifica y la evidencia. Es un documento de **auditoría**: dice lo que está comprobado y lo que no.
 
 ## Cómo leer esta matriz
 
 | Columna | Qué contiene |
 |---|---|
-| **ID** | Identificador de `docs/SPEC.md` §0 (`REQ-O` owner · `REQ-C` contractual, Anexo 1 §5 · `REQ-A` aceptación, Anexo 1 §10 · `REQ-B` marca). |
+| **ID** | Identificador de `docs/SPEC.md` §0 (`REQ-O` owner · `REQ-C` contractual, Anexo 1 §5 · `REQ-A` aceptación, Anexo 1 §10 · `REQ-B` marca · `REQ-U` identidad compartida, de `docs/SPEC-UNIFICACION.md` §0). |
 | **Requisito** | Resumen. El texto completo está en la spec. |
-| **Spec (§)** | Sección de `docs/SPEC.md` donde se especifica. |
+| **Spec (§)** | Sección de `docs/SPEC.md` donde se especifica (para REQ-U, de `docs/SPEC-UNIFICACION.md`). |
 | **Implementación** | Archivos concretos que lo cumplen (rutas relativas a la raíz del repositorio). |
 | **Verificación** | Prueba exacta: archivo y título del test, o script y nombre del *check*. Ver la convención de abreviaturas abajo. |
 | **Evidencia** | Ruta en `docs/evidence/` o run de GitHub Actions identificado. |
@@ -52,9 +52,10 @@ Regla de cumplimiento (Anexo 1 §2.1): la existencia de código, configuración 
 
 - **E2E** (Playwright, `tests/e2e/<nombre>.spec.ts`): `content`, `links`, `responsive`, `visual`, `interaction`, `resilience`, `a11y`, `three`. Se escribe `archivo › «título del test»`.
 - **En vivo** (`npm run test:live`, `tests/live/`): `runtime`, `menu`, `a11y`, `screenshots`, `http` (ver `QA-REPORT.md` §4).
-- **Unitarias** (`npm run test:unit`, `node --test`): `config.test` = `scripts/check-config.test.mjs` · `rules.test` = `scripts/lib/artifact-rules.test.mjs` · `hygiene.test` = `scripts/hygiene.test.mjs` · `manifest.test` = `scripts/deploy/manifest.test.mjs`.
+- **Unitarias** (`npm run test:unit`, `node --test`): `config.test` = `scripts/check-config.test.mjs` · `rules.test` = `scripts/lib/artifact-rules.test.mjs` · `hygiene.test` = `scripts/hygiene.test.mjs` · `manifest.test` = `scripts/deploy/manifest.test.mjs` · `brand-kit.test` = `scripts/brand-kit.test.mjs`.
 - **IaC** (`cd infra && npm test`, vitest): `app.test` = `infra/test/app.test.ts` · `site.test` = `infra/test/landing-site-stack.test.ts` · `identity.test` = `infra/test/delivery-identity-stack.test.ts` · `infra-config.test` = `infra/test/config.test.ts`.
-- **Gates y scripts**: `check:config` (`scripts/check-config.mjs`) · `check:artifact` (`scripts/check-artifact.mjs`) · `hygiene` (`scripts/hygiene.sh`) · `smoke «nombre»` (`scripts/deploy/smoke.mjs`, se ejecuta en el workflow `publish.yml`) · `evidence:*` (scripts de `package.json`).
+- **Plataforma** (repositorio privado `Alexic12/M3TRIC_Platform`, carpeta `m3tric-platform/frontend/`; `npm test`, vitest): `brand.test` = `src/brand/brand.test.ts` · `spanish-ui.test` = `src/test/spanish-ui.test.ts` · `contrast.test` = `src/test/contrast.test.ts` · `perf:budget` = `scripts/perf-budget.mjs` (local). El smoke en vivo de la plataforma es un script de Playwright con un usuario temporal de Cognito (`docs/SPEC-UNIFICACION.md` §9).
+- **Gates y scripts**: `check:config` (`scripts/check-config.mjs`) · `check:artifact` (`scripts/check-artifact.mjs`) · `hygiene` (`scripts/hygiene.sh`) · `smoke «nombre»` (`scripts/deploy/smoke.mjs`, se ejecuta en el workflow `publish.yml`) · `evidence:*` (scripts de `package.json`) · `brand:build` (`scripts/brand-build.mjs`; genera el kit de `brand/`).
 - **CI** = `.github/workflows/ci.yml`; **Deploy** = `deploy.yml`; **Publish** = `publish.yml`; **Rollback** = `rollback.yml`.
 - **Run de despliegue** = run `36920298884` salvo que la fila cite otro.
 
@@ -70,7 +71,7 @@ Los títulos de test están en inglés porque así están escritos en los archiv
 | REQ-O02 | 100 % funcional, grado *production release*, con pruebas visuales | §1, §6, §8, §13 | `package.json` (`release`), `.github/workflows/ci.yml` (jobs `web`, `e2e`, `infra`), `tests/e2e/**` | `visual › «full-page screenshot at 360px»` (y 768, 1280, 1920) · todas las suites E2E · CI · `npm run release` con ambos perfiles | Run de despliegue: CI verde, incluido `Release gate (production)` · `QA-REPORT.md` §3 (323 pasadas / 0 fallos) y §4 (41 / 0 / 16 en vivo) · capturas en vivo en `docs/evidence/live/screenshots/`. Los snapshots de regresión visual son solo locales (chromium, ADR-006); la cobertura de Safari/Edge reales se sigue en REQ-A08 | Verificado |
 | REQ-O03 | Página para usuarios no técnicos, centrada en lo que obtienen | §2, §5.1–§5.7 | `src/content/landing.ts` (`hero`, `benefits`, `useCases`, `howItWorks`, `faq`), `src/components/sections/{Hero,Benefits,UseCases,HowItWorks,Faq}.tsx` | `content › «the value zone avoids unexplained jargon (spec section 2)»` · `content › «hero states the outcomes: three of them, each with a label and one line»` · `content › «benefits: three outcome cards, each with its deliverables and an honest status»` | Pruebas verdes en CI y en `QA-REPORT.md` §3 (`content` 22/0/0 por motor). **Falta**: aprobación escrita del copy nuevo de v3 (ronda 1, REQ-C12); la prueba solo detecta jerga, no juzga si el texto es comprensible para el público | Parcial |
 | REQ-O04 | Profundidad técnica más abajo, nivel *enterprise* | §4.1, §5.8 | `src/components/sections/TechnicalZone.tsx`, `src/content/landing.ts` (`technical`) | `content › «technical zone: the three spec-sheet blocks with honest availability»` · `content › «value zone comes first: the technical zone sits after the FAQ and before the contact»` · en vivo `runtime · estructura` (orden de las 9 secciones) | `QA-REPORT.md` §3 y §4 · CI del run de despliegue · capturas en vivo | Verificado |
-| REQ-O05 | Spec completa, trazable end to end, todo documentado | §0, §14 | `docs/SPEC.md` (v3.2), `docs/TRACEABILITY.md`, `docs/adr/ADR-001..007`, `docs/OPERACION.md`, `docs/CONTENIDOS.md`, `docs/ASSETS.md`, `infra/README.md`, `README.md`, `CHANGELOG.md`, `docs/evidence/live/security-hardening.md` | Revisión documental contra los archivos fuente (sin prueba automática); `hygiene` cubre solo archivos prohibidos | Este documento. Cada fila de evidencia remite a un run o archivo identificado. **Falta**: revisión independiente de la documentación y revisión del cliente (REQ-C15) | Parcial |
+| REQ-O05 | Spec completa, trazable end to end, todo documentado | §0, §14 | `docs/SPEC.md` (v3.3), `docs/SPEC-UNIFICACION.md`, `docs/TRACEABILITY.md`, `docs/adr/ADR-001..010`, `docs/OPERACION.md`, `docs/CONTENIDOS.md`, `docs/ASSETS.md`, `infra/README.md`, `README.md`, `CHANGELOG.md`, `docs/evidence/live/security-hardening.md` | Revisión documental contra los archivos fuente (sin prueba automática); `hygiene` cubre solo archivos prohibidos | Este documento. Cada fila de evidencia remite a un run o archivo identificado. **Falta**: revisión independiente de la documentación y revisión del cliente (REQ-C15) | Parcial |
 | REQ-O06 | Despliegue por IaC con GitHub Actions hasta tener URL de CloudFront funcional | §10, §11 | `infra/bin/landing.ts`, `infra/lib/{landing-app,delivery-identity-stack,landing-site-stack,config,names,nag}.ts`, `infra/config/staging.json`, `.github/workflows/{ci,deploy,publish,rollback}.yml`, `scripts/deploy/{publish.sh,smoke.mjs,manifest.mjs,upload-manifest.sh}` | `app.test › «selects stacks by their physical names (cdk deploy m3tric-staging-LandingSiteStack)»` · `site.test › «outputs exactly the values the deploy workflow reads»` · `identity.test › «defines the role with the exact name, path and one-hour session cap»` · smoke (10 checks, `docs/OPERACION.md` §8) | URL funcional `https://d21guxd9tjai7a.cloudfront.net` desplegada por Actions: runs `36869421270`, `36871068392` y `36920298884` (todos los jobs verdes, smoke 10/10); `deploy-3-7c618b7` en vivo por la cadena de entrega endurecida (`docs/evidence/live/security-hardening.md` §2) | Verificado |
 
 ## 2. Requisitos contractuales (REQ-C, Anexo 1 §5)
@@ -117,7 +118,7 @@ Los títulos de test están en inglés porque así están escritos en los archiv
 |---|---|---|---|---|---|---|
 | REQ-B01 | Logo oficial y variantes (lám. 8, 11) | §3.4 | `src/components/brand/Logo.tsx` (`color`, `reverse`, `mono-dark`, `mono-light`), `public/icon.svg` | Sin prueba dedicada; regresión visual `visual › «full-page screenshot at 1280px»` | Capturas locales y en vivo (`docs/evidence/screenshots/`, `live/screenshots/`). **Falta**: revisión de marca contra el manual; el favicon derivado espera validación (cliente n.º 5) | Parcial |
 | REQ-B02 | Paleta exacta (lám. 10) | §3.2 | `src/app/globals.css` (`@theme`), `src/config/brand.ts` | `npm run evidence:contrast` · `visual › «full-page screenshot at 1280px»` | `docs/evidence/contrast-hero.md` (v3, 0 incumplimientos). Mide el contraste, **no** que cada token coincida con el manual: no hay prueba que compare los valores hexadecimales | Parcial |
-| REQ-B03 | Tipografía DIN 2014 Rounded o sustituto declarado | §3.3, ADR-001 | `src/app/layout.tsx` (`Barlow`), `src/app/globals.css` (`--font-sans`) | Sin prueba automática (decisión documentada) | `docs/adr/ADR-001-barlow-sustituto-din-2014-rounded.md`. Licencia web de DIN 2014 Rounded: dependencia del cliente n.º 7 (opcional) | Parcial |
+| REQ-B03 | Tipografía DIN 2014 Rounded o sustituto declarado | §3.3, ADR-001, ADR-010 | `src/app/layout.tsx` (`Barlow`), `src/app/globals.css` (`--font-sans`) | Sin prueba automática (decisión documentada) | `docs/adr/ADR-001-barlow-sustituto-din-2014-rounded.md`. Licencia web de DIN 2014 Rounded: dependencia del cliente n.º 7 (opcional). Licencia y diseño de servicio: `docs/adr/ADR-010-din-2014-rounded-licencia-y-servicio.md` (sin ejecutar hasta tener licencia) | Parcial |
 | REQ-B04 | El «3» como sistema: tríadas y tres barras | §3.1 | `src/components/brand/TripleBar.tsx`, `src/content/landing.ts` (`hero.outcomes`, `benefits.items`, `scales.items`, `whyM3tric.values`) | `content › «hero states the outcomes: three of them, each with a label and one line»` · `content › «scale tabs carry the plain-language labels»` · `content › «why M3TRIC: the three brand values»` | CI del run de despliegue · `QA-REPORT.md` §3 | Verificado |
 | REQ-B05 | Tono de voz técnico, comprensible, cercano | §2 | `src/content/landing.ts` | `content › «the value zone avoids unexplained jargon (spec section 2)»` | Prueba verde (solo jerga). **Falta**: aprobación editorial del tono (ronda 1, REQ-C12) | Parcial |
 | REQ-B06 | Alcance más allá del riesgo: cultivos, terreno, infraestructura, ambiente | §5.3 | `src/content/landing.ts` (`useCases.items`), `src/components/sections/UseCases.tsx` | `content › «use cases: four cases, each split into the situation and what the user obtains»` | Prueba verde. Copy de Infraestructura y Ambiente pendiente de aprobación (ronda 1, REQ-C12) | Parcial |
@@ -127,14 +128,16 @@ Los títulos de test están en inglés porque así están escritos en los archiv
 
 ## 5. Resumen por estado
 
-| Estado | REQ-O | REQ-C | REQ-A | REQ-B | Total | Antes (corte previo) |
-|---|---|---|---|---|---|---|
-| Verificado | 3 | 8 | 7 | 2 | **20** | 0 |
-| Parcial | 3 | 5 | 4 | 5 | **17** | 20 |
-| Preparado | 0 | 1 | 0 | 0 | **1** | 17 |
-| Pendiente | 0 | 2 | 0 | 0 | **2** | 3 |
-| Dependencia del cliente | 0 | 0 | 1 | 0 | **1** | 1 |
-| **Total** | 6 | 16 | 12 | 7 | **41** | 41 |
+| Estado | REQ-O | REQ-C | REQ-A | REQ-B | REQ-U | Total | Antes (corte previo) |
+|---|---|---|---|---|---|---|---|
+| Verificado | 3 | 8 | 7 | 2 | 0 | **20** | 0 |
+| Parcial | 3 | 5 | 4 | 5 | 0 | **17** | 20 |
+| Preparado | 0 | 1 | 0 | 0 | 5 | **6** | 17 |
+| Pendiente | 0 | 2 | 0 | 0 | 0 | **2** | 3 |
+| Dependencia del cliente | 0 | 0 | 1 | 0 | 0 | **1** | 1 |
+| **Total** | 6 | 16 | 12 | 7 | 5 | **46** | 41 |
+
+REQ-U es un grupo nuevo (2026-10-02, sección 7): no existía en el corte previo, por eso la columna «Antes» suma 41.
 
 Verificados: REQ-O02, O04, O06 · C02, C03, C04, C05, C07, C09, C10, C13 · A01, A02, A04, A06, A07, A10, A12 · B04, B07.
 
@@ -142,10 +145,11 @@ Cambios de estado respecto al corte anterior (41 filas):
 - **20 pasan a Verificado**: 11 desde Preparado (REQ-O02, O04, C02, C04, C05, C07, A02, A04, A10, B04, B07) y 9 desde Parcial (REQ-O06, C03, C09, C10, C13, A01, A06, A07, A12).
 - **6 pasan a Parcial**: REQ-A08 desde Pendiente (Chromium, Firefox, WebKit y Chrome ya tienen resultado; faltan Safari real y Edge) y desde Preparado REQ-O03 (falta la aprobación del copy), C14, B01, B02 y B05 (hay evidencia comprobable; falta validación del cliente o de marca).
 - **Sin cambio de estado**: 11 Parcial (REQ-O01, O05, C01, C06, C08, C11, A03, A05, A11, B03, B06), 1 Preparado (REQ-C15), 2 Pendiente (REQ-C12, C16) y 1 Dependencia del cliente (REQ-A09). Su evidencia sí se actualizó.
+- **Grupo nuevo REQ-U (2026-10-02)**: 5 filas (REQ-U01..U05), todas en Preparado y sin evidencia ejecutada (sección 7). No alteran el estado de las 41 anteriores.
 
 ## 6. Brechas abiertas
 
-Quedan 21 requisitos sin cerrar (17 Parcial, 1 Preparado, 2 Pendiente, 1 Dependencia del cliente). Ninguna brecha técnica bloqueante: lo que falta es de **cliente** (insumos, aprobaciones, aceptación), de **pruebas manuales** (Safari real, Edge) o de **operación** (Billing). Propietarios: **Tech Lead** (equipo de desarrollo), **Cliente** (EAFIT / M3TRIC), **Dueño de la cuenta AWS**.
+Quedan 26 requisitos sin cerrar (17 Parcial, 6 Preparado, 2 Pendiente, 1 Dependencia del cliente): 21 de los requisitos v3 y los 5 del grupo REQ-U. En los requisitos v3 (REQ-O, C, A, B) ninguna brecha técnica es bloqueante: lo que falta es de **cliente** (insumos, aprobaciones, aceptación), de **pruebas manuales** (Safari real, Edge) o de **operación** (Billing). Las brechas de REQ-U sí incluyen trabajo técnico en curso (implementación en la plataforma, pruebas y QA en vivo) y decisiones del **Owner**. Propietarios: **Tech Lead** (equipo de desarrollo), **Cliente** (EAFIT / M3TRIC), **Dueño de la cuenta AWS** y **Owner** (instrucciones del proyecto).
 
 ### 6.1 Acciones transversales
 
@@ -192,9 +196,14 @@ Abiertas:
 | REQ-A11 | Parcial | TLS 1.2+ (dominio propio); destinatario de la alerta; activación de la etiqueta `Component` | Cliente · Tech Lead | Cliente: n.º 1 y n.º 4; Tech Lead: acción F |
 | REQ-B01 | Parcial | Revisión de marca contra el manual | Cliente | Validación de marca (n.º 5 para el favicon) |
 | REQ-B02 | Parcial | Prueba que compare los tokens con la paleta del manual | Tech Lead | Añadir una prueba de tokens o aceptar la revisión visual de marca |
-| REQ-B03 | Parcial | Licencia de DIN 2014 Rounded (opcional) | Cliente | Decidir si se licencia (n.º 7); ver ADR-001 |
+| REQ-B03 | Parcial | Licencia de DIN 2014 Rounded (opcional) | Cliente | Decidir si se licencia (n.º 7); ver ADR-001 y ADR-010 |
 | REQ-B05 | Parcial | Aprobación editorial del tono | Cliente | Acción J |
 | REQ-B06 | Parcial | Aprobación del copy de Infraestructura y Ambiente | Cliente | Ver REQ-C12 |
+| REQ-U01 | Preparado | Implementación en la plataforma (tokens, componentes, sin degradados ni vidrio) y evidencia en vivo antes/después | Tech Lead | Unidades U2 y QA en vivo (`docs/SPEC-UNIFICACION.md` §13); archivar en `docs/evidence/platform-brand/` |
+| REQ-U02 | Preparado | `BrandLogo` en la plataforma y su comprobación en vivo (`role="img"`); validación de marca de `m3tric-mark.svg` del kit (ya pendiente, n.º 5) | Tech Lead · Cliente | Unidad U2 y QA en vivo; el Cliente valida (n.º 5) |
+| REQ-U03 | Preparado | Traducción completa con su prueba guardián. **Pendiente del Owner**: confirmar el título «M3TRIC \| Plataforma» (DEC-56, aplicada por defecto) y aprobar el copy en español del inicio de sesión | Tech Lead · Owner | Unidad U3; el Owner confirma DEC-56 y aprueba el copy (`docs/SPEC-UNIFICACION.md` §12, puntos 2 y 3) |
+| REQ-U04 | Preparado | Licencia web de DIN 2014 Rounded (**Dependencia del cliente**, el mismo insumo que REQ-B03); hasta entonces, Barlow en ambos sitios | Cliente (Owner) | Decidir la compra (recomendada: Fontspring, familia o variable); después ejecutar el diseño de servicio de `docs/adr/ADR-010-din-2014-rounded-licencia-y-servicio.md` |
+| REQ-U05 | Preparado | Implementación, pruebas y despliegue de los dos repositorios con su evidencia (`docs/evidence/platform-brand/QA-REPORT.md`); revisión independiente de la documentación | Tech Lead | Cerrar las unidades U2 a U4 y la QA en vivo; revisión cruzada de `docs/` en ambos repositorios |
 
 ### 6.3 Notas sobre requisitos Verificados
 
@@ -220,6 +229,33 @@ Detalle en `docs/evidence/live/security-hardening.md` §7 y ADR-002: TLS 1.0/1.1
 | 4 | Destinatario institucional de la alerta presupuestal | REQ-A11 |
 | 5 | Validación del favicon derivado | REQ-A05, O01, B01 |
 | 6 | Aprobación del copy de Infraestructura y Ambiente (ronda 1) | REQ-C12, B06 (y el copy nuevo de v3: O03, B05) |
-| 7 | Licencia web DIN 2014 Rounded (opcional) | REQ-B03 |
+| 7 | Licencia web DIN 2014 Rounded (opcional) | REQ-B03, REQ-U04 |
 | 8 | Menciones institucionales y logos de aliados | Ninguno (solo con aprobación escrita) |
 | 9 | Smoke manual en Safari real y Edge | REQ-A08, C11 |
+
+Dependencias del Owner en el programa de identidad compartida (`docs/SPEC-UNIFICACION.md` §12):
+
+| Dependencia | Afecta a | Relación con la tabla anterior |
+|---|---|---|
+| Licencia web de DIN 2014 Rounded (compra) | REQ-U04 | Es la n.º 7 |
+| Confirmar «M3TRIC \| Plataforma» como título de pestaña de la plataforma (DEC-56, aplicada por defecto) | REQ-U03 | Nueva |
+| Aprobación del copy en español del inicio de sesión de la plataforma | REQ-U03 | Nueva |
+| Validación de marca del favicon (`m3tric-mark.svg` del kit) | REQ-U02 | Es la n.º 5 |
+
+---
+
+## 7. Identidad compartida (REQ-U) — 2026-10-02
+
+Requisitos de `docs/SPEC-UNIFICACION.md` §0 (instrucciones del owner del 2026-10-02) que abarcan la landing y la plataforma. Decisiones: `docs/adr/ADR-008-kit-de-marca-compartido.md`, `ADR-009-espanol-unico-en-plataforma.md` y `ADR-010-din-2014-rounded-licencia-y-servicio.md`. En la plataforma (repositorio privado): DEC-53..58 en `docs/platform-live-dashboard/07-decisiones-owner.md`, la spec local `docs/enterprise-agro/26-identidad-compartida.md` y las filas REQ-U de `docs/enterprise-agro/02-trazabilidad.md`.
+
+| ID | Requisito | Spec (§) | Implementación | Verificación | Evidencia | Estado |
+|---|---|---|---|---|---|---|
+| REQ-U01 | La plataforma adopta el estilo de la landing (tokens de marca, componentes base, superficies planas); desaparecen los degradados y el vidrio esmerilado | SPEC-UNIFICACION §2 (DEC-53, DEC-57, DEC-58), §3, §4.1 a §4.3 | **Landing:** `brand/{tokens.json,tokens.css,manifest.json}`, `scripts/brand-build.mjs` (`npm run brand:build`), `scripts/brand-kit.test.mjs`, `.gitattributes` (`brand/** text eol=lf`). **Plataforma** (`m3tric-platform/frontend/`): `src/brand/**` (copia del kit), `scripts/brand-sync.mjs`, `tailwind.config.js`, `src/index.css`, `src/components/layout/MainLayout.tsx`, `src/pages/LoginPage.tsx`, las clases `.live-*` y el shell de `PlatformLivePage` | `brand-kit.test` (60 pruebas: `@theme`, pila tipográfica y `src/config/brand.ts` ↔ `tokens.json`; `tokens.css` ↔ `tokens.json`; `manifest.json` ↔ sha256; inventario exacto del kit) · plataforma: `brand.test` (hashes ↔ manifiesto; colores de `tailwind.config.js` ↔ tokens) y `contrast.test` actualizada a los tokens nuevos · capturas antes/después | Pendiente — implementación | Preparado |
+| REQ-U02 | El logo oficial (wordmark vectorial) reemplaza el texto «M3TRIC» en la plataforma | SPEC-UNIFICACION §3, §4.2 (Logo) | **Landing:** `brand/logo/paths.json` (fuente única de los trazados), `brand/logo/*.svg` (generados de él) y `src/components/brand/Logo.tsx` (lo importa). **Plataforma:** `src/brand/BrandLogo.tsx`, `src/components/layout/MainLayout.tsx`, `src/pages/LoginPage.tsx`, la navegación móvil y `.live-brand` | `brand-kit.test` (SVG del logo ↔ `paths.json`; `Logo.tsx` importa `paths.json` y no lleva trazados propios) · plataforma: `brand.test` (trazados de `BrandLogo` ↔ kit) · capturas · smoke en vivo (`role="img"` con nombre «M3TRIC») | Pendiente — implementación | Preparado |
+| REQ-U03 | Toda la interfaz de la plataforma en español (es-CO): textos, título de pestaña, fechas y números, `lang` | SPEC-UNIFICACION §5; §2 (DEC-55, DEC-56) | **Plataforma:** `index.html` (`lang="es-CO"` y título «M3TRIC \| Plataforma»), `src/lib/labels.ts`, `src/lib/format.ts`, los archivos de SPEC-UNIFICACION §5 y `src/test/spanish-ui.test.ts` | `spanish-ui.test` · pruebas existentes actualizadas al texto nuevo · smoke en vivo (`lang`, título y cero palabras inglesas de la lista en la navegación y las páginas principales) | Pendiente — implementación | Preparado |
+| REQ-U04 | Tipografía del manual (DIN 2014 Rounded): Barlow en ambos sitios y DIN en cuanto exista la licencia web | SPEC-UNIFICACION §6; §2 (DEC-54); §4.2 (Tipografía) | **Landing:** `src/app/layout.tsx` (Barlow, vigente), `brand/fonts/README.md` (espacio sin archivos) y `font.din` en `brand/tokens.json` (`status: pending-license`). **Plataforma:** `@fontsource/barlow` (`package.json`, `src/main.tsx`), `tailwind.config.js` (`fontFamily.sans`), `index.html` (sin Google Fonts). El servicio de DIN (SPEC-UNIFICACION §6) es un diseño aceptado en ADR-010 y no se ejecuta sin licencia | `brand-kit.test` (ningún archivo de fuente bajo `brand/`) · smoke en vivo (fuente computada; sin orígenes de terceros). Con licencia: `/fonts/din-2014-rounded/*.woff2` → 200 `font/woff2` y fuente computada del `h1` = «DIN 2014 Rounded» | Pendiente — implementación | Preparado |
+| REQ-U05 | Spec end to end, implementada, probada y desplegada, trazable y documentada | SPEC-UNIFICACION §0, §7 a §13 | `docs/SPEC-UNIFICACION.md`, `docs/adr/ADR-008..010` (y la referencia a ADR-010 en ADR-001), `docs/SPEC.md` (v3.3), `brand/README.md`, `README.md` y `docs/CONTENIDOS.md` (actualizados), esta matriz, `CHANGELOG.md` (3.2.0). **Plataforma:** `docs/enterprise-agro/26-identidad-compartida.md`, `docs/enterprise-agro/02-trazabilidad.md` (filas REQ-U01..U05 y DEC-53..58), `docs/platform-live-dashboard/07-decisiones-owner.md` (DEC-53..58), `docs/brand/evidence/` | Revisión documental contra los archivos fuente (sin prueba automática); `hygiene` cubre solo archivos prohibidos | Pendiente — implementación | Preparado |
+
+**Criterio aplicado a las filas REQ-U.** Preparado, en este grupo, significa que el requisito, su diseño y su verificación están especificados y las decisiones registradas; la implementación de la landing existe, la de la plataforma está en curso y no hay evidencia ejecutada (un run de CI ni un despliegue). Ninguna fila pasa a Verificado hasta que exista `docs/evidence/platform-brand/QA-REPORT.md` con las pruebas de ambos repositorios y el smoke en vivo contra la plataforma desplegada. Las rutas «Plataforma» son relativas a `m3tric-platform/frontend/` del repositorio privado, salvo las de `docs/`, que son relativas a la raíz de ese repositorio.
+
+Los archivos de la landing listados existen en este árbol (kit `brand/`, `scripts/brand-build.mjs`, `scripts/brand-kit.test.mjs`, `.gitattributes`); los de la plataforma son los previstos en `docs/SPEC-UNIFICACION.md` §8 y esta matriz no afirma que existan todavía. `scripts/brand-kit.test.mjs` también protege a REQ-B01 y REQ-B02 (compara el logo y los colores de la landing con el kit), pero lo hace contra una transcripción del manual y no contra el manual, y todavía no hay un run archivado: por eso esas dos filas conservan su estado y su texto del corte del 2026-10-01.

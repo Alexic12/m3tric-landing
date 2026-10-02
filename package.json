@@ -12,6 +12,7 @@
     "check:config": "node scripts/check-config.mjs",
     "check:artifact": "node scripts/check-artifact.mjs",
     "hygiene": "bash scripts/hygiene.sh",
+    "brand:build": "node scripts/brand-build.mjs",
     "release": "npm run test:unit && npm run check:config && npm run lint && npm run typecheck && next build && npm run check:artifact",
     "serve:out": "node scripts/serve-out.mjs",
     "build:e2e": "RELEASE_PROFILE=production NEXT_PUBLIC_RELEASE_PROFILE=production NEXT_PUBLIC_SITE_URL=https://m3tric-test.co NEXT_PUBLIC_PLATFORM_URL=https://app.m3tric-test.co/login NEXT_PUBLIC_CONTACT_EMAIL=contacto@m3tric-test.co NEXT_PUBLIC_CONTACT_PHONE=+573000000000 next build",

@@ -1,0 +1,20 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-10-02",
+  "files": {
+    "README.md": "600a2ef70760751b2504c6214553bcde64fd174172895b204dcb60cc0e3df8fa",
+    "fonts/README.md": "7f25177bbf0d5bbb15bd3dfd9aadc5f2c659f24e42a8eba01d54ea09757d9255",
+    "images/aerial-tall-747.webp": "42a6a0df34224a1bbd38f43f4c88ddc36f1602aed3beeb6693d3d5c727b92a61",
+    "images/aerial-wide-1280.webp": "6848ce8b1f3954fba8125098b89f6d5bbe59561428aa7d7065b9ed021370b5de",
+    "images/globe-1000.webp": "441df934e9f866641e0e5be5d5d7d8567cb46f8c876ff8e7214c9162440b38f2",
+    "logo/m3tric-logo-color.svg": "eedfa63b6c0f3655de339d5541373bee6397726378c1043cca48b93cd9356e4a",
+    "logo/m3tric-logo-mono-dark.svg": "77ee36cda3f49967200118ee627ab4a59497989a2f9cfde9a3bb80e37279dd4f",
+    "logo/m3tric-logo-mono-light.svg": "3a66040b9c7910bc868ecded94ad96abe735d92d3026bcb165cb1e974b8f4c31",
+    "logo/m3tric-logo-reverse.svg": "09b637a7414b37b5350847547a74627df048f4f00cd4e6aedbe7ad9463881e8a",
+    "logo/m3tric-mark.svg": "889fa9c0201ef0db668e595168dc6f9e8da81bb27f3e97b5f6f21c8723ca4109",
+    "logo/paths.json": "27fe9b4054db236c75bc6e04ef90a5f3e0a594c2740612becd6f6770a08ce1f1",
+    "motifs/triple-bar.svg": "9d86e6be2ab05ddaecbada44cb9effe811b4a9c4ec1e544b4c5c2b3302fd0b1f",
+    "tokens.css": "90002d38dd6376d733bc3ee58f08d7f9c77aed9d168cb6d7ecd80db15de6faaa",
+    "tokens.json": "2f120c851c8d0c179b92f8375b5a7beaff8ae6cf2b316c1d9fb3437f0d162d6f"
+  }
+}

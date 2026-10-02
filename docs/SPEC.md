@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Versión | 3.2 · 2026-10-01 (§10, §11 y §12 actualizados al diseño endurecido tras la auditoría de seguridad: sintetizador con credenciales del CLI, rol de ejecución acotado, `sub` OIDC por rama y workflow, jobs sin token) (v2: 2026-09-30, en el historial de git como `docs/SPEC-landing-v2.md`) |
+| Versión | 3.3 · 2026-10-02 (§3.3 y §3.4 remiten a ADR-010 y al kit `brand/`, DEC-53; §14 y §15 incluyen SPEC-UNIFICACION y ADR-008..010; sin otros cambios) · 3.2 · 2026-10-01 (§10, §11 y §12 actualizados al diseño endurecido tras la auditoría de seguridad: sintetizador con credenciales del CLI, rol de ejecución acotado, `sub` OIDC por rama y workflow, jobs sin token) (v2: 2026-09-30, en el historial de git como `docs/SPEC-landing-v2.md`) |
 | Alcance | Producto/UX, marca, frontend, calidad, infraestructura como código, CI/CD, publicación en AWS y trazabilidad |
 | Fuentes de verdad | `docs/20260428_Manual de marca - Metric.pptx` (raíz del workspace) · `docs/entregables/Anexo_1_Alcance_Tecnico_Landing_AWS_M3TRIC_2026-09-23.pdf` · `README.md` raíz del workspace (capacidades vs. límites) · instrucciones del owner (sesiones 2026-09-30 y 2026-10-01) |
 | Precedencia ante conflicto | Anexo 1 (qué se entrega) > instrucciones del owner > Manual de marca (cómo se ve y suena) > README (qué se puede afirmar) > esta spec |
@@ -90,8 +90,10 @@ Contraste (calculado): `#004124`/blanco 11.79 · `#004124`/beige 10.56 · `#B7E3
 ### 3.3 Tipografía (REQ-B03, ADR-001)
 Pila `"DIN 2014 Rounded", var(--font-barlow), system-ui, sans-serif`. Barlow (OFL) autohospedada vía `next/font`. Pesos 300/400/500/700/800 (cargados en `src/app/layout.tsx`); mezcla **Bold** + *Light* en titulares (patrón lámina 12). Escala fluida: Display 56→120 px · H2 36→64 · H3 22→28 · Lead 18→22 · Body 16–17 · Meta 12–13.
 
+La decisión sobre DIN 2014 Rounded —hechos de licenciamiento, por qué sus archivos nunca entran a git y el diseño para servirlos desde un bucket privado cuando exista licencia web— vive ahora en `docs/adr/ADR-010-din-2014-rounded-licencia-y-servicio.md` (DEC-54). ADR-001 conserva la declaración de Barlow como sustituto, salvo el procedimiento de agregar los `.woff2` con `next/font/local`, que ADR-010 reemplaza. El kit versionado `brand/` (DEC-53, `docs/adr/ADR-008-kit-de-marca-compartido.md`) guarda la lista de tokens de marca (`tokens.json`, que `@theme` repite y una prueba compara) y la fuente única del logo (`logo/paths.json`, que `src/components/brand/Logo.tsx` importa); la plataforma lo sincroniza por commit con sha256. La identidad compartida con la plataforma (REQ-U01..U05) se especifica en `docs/SPEC-UNIFICACION.md`. Lo descrito arriba sigue siendo la implementación vigente de la landing.
+
 ### 3.4 Logo (REQ-B01)
-Vector exacto de las formas libres de la lámina 8 (`src/components/brand/Logo.tsx`, no redibujar). Variantes de la lámina 11: `color`, `reverse`, `mono-dark`, `mono-light`. Mínimo 96 px de ancho; área de protección = altura de una barra. `alternateName: "Metric"` en JSON-LD (REQ-B07). Favicon derivado (tres barras sobre `#004124`), pendiente de validación de marca.
+Vector exacto de las formas libres de la lámina 8, con una sola fuente: `brand/logo/paths.json` (`src/components/brand/Logo.tsx` lo importa y los SVG de `brand/logo/` se generan de él con `npm run brand:build`; no redibujar). Variantes de la lámina 11: `color`, `reverse`, `mono-dark`, `mono-light`. Mínimo 96 px de ancho; área de protección = altura de una barra. `alternateName: "Metric"` en JSON-LD (REQ-B07). Favicon derivado (tres barras sobre `#004124`), pendiente de validación de marca.
 
 ### 3.5 Imagen, iconos y movimiento
 - Fotografía: aérea verde con red de nodos (lámina 12) en recortes sin texto incrustado; globo monocromo (lámina 3). WebP con `srcset`, `width/height` explícitos.
@@ -312,16 +314,19 @@ Modelo de entrega endurecido (auditoría de seguridad del 2026-10-01, ADR-002; e
 - Manual: Safari real y Edge (checklist en `docs/evidence/browser-matrix.md`).
 
 ## 14. Documentación (REQ-C15, REQ-O05)
-`README.md` · `docs/SPEC.md` · `docs/TRACEABILITY.md` · `docs/adr/` · `docs/CONTENIDOS.md` · `docs/OPERACION.md` (despliegue por GitHub Actions, bootstrap, rollback, smoke, troubleshooting) · `docs/ASSETS.md` · `docs/evidence/` · `infra/README.md` · `CHANGELOG.md`.
+`README.md` · `docs/SPEC.md` · `docs/SPEC-UNIFICACION.md` (identidad compartida con la plataforma) · `docs/TRACEABILITY.md` · `docs/adr/` · `docs/CONTENIDOS.md` · `docs/OPERACION.md` (despliegue por GitHub Actions, bootstrap, rollback, smoke, troubleshooting) · `docs/ASSETS.md` · `docs/evidence/` · `brand/README.md` (kit de marca) · `infra/README.md` · `CHANGELOG.md`.
 
 ## 15. ADRs
-- **ADR-001** Barlow como sustituto de DIN 2014 Rounded.
+- **ADR-001** Barlow como sustituto de DIN 2014 Rounded (ver también ADR-010).
 - **ADR-002** App CDK propia de la landing (no los stacks cascarón de la plataforma); identidad OIDC en stack separado desplegado por un humano; cadena de entrega sin roles compartidos (rol de ejecución acotado, sintetizador con credenciales del CLI).
 - **ADR-003** Perfiles `staging`/`production`: en staging el correo de contacto es opcional porque no hay uno aprobado.
 - **ADR-004** `noindex` en staging (dominio `cloudfront.net` provisional).
 - **ADR-005** LCP medido en CloudFront, no en local.
 - **ADR-006** Snapshots visuales solo locales; CI valida todo lo demás en 3 motores.
 - **ADR-007** Rollback por reconstrucción desde git.
+- **ADR-008** Kit de marca compartido con la plataforma (`brand/`, copia por commit con sha256).
+- **ADR-009** Español único en la plataforma.
+- **ADR-010** DIN 2014 Rounded: licencia y servicio de los archivos (bucket privado; nunca en git).
 
 ## 16. Dependencias del cliente (bloquean producción, no staging)
 1. Dominio productivo + ACM + Route 53 (TLS 1.2+, apex/www) · 2. URL oficial del login de producción · 3. Correo/teléfono de contacto aprobados · 4. Destinatario institucional de la alerta presupuestal · 5. Validación del favicon derivado · 6. Aprobación del copy de Infraestructura y Ambiente (ronda 1) · 7. Licencia web DIN 2014 Rounded (opcional) · 8. Menciones institucionales/aliados · 9. Smoke manual en Safari real y Edge.

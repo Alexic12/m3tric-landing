@@ -1,0 +1,10 @@
+# Brand kit: hashes in brand/manifest.json are computed over raw bytes, so line
+# endings must be stable per file type. Binaries are declared explicitly so git
+# never normalizes them (a `text` attribute would rewrite CRLF byte pairs inside
+# compressed images).
+brand/**/*.json text eol=lf
+brand/**/*.css text eol=lf
+brand/**/*.svg text eol=lf
+brand/**/*.md text eol=lf
+brand/**/*.webp binary
+src/app/icon.svg text eol=lf
