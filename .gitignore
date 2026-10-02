@@ -44,3 +44,10 @@ next-env.d.ts
 # playwright
 /playwright-report/
 /test-results/
+
+# fonts: licensed fonts never enter this public repo (ADR-010)
+*.woff
+*.woff2
+*.ttf
+*.otf
+*.eot

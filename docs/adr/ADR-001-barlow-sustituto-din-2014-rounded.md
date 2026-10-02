@@ -6,6 +6,8 @@
 | Fecha | 2026-09-30 |
 | Alcance | Tipografía del sitio (`src/app/layout.tsx`, `src/app/globals.css`) |
 
+Ver también: ADR-010 (licencia y servicio de DIN 2014 Rounded). ADR-010 reemplaza el procedimiento con que cierra la sección «Decisión» de este ADR —agregar los `.woff2` con `next/font/local`—; el resto de este ADR sigue vigente.
+
 ## Contexto
 
 El manual de marca (lámina 10) define **DIN 2014 Rounded** como tipografía corporativa. Es una fuente de licencia comercial y la licencia web no ha sido entregada por el cliente (dependencia del cliente n.º 7, `docs/SPEC.md` §16). El repositorio es público (`docs/SPEC.md` §12), por lo que incluir archivos de la fuente sin licencia sería una infracción.

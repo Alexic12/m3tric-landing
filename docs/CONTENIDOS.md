@@ -179,6 +179,8 @@ python3 scripts/optimize-images.py ~/Downloads/brand-images/
 
 Si cambió la proporción, actualice `width` y `height` en el componente que la usa (previene el desplazamiento de diseño, CLS).
 
+Si cambió `aerial-wide-1280.webp`, `aerial-tall-747.webp` o `globe-1000.webp`, ejecute también `npm run brand:build`: el kit (`brand/images/`) las copia byte a byte y `scripts/brand-kit.test.mjs` falla si difieren.
+
 ### Open Graph (`public/og.png`)
 
 1200 × 630 px (obligatorio para redes sociales). Regenere si cambia la identidad o el mensaje principal. La prueba `content › «og:image is absolute, reachable, a 1200x630 PNG»` verifica las dimensiones.
@@ -189,11 +191,11 @@ Si cambió la proporción, actualice `width` y `height` en el componente que la 
 
 ### Logo (`src/components/brand/Logo.tsx`)
 
-Componente React que renderiza el SVG exacto del manual (lámina 8) en cuatro variantes (`color`, `reverse`, `mono-dark`, `mono-light`). **No rediseñar.** Si el manual se actualiza: exporte las formas vectoriales de la lámina 8, verifique `viewBox` y proporciones, reemplace los trazados y mantenga los nombres de variante.
+Componente React que renderiza el SVG exacto del manual (lámina 8) en cuatro variantes (`color`, `reverse`, `mono-dark`, `mono-light`). Los trazados **no están en el componente**: su única fuente es `brand/logo/paths.json` (`viewBox`, `body` y `bars`), que `Logo.tsx` importa y de la que se generan los cuatro SVG de `brand/logo/`. **No rediseñar.** Si el manual se actualiza: exporte las formas vectoriales de la lámina 8, verifique `viewBox` y proporciones, reemplace los trazados en `brand/logo/paths.json`, ejecute `npm run brand:build` (regenera los SVG y `brand/manifest.json`) y mantenga los nombres de variante. `scripts/brand-kit.test.mjs` (parte de `npm run test:unit` y, por tanto, de `npm run release`) falla si `Logo.tsx` vuelve a llevar trazados propios o si un SVG no coincide con `paths.json`. Detalle del kit: `brand/README.md`.
 
 ### Favicons y iconos web
 
-`public/icon.svg`, `public/apple-icon.png` (180 × 180), `public/icon-192.png`, `public/icon-512.png`. Derivados de las tres barras del logo sobre un cuadrado verde oscuro. **No cambiar sin aprobación del equipo de marca**: el favicon derivado está pendiente de validación (dependencia del cliente n.º 5).
+`public/icon.svg`, `public/apple-icon.png` (180 × 180), `public/icon-192.png`, `public/icon-512.png`. Derivados de las tres barras del logo sobre un cuadrado verde oscuro. **No cambiar sin aprobación del equipo de marca**: el favicon derivado está pendiente de validación (dependencia del cliente n.º 5). El kit guarda una copia de la marca: `brand/logo/m3tric-mark.svg` es copia byte a byte de `src/app/icon.svg`; si ese archivo cambia, ejecute `npm run brand:build`.
 
 ---
 
@@ -212,11 +214,13 @@ Componente React que renderiza el SVG exacto del manual (lámina 8) en cuatro va
 | `--color-m3-yellow` / `-orange` / `-red` | `#ffd166` / `#f77f00` / `#d62828` | **Solo** niveles de alerta: Atención / Alerta / Crítico |
 | `--color-m3-ink` / `--color-m3-muted` | `#0b0f0d` / `#4b5563` | Texto editorial / secundario |
 
-Reglas de uso: `#74c69d` **no** se usa como texto sobre blanco (contraste 2,04) ni sobre `#2c694f` (3,18); el texto sobre fotografía lleva un velo `#004124` de al menos 70 % y se mide con `npm run evidence:contrast`. No cambie los **nombres** de las variables.
+Reglas de uso: `#74c69d` **no** se usa como texto sobre blanco (contraste 2,04) ni sobre `#2c694f` (3,18); el texto sobre fotografía lleva un velo `#004124` de al menos 70 % y se mide con `npm run evidence:contrast`. No cambie los **nombres** de las variables. Cada hex de `@theme` tiene su par en `brand/tokens.json`, la lista de colores del kit que comparte la plataforma. Para cambiar un color, edite `brand/tokens.json`, ejecute `npm run brand:build` y repita el valor en `@theme`, en `src/config/brand.ts` y, si es un color del logo, en los `COLORS` de `Logo.tsx`; `scripts/brand-kit.test.mjs` falla si no coinciden (`brand/README.md`, «Cómo actualizar el kit»).
 
 ### Fuente
 
-La pila `"DIN 2014 Rounded", var(--font-barlow), system-ui, sans-serif` usa **Barlow** (OFL, autohospedada) como sustituto declarado (ADR-001). Si el cliente licencia DIN 2014 Rounded, agregue los `.woff2` con `next/font/local` en `src/app/layout.tsx`; la pila no cambia.
+La pila `"DIN 2014 Rounded", var(--font-barlow), system-ui, sans-serif` usa **Barlow** (OFL, autohospedada) como sustituto declarado (ADR-001). Hoy la tipografía efectiva es Barlow.
+
+**No agregue archivos de fuente a este repositorio** (`.woff`, `.woff2`, `.ttf`, `.otf`): es público y las licencias de las fuentes comerciales prohíben redistribuirlos (ADR-010). Si el cliente licencia DIN 2014 Rounded, los archivos se servirán bajo `/fonts/*` desde un bucket privado compartido con la plataforma y el `@font-face` se activará por configuración; la pila CSS no cambia. Ese diseño y su estado («pendiente de licencia»; todavía no está implementado) están en `docs/adr/ADR-010-din-2014-rounded-licencia-y-servicio.md` y `brand/fonts/README.md`. `npm run brand:build` y `scripts/brand-kit.test.mjs` fallan si aparece un archivo de fuente bajo `brand/`.
 
 ---
 
@@ -239,9 +243,9 @@ La pila `"DIN 2014 Rounded", var(--font-barlow), system-ui, sans-serif` usa **Ba
 | Correo de contacto | Variable `NEXT_PUBLIC_CONTACT_EMAIL` | `.env.production.local` (local) o variable `CONTACT_EMAIL` del environment (CI) |
 | URL de la plataforma | Variable `NEXT_PUBLIC_PLATFORM_URL` | `.env.production.local` o variable `PLATFORM_URL` |
 | Dominio | Variable `NEXT_PUBLIC_SITE_URL` | `.env.production.local`; en CI sale del stack |
-| Fotos | `public/images/` | Reemplazar y correr `scripts/optimize-images.py` |
+| Fotos | `public/images/` | Reemplazar y correr `scripts/optimize-images.py`; si cambia una de las tres que copia el kit, `npm run brand:build` |
 | Open Graph | `public/og.png` | Reemplazar 1200 × 630 |
-| Logo | `src/components/brand/Logo.tsx` | Solo si cambia la marca |
-| Colores | `src/app/globals.css` | Cambiar el hex en `@theme`; verificar contrastes |
+| Logo | `brand/logo/paths.json` (trazados) y `src/components/brand/Logo.tsx` (colores por variante) | Solo si cambia la marca; después, `npm run brand:build` |
+| Colores | `brand/tokens.json` y `src/app/globals.css` | Cambiar el hex en `tokens.json`, ejecutar `npm run brand:build` y repetirlo en `@theme` y `src/config/brand.ts`; verificar contrastes |
 | Estado de una escala | `src/content/landing.ts` | `status: "available"` o `"evolving"` |
 | Navegación | `src/content/landing.ts` | Editar `navItems[].label` |
