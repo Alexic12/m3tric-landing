@@ -67,7 +67,7 @@ const MANUAL_PALETTE = {
 };
 
 // docs/SPEC-UNIFICACION.md 4.2: the greens plus neutrals. The warm colours are reserved for alert levels.
-const CHART_SERIES = ["#004124", "#74C69D", "#2C694F", "#B7E3C7", "#4B5563", "#0B0F0D"];
+const CHART_SERIES = ["#004124", "#2C694F", "#4B5563", "#74C69D", "#0B0F0D", "#B7E3C7"];
 
 // sha256 of JSON.stringify([viewBox, body, bars]) of logo/paths.json. It equals the original inline strings of Logo.tsx at
 // 7f32145 (blob f5fb27b8). A literal, so redrawing the official wordmark is a deliberate edit here, never a side effect.
