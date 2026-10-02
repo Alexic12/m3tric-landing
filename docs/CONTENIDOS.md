@@ -32,7 +32,7 @@ No se pueden hacer afirmaciones sobre capacidades no verificadas. El estado se m
 |---|---|---|
 | `navItems` | Enlaces del menú (`id` = ancla, `label` = texto) | Header, menú móvil, Footer |
 | `a11y` | Etiquetas ARIA y alternativas de texto | Todo el sitio |
-| `cta` | Textos de los botones («Abrir plataforma», «Hablar con el equipo», «Escribir al equipo») y asunto del correo | Header, Hero, Casos de uso, Contacto |
+| `cta` | Textos de los botones («Abrir plataforma», «Escribir al equipo») y asunto del correo | Header, Hero, Contacto |
 | `brand` | Lema y «Todos los derechos reservados.» | Pie de página |
 | `footer` | Rótulo de secciones del pie | Footer |
 | `statusLabels` | «Disponible» / «En evolución» | Insignias de estado |
@@ -94,7 +94,6 @@ Principio: **prueba en lugar de promesa**. Cada beneficio nombra el entregable c
 | `imageAlt` | Texto alternativo de la foto de la sección |
 | `situationLabel`, `givesLabel` | Rótulos «La situación» y «Lo que obtiene» |
 | `items` | **Cuatro** casos: `icon` (`risk`, `agro`, `infra`, `environment`), `title`, `scope`, `situation` y `gives` |
-| `band.title` | Texto de la banda con el CTA «Hablar con el equipo» |
 
 Los casos de **Infraestructura** y **Ambiente** están marcados en el código con «Pendiente de aprobación editorial (ronda de ajustes 1)». No se publican como definitivos hasta que el cliente los apruebe (`docs/TRACEABILITY.md`, REQ-C12).
 
@@ -229,7 +228,7 @@ La pila `"DIN 2014 Rounded", var(--font-barlow), system-ui, sans-serif` usa **Ba
 - [ ] **Imágenes**: si agregó o reemplazó, ejecutó `python3 scripts/optimize-images.py` y revisó anchos.
 - [ ] **Variables**: `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_PLATFORM_URL` y, en producción, `NEXT_PUBLIC_CONTACT_EMAIL` son válidas.
 - [ ] **Local**: `npm run release` pasa.
-- [ ] **Revisión visual**: leyó la página en 360, 768 y 1920 px; probó todos los «Abrir plataforma» y «Hablar con el equipo».
+- [ ] **Revisión visual**: leyó la página en 360, 768 y 1920 px; probó todos los «Abrir plataforma» y el enlace «Contacto».
 - [ ] **Publicación**: abra un PR; al fusionar a `main`, `Deploy staging` publica (`docs/OPERACION.md` §6).
 
 ## Referencia rápida

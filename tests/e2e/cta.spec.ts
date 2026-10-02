@@ -10,21 +10,20 @@ async function isFilled(locator: Locator): Promise<boolean> {
   });
 }
 
-test.describe("CTA hierarchy: talk to the team first, open the platform second", () => {
-  test("hero: primary 'Hablar con el equipo' (filled, #contacto) comes before secondary 'Abrir plataforma' (ghost)", async ({
-    page,
-  }) => {
+test.describe("CTA hierarchy: 'Contacto' in the nav, 'Abrir plataforma' as the call to action", () => {
+  test("no 'Hablar con el equipo' button anywhere on the page (owner decision 2026-10-01)", async ({ page }) => {
     await page.goto("/");
-    const links = page.locator("#inicio a").filter({ hasText: /Hablar con el equipo|Abrir plataforma/ });
-    await expect(links).toHaveCount(2);
-    const primary = links.nth(0);
-    const secondary = links.nth(1);
-    await expect(primary).toHaveText("Hablar con el equipo");
-    await expect(primary).toHaveAttribute("href", "#contacto");
-    await expect(secondary).toHaveText("Abrir plataforma");
-    await expect(secondary).toHaveAttribute("href", PLATFORM_URL);
-    expect(await isFilled(primary), "primary is a filled button").toBe(true);
-    expect(await isFilled(secondary), "secondary is not filled").toBe(false);
+    // The nav link "Contacto" already leads to #contacto; the button duplicated it everywhere.
+    await expect(page.getByRole("link", { name: /Hablar con el equipo/ })).toHaveCount(0);
+    await expect(page.getByText(/Hablar con el equipo|¿Su caso es uno de estos\?/)).toHaveCount(0);
+  });
+
+  test("hero: 'Abrir plataforma' is the single, filled CTA", async ({ page }) => {
+    await page.goto("/");
+    const links = page.locator("#inicio a").filter({ hasText: /Abrir plataforma/ });
+    await expect(links).toHaveCount(1);
+    await expect(links.first()).toHaveAttribute("href", PLATFORM_URL);
+    expect(await isFilled(links.first()), "the hero CTA is a filled button").toBe(true);
   });
 
   test("header (1440): only 'Contacto' leads to the contact section; 'Abrir plataforma' is the sole header CTA", async ({
@@ -47,18 +46,10 @@ test.describe("CTA hierarchy: talk to the team first, open the platform second",
     expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
   });
 
-  test("after the use cases a full-width band repeats the primary CTA", async ({ page }) => {
-    await page.goto("/");
-    const band = page.locator("#casos").getByRole("link", { name: "Hablar con el equipo" });
-    await expect(band).toHaveCount(1);
-    await expect(band).toHaveAttribute("href", "#contacto");
-    await expect(page.locator("#casos").getByText("¿Su caso es uno de estos? Hablemos.")).toBeVisible();
-  });
-
-  test("clicking a 'Hablar con el equipo' button lands on the contact heading", async ({ page }) => {
+  test("the nav link 'Contacto' lands on the contact heading", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/");
-    await page.locator("#casos").getByRole("link", { name: "Hablar con el equipo" }).click();
+    await page.locator("header").getByRole("navigation", { name: "Navegación principal" }).getByRole("link", { name: "Contacto" }).click();
     await expect(page).toHaveURL(/#contacto$/);
     await waitForScrollSettled(page);
     const box = await page.locator("#contacto-title").boundingBox();

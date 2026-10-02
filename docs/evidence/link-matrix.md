@@ -2,7 +2,7 @@
 
 Generada por `tests/e2e/links.spec.ts` (proyecto chromium, 2026-09-30) contra `out/` construido con SITE_URL=https://m3tric-test.co, PLATFORM_URL=https://app.m3tric-test.co/login, EMAIL=contacto@m3tric-test.co, PHONE=+573000000000.
 
-Total de enlaces `<a>`: 35 · Con problemas: 0
+Total de enlaces `<a>`: 33 · Con problemas: 0
 
 | # | Ubicación | Texto accesible | href | Tipo | Resultado |
 |---|---|---|---|---|---|
@@ -24,20 +24,18 @@ Total de enlaces `<a>`: 35 · Con problemas: 0
 | 16 | header (menú móvil) | 06Técnico | `#tecnico` | anchor | PASS |
 | 17 | header (menú móvil) | 07Contacto | `#contacto` | anchor | PASS |
 | 18 | header (menú móvil) | Abrir plataforma | `https://app.m3tric-test.co/login` | platform-cta | PASS |
-| 19 | inicio | Hablar con el equipo | `#contacto` | anchor | PASS |
-| 20 | inicio | Abrir plataforma | `https://app.m3tric-test.co/login` | platform-cta | PASS |
-| 21 | casos | Hablar con el equipo | `#contacto` | anchor | PASS |
-| 22 | contacto | Escribir al equipo | `mailto:contacto@m3tric-test.co?subject=Contacto%20desde%20el%20sitio%20M3TRIC` | mailto | PASS |
-| 23 | contacto | Abrir plataforma | `https://app.m3tric-test.co/login` | platform-cta | PASS |
-| 24 | contacto | Correo: contacto@m3tric-test.co | `mailto:contacto@m3tric-test.co?subject=Contacto%20desde%20el%20sitio%20M3TRIC` | mailto | PASS |
-| 25 | contacto | Teléfono: +57 300 000 0000 | `tel:+573000000000` | tel | PASS |
-| 26 | footer | M3TRIC, ir al inicio | `#inicio` | anchor | PASS |
-| 27 | footer | Beneficios | `#beneficios` | anchor | PASS |
-| 28 | footer | Casos de uso | `#casos` | anchor | PASS |
-| 29 | footer | Cómo funciona | `#como-funciona` | anchor | PASS |
-| 30 | footer | Escalas | `#escalas` | anchor | PASS |
-| 31 | footer | Preguntas | `#preguntas` | anchor | PASS |
-| 32 | footer | Técnico | `#tecnico` | anchor | PASS |
-| 33 | footer | Contacto | `#contacto` | anchor | PASS |
-| 34 | footer | contacto@m3tric-test.co | `mailto:contacto@m3tric-test.co?subject=Contacto%20desde%20el%20sitio%20M3TRIC` | mailto | PASS |
-| 35 | footer | +57 300 000 0000 | `tel:+573000000000` | tel | PASS |
+| 19 | inicio | Abrir plataforma | `https://app.m3tric-test.co/login` | platform-cta | PASS |
+| 20 | contacto | Escribir al equipo | `mailto:contacto@m3tric-test.co?subject=Contacto%20desde%20el%20sitio%20M3TRIC` | mailto | PASS |
+| 21 | contacto | Abrir plataforma | `https://app.m3tric-test.co/login` | platform-cta | PASS |
+| 22 | contacto | Correo: contacto@m3tric-test.co | `mailto:contacto@m3tric-test.co?subject=Contacto%20desde%20el%20sitio%20M3TRIC` | mailto | PASS |
+| 23 | contacto | Teléfono: +57 300 000 0000 | `tel:+573000000000` | tel | PASS |
+| 24 | footer | M3TRIC, ir al inicio | `#inicio` | anchor | PASS |
+| 25 | footer | Beneficios | `#beneficios` | anchor | PASS |
+| 26 | footer | Casos de uso | `#casos` | anchor | PASS |
+| 27 | footer | Cómo funciona | `#como-funciona` | anchor | PASS |
+| 28 | footer | Escalas | `#escalas` | anchor | PASS |
+| 29 | footer | Preguntas | `#preguntas` | anchor | PASS |
+| 30 | footer | Técnico | `#tecnico` | anchor | PASS |
+| 31 | footer | Contacto | `#contacto` | anchor | PASS |
+| 32 | footer | contacto@m3tric-test.co | `mailto:contacto@m3tric-test.co?subject=Contacto%20desde%20el%20sitio%20M3TRIC` | mailto | PASS |
+| 33 | footer | +57 300 000 0000 | `tel:+573000000000` | tel | PASS |

@@ -53,7 +53,7 @@ Una landing pública de M3TRIC que un gerente, un alcalde, un ingeniero de obra 
 
 | Audiencia | Lo que le importa | Lo que le decimos | CTA |
 |---|---|---|---|
-| Decisor no técnico (gerencia de riesgo, entidades territoriales, operadores de infraestructura, productores) | Saber a tiempo, tener claridad, justificar decisiones | "Le avisamos cuando su terreno cambia, se lo mostramos en un mapa y le entregamos reportes para decidir." | **Hablar con el equipo** |
+| Decisor no técnico (gerencia de riesgo, entidades territoriales, operadores de infraestructura, productores) | Saber a tiempo, tener claridad, justificar decisiones | "Le avisamos cuando su terreno cambia, se lo mostramos en un mapa y le entregamos reportes para decidir." | Enlace **Contacto** de la navegación |
 | Equipo técnico del cliente (ingeniería, TI, investigación) | Método, datos, seguridad, integración | Franja "Para equipos técnicos": capacidades, flujo de datos, stack, seguridad | Leer detalle técnico |
 | Usuario existente | Entrar | — | **Abrir plataforma** (header y contacto) |
 
@@ -118,7 +118,7 @@ Página única, `lang="es-CO"`. Dos zonas: **zona de valor** (lenguaje llano) y 
 | 9 | `#contacto` | Hablemos | **Contacto** + **CTA** | Valor |
 | — | — | Footer | — | — |
 
-Navegación (desktop ≥ 1280 px): Beneficios · Casos de uso · Cómo funciona · Escalas · Preguntas · Técnico · Contacto. A la derecha: enlace **Abrir plataforma**. Sin botón «Hablar con el equipo» en la barra: duplicaba el enlace **Contacto** (decisión del owner, 2026-10-01); ese CTA sigue en el hero, tras los casos de uso y en contacto. En móvil: logo y menú (diálogo modal accesible con la navegación, incluido Contacto, y el CTA **Abrir plataforma**).
+Navegación (desktop ≥ 1280 px): Beneficios · Casos de uso · Cómo funciona · Escalas · Preguntas · Técnico · Contacto. A la derecha: enlace **Abrir plataforma**. Sin botón «Hablar con el equipo» en ninguna parte de la página: duplicaba el enlace **Contacto** (decisión del owner, 2026-10-01). En móvil: logo y menú (diálogo modal accesible con la navegación, incluido Contacto, y el CTA **Abrir plataforma**).
 
 ### 4.1 Patrones *enterprise* que se aplican
 - Ritmo y retícula: 12 columnas, contenedor 1280 px, márgenes 16/24/32 px, secciones de 96–128 px de alto de respiro.
@@ -126,7 +126,7 @@ Navegación (desktop ≥ 1280 px): Beneficios · Casos de uso · Cómo funciona 
 - **Prueba en lugar de promesa**: cada beneficio muestra el *entregable concreto* ("tablero con la última lectura de cada sensor", "reporte de salud de sensores").
 - Estados honestos visibles (Disponible / En evolución) con texto y forma, no solo color.
 - Franja técnica tipo *spec sheet*: tablas limpias, monoespaciado solo en etiquetas cortas, iconografía de línea, fondo `#002A17`.
-- CTA repetido en tres puntos (hero, después de casos de uso, contacto) sin ser invasivo; nada de pop-ups.
+- Un solo camino a contacto: el enlace **Contacto** de la navegación (decisión del owner, 2026-10-01: el botón «Hablar con el equipo» duplicaba ese enlace y se retiró de toda la página). CTA visible: **Abrir plataforma** en el hero y en contacto. Nada de pop-ups.
 
 ---
 
@@ -136,7 +136,7 @@ Navegación (desktop ≥ 1280 px): Beneficios · Casos de uso · Cómo funciona 
 - Kicker: `Monitoreo del territorio`
 - H1: **Entender el territorio** *para anticipar el riesgo.* (tagline del manual)
 - Bajada: "M3TRIC reúne en un solo lugar la información de los sensores instalados en su terreno, le avisa cuando algo cambia y le entrega reportes claros para decidir a tiempo."
-- CTA primario: **Hablar con el equipo** → `#contacto` · Secundario: **Abrir plataforma** → `PLATFORM_URL`.
+- CTA: **Abrir plataforma** → `PLATFORM_URL` (único botón del hero; el contacto se alcanza por el enlace **Contacto** de la navegación).
 - Franja de tres resultados (REQ-B04), cada uno con ícono y una línea: **Avisos a tiempo** · **Un mapa claro de su terreno** · **Reportes para decidir**.
 
 ### 5.2 Lo que usted obtiene (`#beneficios`) — productos como resultados
@@ -154,7 +154,7 @@ Kicker `02 — Para quién es`. Titular: "Un mismo método para cuatro frentes."
 3. **Infraestructura** — Obras y activos. Situación: "Una obra depende de la estabilidad del terreno que la rodea." Le da: "Mediciones periódicas del entorno y alertas ante cambios." *(copy pendiente de aprobación editorial — ronda 1)*
 4. **Ambiente** — Variables hídricas, climáticas y ambientales. Situación: "Las variables del ambiente cambian a distintas escalas." Le da: "Registro ordenado de las mediciones y reportes para su seguimiento." *(copy pendiente de aprobación editorial — ronda 1)*
 
-Cierre de sección: banda con CTA **Hablar con el equipo**.
+Sin banda de cierre: la banda «¿Su caso es uno de estos? Hablemos.» se retiró junto con el botón «Hablar con el equipo» (decisión del owner, 2026-10-01).
 
 ### 5.4 Cómo funciona (`#como-funciona`) — plataforma
 Kicker `03 — Cómo funciona`. Titular: "De la medición en campo a la decisión, en cuatro pasos." Pasos (lámina 12, en lenguaje llano):

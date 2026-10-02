@@ -38,12 +38,9 @@ export const a11y = {
 
 const PLATFORM_VERB = "Abrir";
 const PLATFORM_NOUN = "plataforma";
-const TEAM_VERB = "Hablar";
-const TEAM_REST = "con el equipo";
 
 export const cta = {
   platform: `${PLATFORM_VERB} ${PLATFORM_NOUN}`,
-  team: `${TEAM_VERB} ${TEAM_REST}`,
   writeTeam: "Escribir al equipo",
   mailSubject: "Contacto desde el sitio M3TRIC",
 } as const;
@@ -182,9 +179,6 @@ export const useCases = {
     situation: string;
     gives: string;
   }>,
-  band: {
-    title: "¿Su caso es uno de estos? Hablemos.",
-  },
 } as const;
 
 export const howItWorks = {

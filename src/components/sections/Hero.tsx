@@ -1,4 +1,4 @@
-import { ArrowRight, ArrowUpRight, Bell, FileText, MapPinned, type LucideIcon } from "lucide-react";
+import { ArrowUpRight, Bell, FileText, MapPinned, type LucideIcon } from "lucide-react";
 import { NodeNetwork } from "@/components/brand/NodeNetwork";
 import { TripleBar } from "@/components/brand/TripleBar";
 import { Button } from "@/components/ui/Button";
@@ -60,16 +60,8 @@ export function Hero() {
           <p className="text-lead mt-8 max-w-xl text-white/90">{hero.lead}</p>
           <div className="mt-10 flex flex-wrap gap-3">
             <Button
-              href="#contacto"
-              variant="primary-on-dark"
-              size="lg"
-              icon={<ArrowRight size={20} strokeWidth={1.5} />}
-            >
-              {cta.team}
-            </Button>
-            <Button
               href={siteConfig.platformUrl}
-              variant="ghost-on-dark"
+              variant="primary-on-dark"
               size="lg"
               icon={<ArrowUpRight size={20} strokeWidth={1.5} />}
             >
