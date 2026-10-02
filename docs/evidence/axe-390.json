@@ -13,7 +13,7 @@
     "orientationAngle": 0,
     "orientationType": "landscape-primary"
   },
-  "timestamp": "2026-10-02T03:17:07.761Z",
+  "timestamp": "2026-10-02T14:04:51.572Z",
   "url": "http://127.0.0.1:4173/",
   "toolOptions": {
     "runOnly": {
@@ -717,9 +717,89 @@
             }
           ],
           "impact": null,
+          "html": "<div class=\"flex shrink-0 items-center gap-3 sm:gap-4\" aria-label=\"Iniciativa con el apoyo de la Universidad EAFIT\" role=\"group\">",
+          "target": [
+            "div[role=\"group\"]"
+          ]
+        },
+        {
+          "any": [],
+          "all": [
+            {
+              "id": "aria-allowed-attr",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "critical",
+              "message": "ARIA attributes are used correctly for the defined role"
+            },
+            {
+              "id": "aria-allowed-attr-elm",
+              "data": null,
+              "relatedNodes": [],
+              "message": "ARIA attributes are allowed for this element",
+              "impact": "critical"
+            },
+            {
+              "id": "aria-no-deprecated-attr",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "critical",
+              "message": "No deprecated ARIA attributes are used"
+            }
+          ],
+          "none": [
+            {
+              "id": "aria-unsupported-attr",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "critical",
+              "message": "ARIA attribute is supported"
+            }
+          ],
+          "impact": null,
           "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 503.1 99.09\" role=\"img\" aria-label=\"M3TRIC, ir al inicio\" class=\"w-[104px] sm:w-32\" style=\"height:auto\">",
           "target": [
             ".w-\\[104px\\]"
+          ]
+        },
+        {
+          "any": [],
+          "all": [
+            {
+              "id": "aria-allowed-attr",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "critical",
+              "message": "ARIA attributes are used correctly for the defined role"
+            },
+            {
+              "id": "aria-allowed-attr-elm",
+              "data": null,
+              "relatedNodes": [],
+              "message": "ARIA attributes are allowed for this element",
+              "impact": "critical"
+            },
+            {
+              "id": "aria-no-deprecated-attr",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "critical",
+              "message": "No deprecated ARIA attributes are used"
+            }
+          ],
+          "none": [
+            {
+              "id": "aria-unsupported-attr",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "critical",
+              "message": "ARIA attribute is supported"
+            }
+          ],
+          "impact": null,
+          "html": "<svg viewBox=\"0 0 2200 856\" role=\"img\" aria-label=\"Universidad EAFIT\" class=\"w-[62px] sm:w-[76px]\" style=\"height:auto\">",
+          "target": [
+            ".w-\\[62px\\]"
           ]
         },
         {
@@ -1556,9 +1636,45 @@
           ],
           "none": [],
           "impact": null,
+          "html": "<div class=\"flex shrink-0 items-center gap-3 sm:gap-4\" aria-label=\"Iniciativa con el apoyo de la Universidad EAFIT\" role=\"group\">",
+          "target": [
+            "div[role=\"group\"]"
+          ]
+        },
+        {
+          "any": [],
+          "all": [
+            {
+              "id": "aria-conditional-attr",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "serious",
+              "message": "ARIA attribute is allowed"
+            }
+          ],
+          "none": [],
+          "impact": null,
           "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 503.1 99.09\" role=\"img\" aria-label=\"M3TRIC, ir al inicio\" class=\"w-[104px] sm:w-32\" style=\"height:auto\">",
           "target": [
             ".w-\\[104px\\]"
+          ]
+        },
+        {
+          "any": [],
+          "all": [
+            {
+              "id": "aria-conditional-attr",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "serious",
+              "message": "ARIA attribute is allowed"
+            }
+          ],
+          "none": [],
+          "impact": null,
+          "html": "<svg viewBox=\"0 0 2200 856\" role=\"img\" aria-label=\"Universidad EAFIT\" class=\"w-[62px] sm:w-[76px]\" style=\"height:auto\">",
+          "target": [
+            ".w-\\[62px\\]"
           ]
         },
         {
@@ -1955,9 +2071,45 @@
             }
           ],
           "impact": null,
+          "html": "<div class=\"flex shrink-0 items-center gap-3 sm:gap-4\" aria-label=\"Iniciativa con el apoyo de la Universidad EAFIT\" role=\"group\">",
+          "target": [
+            "div[role=\"group\"]"
+          ]
+        },
+        {
+          "any": [],
+          "all": [],
+          "none": [
+            {
+              "id": "deprecatedrole",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "minor",
+              "message": "ARIA role is not deprecated"
+            }
+          ],
+          "impact": null,
           "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 503.1 99.09\" role=\"img\" aria-label=\"M3TRIC, ir al inicio\" class=\"w-[104px] sm:w-32\" style=\"height:auto\">",
           "target": [
             ".w-\\[104px\\]"
+          ]
+        },
+        {
+          "any": [],
+          "all": [],
+          "none": [
+            {
+              "id": "deprecatedrole",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "minor",
+              "message": "ARIA role is not deprecated"
+            }
+          ],
+          "impact": null,
+          "html": "<svg viewBox=\"0 0 2200 856\" role=\"img\" aria-label=\"Universidad EAFIT\" class=\"w-[62px] sm:w-[76px]\" style=\"height:auto\">",
+          "target": [
+            ".w-\\[62px\\]"
           ]
         },
         {
@@ -2195,6 +2347,38 @@
           "html": "<div aria-hidden=\"true\" class=\"absolute inset-0 border-b transition-colors duration-300 border-m3-green-900/10 bg-white/95 backdrop-blur\"></div>",
           "target": [
             ".bg-white\\/95"
+          ]
+        },
+        {
+          "any": [],
+          "all": [
+            {
+              "id": "focusable-modal-open",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "serious",
+              "message": "No focusable elements while a modal is open"
+            },
+            {
+              "id": "focusable-disabled",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "serious",
+              "message": "No focusable elements contained within element"
+            },
+            {
+              "id": "focusable-not-tabbable",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "serious",
+              "message": "No focusable elements contained within element"
+            }
+          ],
+          "none": [],
+          "impact": null,
+          "html": "<span aria-hidden=\"true\" class=\"h-6 w-px bg-m3-green-900/20\"></span>",
+          "target": [
+            ".h-6"
           ]
         },
         {
@@ -4946,7 +5130,7 @@
           "impact": null,
           "html": "<span aria-hidden=\"true\" class=\"absolute bottom-0 left-[1.1875rem] top-11 w-px bg-white/20 lg:bottom-auto lg:left-12 lg:right-0 lg:top-[1.1875rem] lg:h-px lg:w-auto\"></span>",
           "target": [
-            ".pb-8.last\\:pb-0.lg\\:block:nth-child(1) > .left-\\[1\\.1875rem\\].top-11.w-px"
+            ".pb-8.last\\:pb-0.lg\\:block:nth-child(1) > .left-\\[1\\.1875rem\\].top-11.lg\\:bottom-auto"
           ]
         },
         {
@@ -5010,7 +5194,7 @@
           "impact": null,
           "html": "<span aria-hidden=\"true\" class=\"absolute bottom-0 left-[1.1875rem] top-11 w-px bg-white/20 lg:bottom-auto lg:left-12 lg:right-0 lg:top-[1.1875rem] lg:h-px lg:w-auto\"></span>",
           "target": [
-            ".pb-8.last\\:pb-0.lg\\:block:nth-child(2) > .left-\\[1\\.1875rem\\].top-11.w-px"
+            ".pb-8.last\\:pb-0.lg\\:block:nth-child(2) > .left-\\[1\\.1875rem\\].top-11.lg\\:bottom-auto"
           ]
         },
         {
@@ -5074,7 +5258,7 @@
           "impact": null,
           "html": "<span aria-hidden=\"true\" class=\"absolute bottom-0 left-[1.1875rem] top-11 w-px bg-white/20 lg:bottom-auto lg:left-12 lg:right-0 lg:top-[1.1875rem] lg:h-px lg:w-auto\"></span>",
           "target": [
-            ".pb-8.last\\:pb-0.lg\\:block:nth-child(3) > .left-\\[1\\.1875rem\\].top-11.w-px"
+            ".pb-8.last\\:pb-0.lg\\:block:nth-child(3) > .left-\\[1\\.1875rem\\].top-11.lg\\:bottom-auto"
           ]
         },
         {
@@ -5138,7 +5322,7 @@
           "impact": null,
           "html": "<span aria-hidden=\"true\" class=\"absolute bottom-0 left-[1.1875rem] top-11 w-px bg-white/20 lg:bottom-auto lg:left-12 lg:right-0 lg:top-[1.1875rem] lg:h-px lg:w-auto\"></span>",
           "target": [
-            ".pb-8.last\\:pb-0.lg\\:block:nth-child(4) > .left-\\[1\\.1875rem\\].top-11.w-px"
+            ".pb-8.last\\:pb-0.lg\\:block:nth-child(4) > .left-\\[1\\.1875rem\\].top-11.lg\\:bottom-auto"
           ]
         },
         {
@@ -5652,9 +5836,45 @@
             }
           ],
           "impact": null,
+          "html": "<div class=\"flex shrink-0 items-center gap-3 sm:gap-4\" aria-label=\"Iniciativa con el apoyo de la Universidad EAFIT\" role=\"group\">",
+          "target": [
+            "div[role=\"group\"]"
+          ]
+        },
+        {
+          "any": [],
+          "all": [],
+          "none": [
+            {
+              "id": "aria-prohibited-attr",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "serious",
+              "message": "ARIA attribute is allowed"
+            }
+          ],
+          "impact": null,
           "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 503.1 99.09\" role=\"img\" aria-label=\"M3TRIC, ir al inicio\" class=\"w-[104px] sm:w-32\" style=\"height:auto\">",
           "target": [
             ".w-\\[104px\\]"
+          ]
+        },
+        {
+          "any": [],
+          "all": [],
+          "none": [
+            {
+              "id": "aria-prohibited-attr",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "serious",
+              "message": "ARIA attribute is allowed"
+            }
+          ],
+          "impact": null,
+          "html": "<svg viewBox=\"0 0 2200 856\" role=\"img\" aria-label=\"Universidad EAFIT\" class=\"w-[62px] sm:w-[76px]\" style=\"height:auto\">",
+          "target": [
+            ".w-\\[62px\\]"
           ]
         },
         {
@@ -6051,9 +6271,45 @@
           "all": [],
           "none": [],
           "impact": null,
+          "html": "<div class=\"flex shrink-0 items-center gap-3 sm:gap-4\" aria-label=\"Iniciativa con el apoyo de la Universidad EAFIT\" role=\"group\">",
+          "target": [
+            "div[role=\"group\"]"
+          ]
+        },
+        {
+          "any": [
+            {
+              "id": "aria-required-attr",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "critical",
+              "message": "All required ARIA attributes are present"
+            }
+          ],
+          "all": [],
+          "none": [],
+          "impact": null,
           "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 503.1 99.09\" role=\"img\" aria-label=\"M3TRIC, ir al inicio\" class=\"w-[104px] sm:w-32\" style=\"height:auto\">",
           "target": [
             ".w-\\[104px\\]"
+          ]
+        },
+        {
+          "any": [
+            {
+              "id": "aria-required-attr",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "critical",
+              "message": "All required ARIA attributes are present"
+            }
+          ],
+          "all": [],
+          "none": [],
+          "impact": null,
+          "html": "<svg viewBox=\"0 0 2200 856\" role=\"img\" aria-label=\"Universidad EAFIT\" class=\"w-[62px] sm:w-[76px]\" style=\"height:auto\">",
+          "target": [
+            ".w-\\[62px\\]"
           ]
         },
         {
@@ -6356,9 +6612,73 @@
             }
           ],
           "impact": null,
+          "html": "<div class=\"flex shrink-0 items-center gap-3 sm:gap-4\" aria-label=\"Iniciativa con el apoyo de la Universidad EAFIT\" role=\"group\">",
+          "target": [
+            "div[role=\"group\"]"
+          ]
+        },
+        {
+          "any": [],
+          "all": [],
+          "none": [
+            {
+              "id": "invalidrole",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "critical",
+              "message": "ARIA role is valid"
+            },
+            {
+              "id": "abstractrole",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "critical",
+              "message": "Abstract roles are not used"
+            },
+            {
+              "id": "unsupportedrole",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "critical",
+              "message": "ARIA role is supported"
+            }
+          ],
+          "impact": null,
           "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 503.1 99.09\" role=\"img\" aria-label=\"M3TRIC, ir al inicio\" class=\"w-[104px] sm:w-32\" style=\"height:auto\">",
           "target": [
             ".w-\\[104px\\]"
+          ]
+        },
+        {
+          "any": [],
+          "all": [],
+          "none": [
+            {
+              "id": "invalidrole",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "critical",
+              "message": "ARIA role is valid"
+            },
+            {
+              "id": "abstractrole",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "critical",
+              "message": "Abstract roles are not used"
+            },
+            {
+              "id": "unsupportedrole",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "critical",
+              "message": "ARIA role is supported"
+            }
+          ],
+          "impact": null,
+          "html": "<svg viewBox=\"0 0 2200 856\" role=\"img\" aria-label=\"Universidad EAFIT\" class=\"w-[62px] sm:w-[76px]\" style=\"height:auto\">",
+          "target": [
+            ".w-\\[62px\\]"
           ]
         },
         {
@@ -6665,9 +6985,73 @@
           ],
           "none": [],
           "impact": null,
+          "html": "<div class=\"flex shrink-0 items-center gap-3 sm:gap-4\" aria-label=\"Iniciativa con el apoyo de la Universidad EAFIT\" role=\"group\">",
+          "target": [
+            "div[role=\"group\"]"
+          ]
+        },
+        {
+          "any": [],
+          "all": [
+            {
+              "id": "aria-valid-attr-value",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "critical",
+              "message": "ARIA attribute values are valid"
+            },
+            {
+              "id": "aria-errormessage",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "critical",
+              "message": "aria-errormessage exists and references elements visible to screen readers that use a supported aria-errormessage technique"
+            },
+            {
+              "id": "aria-level",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "critical",
+              "message": "aria-level values are valid"
+            }
+          ],
+          "none": [],
+          "impact": null,
           "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 503.1 99.09\" role=\"img\" aria-label=\"M3TRIC, ir al inicio\" class=\"w-[104px] sm:w-32\" style=\"height:auto\">",
           "target": [
             ".w-\\[104px\\]"
+          ]
+        },
+        {
+          "any": [],
+          "all": [
+            {
+              "id": "aria-valid-attr-value",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "critical",
+              "message": "ARIA attribute values are valid"
+            },
+            {
+              "id": "aria-errormessage",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "critical",
+              "message": "aria-errormessage exists and references elements visible to screen readers that use a supported aria-errormessage technique"
+            },
+            {
+              "id": "aria-level",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "critical",
+              "message": "aria-level values are valid"
+            }
+          ],
+          "none": [],
+          "impact": null,
+          "html": "<svg viewBox=\"0 0 2200 856\" role=\"img\" aria-label=\"Universidad EAFIT\" class=\"w-[62px] sm:w-[76px]\" style=\"height:auto\">",
+          "target": [
+            ".w-\\[62px\\]"
           ]
         },
         {
@@ -7344,9 +7728,45 @@
           "all": [],
           "none": [],
           "impact": null,
+          "html": "<div class=\"flex shrink-0 items-center gap-3 sm:gap-4\" aria-label=\"Iniciativa con el apoyo de la Universidad EAFIT\" role=\"group\">",
+          "target": [
+            "div[role=\"group\"]"
+          ]
+        },
+        {
+          "any": [
+            {
+              "id": "aria-valid-attr",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "critical",
+              "message": "ARIA attribute name is valid"
+            }
+          ],
+          "all": [],
+          "none": [],
+          "impact": null,
           "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 503.1 99.09\" role=\"img\" aria-label=\"M3TRIC, ir al inicio\" class=\"w-[104px] sm:w-32\" style=\"height:auto\">",
           "target": [
             ".w-\\[104px\\]"
+          ]
+        },
+        {
+          "any": [
+            {
+              "id": "aria-valid-attr",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "critical",
+              "message": "ARIA attribute name is valid"
+            }
+          ],
+          "all": [],
+          "none": [],
+          "impact": null,
+          "html": "<svg viewBox=\"0 0 2200 856\" role=\"img\" aria-label=\"Universidad EAFIT\" class=\"w-[62px] sm:w-[76px]\" style=\"height:auto\">",
+          "target": [
+            ".w-\\[62px\\]"
           ]
         },
         {
@@ -7759,6 +8179,38 @@
           "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 503.1 99.09\" role=\"img\" aria-label=\"M3TRIC, ir al inicio\" class=\"w-[104px] sm:w-32\" style=\"height:auto\">",
           "target": [
             ".w-\\[104px\\]"
+          ]
+        },
+        {
+          "any": [],
+          "all": [
+            {
+              "id": "important-letter-spacing",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "serious",
+              "message": "Letter-spacing in the style attribute is not set to !important, or meets the minimum"
+            },
+            {
+              "id": "important-word-spacing",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "serious",
+              "message": "word-spacing in the style attribute is not set to !important, or meets the minimum"
+            },
+            {
+              "id": "important-line-height",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "serious",
+              "message": "line-height in the style attribute is not set to !important, or meets the minimum"
+            }
+          ],
+          "none": [],
+          "impact": null,
+          "html": "<svg viewBox=\"0 0 2200 856\" role=\"img\" aria-label=\"Universidad EAFIT\" class=\"w-[62px] sm:w-[76px]\" style=\"height:auto\">",
+          "target": [
+            ".w-\\[62px\\]"
           ]
         },
         {
@@ -13767,7 +14219,7 @@
           "impact": null,
           "html": "<a href=\"#inicio\" class=\"shrink-0 rounded-sm\">",
           "target": [
-            ".max-w-\\[1320px\\].z-10.sm\\:px-6 > .rounded-sm[href$=\"#inicio\"]"
+            "div[role=\"group\"] > .rounded-sm[href$=\"#inicio\"]"
           ]
         },
         {
@@ -15922,6 +16374,24 @@
           "all": [],
           "none": [],
           "impact": null,
+          "html": "<svg viewBox=\"0 0 2200 856\" role=\"img\" aria-label=\"Universidad EAFIT\" class=\"w-[62px] sm:w-[76px]\" style=\"height:auto\">",
+          "target": [
+            ".w-\\[62px\\]"
+          ]
+        },
+        {
+          "any": [
+            {
+              "id": "no-focusable-content",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "serious",
+              "message": "Element does not have focusable descendants"
+            }
+          ],
+          "all": [],
+          "none": [],
+          "impact": null,
           "html": "<button type=\"button\" aria-expanded=\"false\" aria-controls=\"menu-movil\" aria-label=\"Abrir menú\" class=\"inline-flex size-11 items-center justify-center rounded-full xl:hidden text-m3-green-900\">",
           "target": [
             "button[aria-controls=\"menu-movil\"]"
@@ -16346,6 +16816,31 @@
           "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 503.1 99.09\" role=\"img\" aria-label=\"M3TRIC, ir al inicio\" class=\"w-[104px] sm:w-32\" style=\"height:auto\">",
           "target": [
             ".w-\\[104px\\]"
+          ]
+        },
+        {
+          "any": [
+            {
+              "id": "svg-non-empty-title",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "serious",
+              "message": "Element has a child that is a title"
+            },
+            {
+              "id": "aria-label",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "serious",
+              "message": "aria-label attribute exists and is not empty"
+            }
+          ],
+          "all": [],
+          "none": [],
+          "impact": null,
+          "html": "<svg viewBox=\"0 0 2200 856\" role=\"img\" aria-label=\"Universidad EAFIT\" class=\"w-[62px] sm:w-[76px]\" style=\"height:auto\">",
+          "target": [
+            ".w-\\[62px\\]"
           ]
         },
         {

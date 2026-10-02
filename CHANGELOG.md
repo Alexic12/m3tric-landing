@@ -4,6 +4,13 @@ Todas las versiones de la landing de M3TRIC.
 
 ---
 
+## [3.3.0] - 2026-10-02
+
+### Agregado
+- Co-marca de la **Universidad EAFIT** en la barra superior, a la derecha del logo M3TRIC: wordmark vectorizado (`src/components/brand/EafitLogo.tsx`) en azul EAFIT `#004B85` sobre la barra blanca y en blanco sobre el hero; nombre accesible «Universidad EAFIT»; sin enlace (ADR-011).
+- Correo de contacto aprobado por el owner (`amarula2@eafit.edu.co`) configurado como variable del entorno `landing-staging`: el sitio publica `mailto:` en contacto y pie de página.
+- Evidencia «antes» del rediseño de la plataforma en `docs/evidence/platform-brand/` (capturas e informes de Lighthouse).
+
 ## [3.2.1] - 2026-10-02
 
 ### Cambiado

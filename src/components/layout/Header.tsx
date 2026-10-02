@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Menu, X } from "lucide-react";
+import { EafitLogo } from "@/components/brand/EafitLogo";
 import { Logo } from "@/components/brand/Logo";
 import { TripleBar } from "@/components/brand/TripleBar";
 import { Button } from "@/components/ui/Button";
@@ -132,9 +133,15 @@ export function Header() {
         }`}
       />
       <div className="relative z-10 mx-auto flex h-full max-w-[1320px] items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
-        <a href="#inicio" className="shrink-0 rounded-sm" onClick={open ? closeForNavigation : undefined}>
-          <Logo variant={solid ? "color" : "reverse"} label={a11y.homeLink} className="w-[104px] sm:w-32" />
-        </a>
+        <div className="flex shrink-0 items-center gap-3 sm:gap-4" aria-label={a11y.supportedBy} role="group">
+          <a href="#inicio" className="shrink-0 rounded-sm" onClick={open ? closeForNavigation : undefined}>
+            <Logo variant={solid ? "color" : "reverse"} label={a11y.homeLink} className="w-[104px] sm:w-32" />
+          </a>
+          {/* Co-brand: the university backing the initiative (owner decision 2026-10-02). EAFIT blue
+              on the solid bar; white over the dark hero, where the blue would not be legible. */}
+          <span aria-hidden="true" className={`h-6 w-px ${solid ? "bg-m3-green-900/20" : "bg-white/30"}`} />
+          <EafitLogo tone={solid ? "navy" : "light"} label={a11y.eafitLogo} className="w-[62px] sm:w-[76px]" />
+        </div>
 
         <nav aria-label={a11y.mainNav} className="hidden xl:block">
           <ul className="flex items-center gap-6 2xl:gap-8">

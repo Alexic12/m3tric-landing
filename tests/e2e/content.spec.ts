@@ -244,3 +244,16 @@ test.describe("404 page", () => {
     await expect(page.locator("h1")).not.toHaveText("Esta página no existe");
   });
 });
+
+test("header carries the EAFIT co-brand next to the M3TRIC logo (owner decision 2026-10-02)", async ({ page }) => {
+  await page.goto("/");
+  const header = page.locator("header");
+  await expect(header.getByRole("img", { name: "Universidad EAFIT" })).toBeVisible();
+  await expect(header.getByRole("img", { name: /M3TRIC/ }).first()).toBeVisible();
+  // The co-brand is a mark, not a link: it must not point anywhere.
+  await expect(header.getByRole("link", { name: /Universidad EAFIT/ })).toHaveCount(0);
+  await page.evaluate(() => window.scrollTo(0, 900));
+  await page.waitForTimeout(400);
+  await expect(header.getByRole("img", { name: "Universidad EAFIT" })).toBeVisible();
+});
+

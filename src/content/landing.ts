@@ -29,6 +29,8 @@ export const a11y = {
   openMenu: "Abrir menú",
   closeMenu: "Cerrar menú",
   menuDialog: "Menú de navegación",
+  eafitLogo: "Universidad EAFIT",
+  supportedBy: "Iniciativa con el apoyo de la Universidad EAFIT",
   footerNav: "Navegación del pie de página",
   outcomes: "Lo que obtiene con M3TRIC",
   scaleTabs: "Escalas de lectura del territorio",
