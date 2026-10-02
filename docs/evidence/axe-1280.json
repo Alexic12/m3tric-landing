@@ -13,7 +13,7 @@
     "orientationAngle": 0,
     "orientationType": "landscape-primary"
   },
-  "timestamp": "2026-10-01T14:17:01.623Z",
+  "timestamp": "2026-10-02T02:53:34.872Z",
   "url": "http://127.0.0.1:4173/",
   "toolOptions": {
     "runOnly": {
@@ -2572,7 +2572,7 @@
           "impact": null,
           "html": "<span aria-hidden=\"true\" class=\"text-meta w-7 font-medium text-m3-green-400\">07</span>",
           "target": [
-            ".min-h-14.text-\\[clamp\\(1\\.5rem\\,1\\.1rem\\+2vw\\,2\\.25rem\\)\\][aria-current=\"true\"] > .w-7.font-medium.text-meta"
+            ".min-h-14[aria-current=\"true\"][href$=\"#contacto\"] > .w-7.font-medium.text-meta"
           ]
         },
         {
@@ -2636,7 +2636,7 @@
           "impact": null,
           "html": "<span aria-hidden=\"true\" class=\"inline-flex\">",
           "target": [
-            ".pt-10 > .border-m3-green-200\\/60.hover\\:bg-white\\/10.min-h-12 > .inline-flex"
+            ".pt-10 > .hover\\:bg-white.bg-m3-green-200.tracking-wide > .inline-flex"
           ]
         },
         {
@@ -2828,7 +2828,7 @@
           "impact": null,
           "html": "<span aria-hidden=\"true\" class=\"inline-flex\">",
           "target": [
-            ".flex-wrap.mt-10.gap-3 > .hover\\:bg-white.bg-m3-green-200.min-h-12 > .inline-flex"
+            ".flex-wrap.mt-10.gap-3 > .hover\\:bg-white.bg-m3-green-200[href$=\"#contacto\"] > .inline-flex"
           ]
         },
         {
@@ -2860,7 +2860,7 @@
           "impact": null,
           "html": "<span aria-hidden=\"true\" class=\"inline-flex\">",
           "target": [
-            ".flex-wrap.mt-10.gap-3 > .border-m3-green-200\\/60.hover\\:bg-white\\/10.min-h-12 > .inline-flex"
+            ".flex-wrap.mt-10.gap-3 > .border-m3-green-200\\/60.hover\\:bg-white\\/10.tracking-wide > .inline-flex"
           ]
         },
         {
@@ -5708,7 +5708,7 @@
           "impact": null,
           "html": "<span aria-hidden=\"true\" class=\"inline-flex\">",
           "target": [
-            ".mt-10[data-reveal=\"\"][data-revealed=\"\"] > .flex-wrap.gap-3.flex > .hover\\:bg-white.bg-m3-green-200.min-h-12 > .inline-flex"
+            ".mt-10[data-reveal=\"\"][data-revealed=\"\"] > .flex-wrap.gap-3.flex > .hover\\:bg-white.bg-m3-green-200.tracking-wide > .inline-flex"
           ]
         },
         {
@@ -5740,7 +5740,7 @@
           "impact": null,
           "html": "<span aria-hidden=\"true\" class=\"inline-flex\">",
           "target": [
-            ".mt-10[data-reveal=\"\"][data-revealed=\"\"] > .flex-wrap.gap-3.flex > .border-m3-green-200\\/60.hover\\:bg-white\\/10.min-h-12 > .inline-flex"
+            ".mt-10[data-reveal=\"\"][data-revealed=\"\"] > .flex-wrap.gap-3.flex > .border-m3-green-200\\/60.hover\\:bg-white\\/10.tracking-wide > .inline-flex"
           ]
         },
         {
@@ -8961,56 +8961,6 @@
       "help": "Elements must meet minimum color contrast ratio thresholds",
       "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/color-contrast?application=playwright",
       "nodes": [
-        {
-          "any": [
-            {
-              "id": "color-contrast",
-              "data": {
-                "fgColor": "#ffffff",
-                "bgColor": "#004124",
-                "contrastRatio": 11.78,
-                "fontSize": "11.3pt (15px)",
-                "fontWeight": "bold",
-                "expectedContrastRatio": "4.5:1"
-              },
-              "relatedNodes": [],
-              "impact": "serious",
-              "message": "Element has sufficient color contrast of 11.78"
-            }
-          ],
-          "all": [],
-          "none": [],
-          "impact": null,
-          "html": "<span>Hablar<span class=\"sr-only xl:not-sr-only\"> <!-- -->con el equipo</span></span>",
-          "target": [
-            ".hover\\:bg-m3-green-700 > span"
-          ]
-        },
-        {
-          "any": [
-            {
-              "id": "color-contrast",
-              "data": {
-                "fgColor": "#ffffff",
-                "bgColor": "#004124",
-                "contrastRatio": 11.78,
-                "fontSize": "11.3pt (15px)",
-                "fontWeight": "bold",
-                "expectedContrastRatio": "4.5:1"
-              },
-              "relatedNodes": [],
-              "impact": "serious",
-              "message": "Element has sufficient color contrast of 11.78"
-            }
-          ],
-          "all": [],
-          "none": [],
-          "impact": null,
-          "html": "<span class=\"sr-only xl:not-sr-only\"> <!-- -->con el equipo</span>",
-          "target": [
-            ".xl\\:not-sr-only"
-          ]
-        },
         {
           "any": [
             {
@@ -14242,35 +14192,9 @@
             }
           ],
           "impact": null,
-          "html": "<a href=\"#contacto\" class=\"inline-flex items-center justify-center gap-2 rounded-full font-bold tracking-wide transition-colors duration-200 bg-m3-green-900 text-white hover:bg-m3-green-700 min-h-11 px-5 text-[0.9375rem] max-sm:px-4\">",
-          "target": [
-            ".hover\\:bg-m3-green-700"
-          ]
-        },
-        {
-          "any": [
-            {
-              "id": "has-visible-text",
-              "data": null,
-              "relatedNodes": [],
-              "impact": "serious",
-              "message": "Element has text that is visible to screen readers"
-            }
-          ],
-          "all": [],
-          "none": [
-            {
-              "id": "focusable-no-name",
-              "data": null,
-              "relatedNodes": [],
-              "impact": "serious",
-              "message": "Element is not in tab order or has accessible text"
-            }
-          ],
-          "impact": null,
           "html": "<a href=\"#contacto\" class=\"inline-flex items-center justify-center gap-2 rounded-full font-bold tracking-wide transition-colors duration-200 bg-m3-green-200 text-m3-green-900 hover:bg-white min-h-12 px-7 text-base \">",
           "target": [
-            ".flex-wrap.mt-10.gap-3 > .hover\\:bg-white.bg-m3-green-200.min-h-12"
+            ".flex-wrap.mt-10.gap-3 > .hover\\:bg-white.bg-m3-green-200[href$=\"#contacto\"]"
           ]
         },
         {
@@ -14296,7 +14220,7 @@
           "impact": null,
           "html": "<a href=\"https://app.m3tric-test.co/login\" class=\"inline-flex items-center justify-center gap-2 rounded-full font-bold tracking-wide transition-colors duration-200 border border-m3-green-200/60 text-white hover:bg-white/10 min-h-12 px-7 text-base \">",
           "target": [
-            ".flex-wrap.mt-10.gap-3 > .border-m3-green-200\\/60.hover\\:bg-white\\/10.min-h-12"
+            ".flex-wrap.mt-10.gap-3 > .border-m3-green-200\\/60.hover\\:bg-white\\/10.tracking-wide"
           ]
         },
         {
@@ -14348,7 +14272,7 @@
           "impact": null,
           "html": "<a href=\"mailto:contacto@m3tric-test.co?subject=Contacto%20desde%20el%20sitio%20M3TRIC\" class=\"inline-flex items-center justify-center gap-2 rounded-full font-bold tracking-wide transition-colors duration-200 bg-m3-green-200 text-m3-green-900 hover:bg-white min-h-12 px-7 text-base \">",
           "target": [
-            ".mt-10[data-reveal=\"\"][data-revealed=\"\"] > .flex-wrap.gap-3.flex > .hover\\:bg-white.bg-m3-green-200.min-h-12"
+            ".mt-10[data-reveal=\"\"][data-revealed=\"\"] > .flex-wrap.gap-3.flex > .hover\\:bg-white.bg-m3-green-200.tracking-wide"
           ]
         },
         {
@@ -14374,7 +14298,7 @@
           "impact": null,
           "html": "<a href=\"https://app.m3tric-test.co/login\" class=\"inline-flex items-center justify-center gap-2 rounded-full font-bold tracking-wide transition-colors duration-200 border border-m3-green-200/60 text-white hover:bg-white/10 min-h-12 px-7 text-base \">",
           "target": [
-            ".mt-10[data-reveal=\"\"][data-revealed=\"\"] > .flex-wrap.gap-3.flex > .border-m3-green-200\\/60.hover\\:bg-white\\/10.min-h-12"
+            ".mt-10[data-reveal=\"\"][data-revealed=\"\"] > .flex-wrap.gap-3.flex > .border-m3-green-200\\/60.hover\\:bg-white\\/10.tracking-wide"
           ]
         },
         {
@@ -17271,9 +17195,9 @@
                   ]
                 },
                 {
-                  "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 800 500\" aria-hidden=\"true\" focusable=\"false\" preserveAspectRatio=\"xMidYMid slice\" class=\"absolute inset-0 -z-10 size-full opacity-20\">",
+                  "html": "<img src=\"/images/aerial-tall-...\" srcset=\"/images/aerial-tall-...\" sizes=\"(min-width: 1024px) ...\" width=\"747\" height=\"996\" alt=\"Vista aérea vertical...\" loading=\"lazy\" decoding=\"async\" class=\"absolute inset-0 siz...\">",
                   "target": [
-                    ".opacity-20"
+                    "img[src$=\"aerial-tall-747.webp\"]"
                   ]
                 }
               ],
@@ -17487,7 +17411,7 @@
           "impact": "serious",
           "html": "<a href=\"#contacto\" class=\"inline-flex items-center justify-center gap-2 rounded-full font-bold tracking-wide transition-colors duration-200 bg-m3-green-200 text-m3-green-900 hover:bg-white min-h-12 px-7 text-base \">",
           "target": [
-            ".flex-wrap.mt-10.gap-3 > .hover\\:bg-white.bg-m3-green-200.min-h-12"
+            ".flex-wrap.mt-10.gap-3 > .hover\\:bg-white.bg-m3-green-200[href$=\"#contacto\"]"
           ],
           "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element"
         },
@@ -17512,7 +17436,7 @@
           "impact": "serious",
           "html": "<a href=\"https://app.m3tric-test.co/login\" class=\"inline-flex items-center justify-center gap-2 rounded-full font-bold tracking-wide transition-colors duration-200 border border-m3-green-200/60 text-white hover:bg-white/10 min-h-12 px-7 text-base \">",
           "target": [
-            ".flex-wrap.mt-10.gap-3 > .border-m3-green-200\\/60.hover\\:bg-white\\/10.min-h-12"
+            ".flex-wrap.mt-10.gap-3 > .border-m3-green-200\\/60.hover\\:bg-white\\/10.tracking-wide"
           ],
           "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element"
         },
@@ -18855,7 +18779,7 @@
           "impact": "serious",
           "html": "<a href=\"mailto:contacto@m3tric-test.co?subject=Contacto%20desde%20el%20sitio%20M3TRIC\" class=\"inline-flex items-center justify-center gap-2 rounded-full font-bold tracking-wide transition-colors duration-200 bg-m3-green-200 text-m3-green-900 hover:bg-white min-h-12 px-7 text-base \">",
           "target": [
-            ".mt-10[data-reveal=\"\"][data-revealed=\"\"] > .flex-wrap.gap-3.flex > .hover\\:bg-white.bg-m3-green-200.min-h-12"
+            ".mt-10[data-reveal=\"\"][data-revealed=\"\"] > .flex-wrap.gap-3.flex > .hover\\:bg-white.bg-m3-green-200.tracking-wide"
           ],
           "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element"
         },
@@ -18880,7 +18804,7 @@
           "impact": "serious",
           "html": "<a href=\"https://app.m3tric-test.co/login\" class=\"inline-flex items-center justify-center gap-2 rounded-full font-bold tracking-wide transition-colors duration-200 border border-m3-green-200/60 text-white hover:bg-white/10 min-h-12 px-7 text-base \">",
           "target": [
-            ".mt-10[data-reveal=\"\"][data-revealed=\"\"] > .flex-wrap.gap-3.flex > .border-m3-green-200\\/60.hover\\:bg-white\\/10.min-h-12"
+            ".mt-10[data-reveal=\"\"][data-revealed=\"\"] > .flex-wrap.gap-3.flex > .border-m3-green-200\\/60.hover\\:bg-white\\/10.tracking-wide"
           ],
           "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element"
         },

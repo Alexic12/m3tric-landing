@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { NAV_IDS } from "../helpers/env";
+import { NAV_IDS, PLATFORM_URL } from "../helpers/env";
 import { tabChord, waitForScrollSettled } from "../helpers/page";
 
 /** Header must end above the section heading, and nothing may be painted over the heading's centre. */
@@ -118,23 +118,22 @@ test.describe("mobile menu (390x844)", () => {
 test.describe("mobile CTA hierarchy (390x844)", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
-  test("header shows the compact primary 'Hablar'; the menu offers both CTAs and 'Hablar con el equipo' lands on #contacto", async ({
+  test("header has no 'Hablar' button; the menu's 'Contacto' link lands on #contacto and 'Abrir plataforma' is its CTA", async ({
     page,
   }) => {
     await page.goto("/");
-    const headerCta = page.locator("header").getByRole("link", { name: "Hablar con el equipo" }).first();
-    await expect(headerCta).toBeVisible();
-    await expect(headerCta).toHaveText("Hablar con el equipo"); // textContent keeps the visually hidden tail
-    const visibleWidth = await headerCta.evaluate((el) => el.getBoundingClientRect().width);
-    expect(visibleWidth, "compact: much narrower than the full label").toBeLessThan(120);
+    const header = page.locator("header");
+    await expect(header.getByRole("link", { name: /Hablar/ })).toHaveCount(0);
     await expect(page.locator("header nav[aria-label='Navegación principal']")).toBeHidden();
-    await expect(page.locator("header").getByRole("link", { name: "Abrir plataforma" }).first()).toBeHidden();
+    await expect(header.getByRole("link", { name: "Abrir plataforma" }).first()).toBeHidden();
 
     await page.locator("header button[aria-controls='menu-movil']").click();
     const menu = page.locator("#menu-movil");
-    await expect(menu.getByRole("link", { name: "Hablar con el equipo" })).toBeVisible();
-    await expect(menu.getByRole("link", { name: "Abrir plataforma" })).toBeVisible();
-    await menu.getByRole("link", { name: "Hablar con el equipo" }).click();
+    await expect(menu.getByRole("link", { name: /Hablar/ })).toHaveCount(0);
+    const platform = menu.getByRole("link", { name: "Abrir plataforma" });
+    await expect(platform).toBeVisible();
+    await expect(platform).toHaveAttribute("href", PLATFORM_URL);
+    await menu.getByRole("link", { name: /Contacto/ }).click();
     await expect(menu).toBeHidden();
     await expect(page).toHaveURL(/#contacto$/);
     await waitForScrollSettled(page);

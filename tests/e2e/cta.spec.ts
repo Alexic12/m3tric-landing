@@ -27,20 +27,24 @@ test.describe("CTA hierarchy: talk to the team first, open the platform second",
     expect(await isFilled(secondary), "secondary is not filled").toBe(false);
   });
 
-  test("header (1440): 'Abrir plataforma' is a text link before the filled 'Hablar con el equipo' button", async ({ page }) => {
+  test("header (1440): only 'Contacto' leads to the contact section; 'Abrir plataforma' is the sole header CTA", async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/");
-    const platform = page.locator("header").getByRole("link", { name: "Abrir plataforma" }).first();
-    const team = page.locator("header").getByRole("link", { name: "Hablar con el equipo" }).first();
+    const header = page.locator("header");
+    // Owner decision 2026-10-01: the "Hablar con el equipo" header button duplicated the
+    // "Contacto" nav link, so the top bar keeps only the link.
+    await expect(header.getByRole("link", { name: /Hablar/ })).toHaveCount(0);
+    const contact = header.getByRole("navigation", { name: "Navegación principal" }).getByRole("link", { name: "Contacto" });
+    await expect(contact).toBeVisible();
+    await expect(contact).toHaveAttribute("href", "#contacto");
+    const platform = header.getByRole("link", { name: "Abrir plataforma" }).first();
     await expect(platform).toBeVisible();
-    await expect(team).toBeVisible();
     await expect(platform).toHaveAttribute("href", PLATFORM_URL);
-    await expect(team).toHaveAttribute("href", "#contacto");
-    expect(await isFilled(platform), "platform link has no fill").toBe(false);
-    expect(await isFilled(team), "team button is filled").toBe(true);
-    const [p, t] = await Promise.all([platform.boundingBox(), team.boundingBox()]);
-    expect(p && t && p.x + p.width <= t.x, "text link sits left of the primary button").toBe(true);
-    expect(t?.height ?? 0).toBeGreaterThanOrEqual(44);
+    expect(await isFilled(platform), "platform link stays a text link").toBe(false);
+    const box = await platform.boundingBox();
+    expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
   });
 
   test("after the use cases a full-width band repeats the primary CTA", async ({ page }) => {

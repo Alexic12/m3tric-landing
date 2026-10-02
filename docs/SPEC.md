@@ -118,7 +118,7 @@ Página única, `lang="es-CO"`. Dos zonas: **zona de valor** (lenguaje llano) y 
 | 9 | `#contacto` | Hablemos | **Contacto** + **CTA** | Valor |
 | — | — | Footer | — | — |
 
-Navegación (desktop ≥ 1280 px): Beneficios · Casos de uso · Cómo funciona · Escalas · Preguntas · Técnico · Contacto. A la derecha: enlace secundario **Abrir plataforma** + botón primario **Hablar con el equipo**. En móvil: logo, botón **Hablar** compacto y menú (diálogo modal accesible con ambos CTA).
+Navegación (desktop ≥ 1280 px): Beneficios · Casos de uso · Cómo funciona · Escalas · Preguntas · Técnico · Contacto. A la derecha: enlace **Abrir plataforma**. Sin botón «Hablar con el equipo» en la barra: duplicaba el enlace **Contacto** (decisión del owner, 2026-10-01); ese CTA sigue en el hero, tras los casos de uso y en contacto. En móvil: logo y menú (diálogo modal accesible con la navegación, incluido Contacto, y el CTA **Abrir plataforma**).
 
 ### 4.1 Patrones *enterprise* que se aplican
 - Ritmo y retícula: 12 columnas, contenedor 1280 px, márgenes 16/24/32 px, secciones de 96–128 px de alto de respiro.
