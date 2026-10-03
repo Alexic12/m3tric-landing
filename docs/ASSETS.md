@@ -110,6 +110,22 @@ Las rutas `public/icon.*` y `public/apple-icon.png` del encabezado y de otros do
 - Color: verde claro `#74C69D` a baja opacidad
 - SVG embebido (no externo) para evitar request extra
 
+### EafitLogo (`src/components/brand/EafitLogo.tsx`)
+
+**Co-marca de la Universidad EAFIT** (ADR-011), a la derecha del logo M3TRIC en la barra superior. No es una marca de M3TRIC y no forma parte del kit `brand/`.
+
+**Origen**: PNG institucional que entregó el owner (2026-10-02), vectorizado con potrace a 8× (fidelidad verificada contra el original). Los trazados están en `src/components/brand/eafit-paths.json` (`viewBox`, `transform` y `d`). **El vector oficial de EAFIT sigue pendiente**: cuando lo entregue, se reemplaza `eafit-paths.json` sin cambiar la API del componente.
+
+| Variante (`tone`) | Color | Fondo | Uso |
+|---|---|---|---|
+| `navy` | Azul EAFIT `#004B85` (RGB 0/75/133, Pantone 294C, según el manual de identidad de EAFIT) | Barra blanca | Barra superior sobre fondo claro |
+| `light` | Blanco `#FFFFFF` | Hero verde oscuro | Barra superior sobre el hero (el azul no es legible allí, ≈ 1.3:1) |
+
+**Propiedades:**
+
+- Accesibilidad: `role="img"` + `aria-label="Universidad EAFIT"` (y `<title>`); es una marca, no un enlace
+- Licencia: marca de la Universidad EAFIT, usada como co-marca por instrucción del owner; falta la confirmación de su oficina de marca (ADR-011, dependencia del cliente n.º 8)
+
 ---
 
 ## Kit de marca (`brand/`)
@@ -278,6 +294,7 @@ Permite modificación, distribución comercial. Requiere declaración de cambios
 - **M3TRIC** es marca registrada de Metric (cliente)
 - Logo, colores, tipografía y contenido son propiedad intelectual de Metric
 - Uso restringido a este sitio web (bajo contrato Anexo 1)
+- Excepción: el wordmark de la **Universidad EAFIT** (`EafitLogo.tsx`) es de la universidad, no de Metric; se usa como co-marca por instrucción del owner y falta la confirmación de su oficina de marca (ADR-011)
 
 ### Sin datos personales
 
@@ -340,6 +357,7 @@ Cuando actualices activos:
 - [ ] Ejecutar `npm run dev` y verificar visualmente en 3 anchos de pantalla
 - [ ] Si actualizaste el logo: editar `brand/logo/paths.json`, ejecutar `npm run brand:build` y validar con equipo de marca (Anexo 1 §14.4)
 - [ ] Si cambió `src/app/icon.svg`: `npm run brand:build` (`brand/logo/m3tric-mark.svg` es una copia byte a byte)
+- [ ] Si EAFIT entrega el vector oficial: reemplazar `src/components/brand/eafit-paths.json` (la API de `EafitLogo.tsx` no cambia), comprobar el contraste de las dos variantes y repetir la prueba e2e de la co-marca (`content › «header carries the EAFIT co-brand next to the M3TRIC logo (owner decision 2026-10-02)»`)
 - [ ] Si actualizaste tokens de color: editar `brand/tokens.json`, ejecutar `npm run brand:build`, repetir el valor en `@theme` y `src/config/brand.ts`, y verificar contrastes (WCAG AA mínimo)
 - [ ] `npm run release` en local (incluye las pruebas de deriva del kit) y abrir un PR; la publicación la hace `Deploy staging` al fusionar a `main` (`docs/OPERACION.md` §6)
 

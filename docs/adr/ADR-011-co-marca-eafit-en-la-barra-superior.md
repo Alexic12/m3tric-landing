@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Aceptada — implementada (2026-10-02) |
+| Estado | Aceptada — implementada (2026-10-02); vector oficial y confirmación de la oficina de marca de EAFIT pendientes |
 | Fecha | 2026-10-02 |
 | Requisitos | REQ-O07 (instrucción del owner: logo de EAFIT a la derecha del logo M3TRIC, en el azul institucional), REQ-B01 (el logo M3TRIC conserva su área de protección) |
 
@@ -23,3 +23,9 @@ La landing es una iniciativa apoyada por la Universidad EAFIT. El owner pidió e
 ## Consecuencias
 - Prueba e2e en `tests/e2e/content.spec.ts` (presencia en ambos estados de la barra, sin enlace).
 - Pendiente: vector oficial de EAFIT y confirmación de su oficina de marca sobre el uso en co-marca.
+
+## Evidencia
+- Release `deploy-11-cd7d8b9` (commit `cd7d8b9`, CHANGELOG 3.3.0), publicado por `Deploy staging` con smoke 10/10.
+- Prueba e2e `content › «header carries the EAFIT co-brand next to the M3TRIC logo (owner decision 2026-10-02)»` (`tests/e2e/content.spec.ts`): el nombre accesible «Universidad EAFIT» es visible junto al logo M3TRIC arriba y tras desplazar 900 px, y ningún enlace lleva ese nombre. Subconjunto de e2e en chromium 59/59 y unitarias 208/208, en local (Tech Lead, 2026-10-02).
+- Estado de REQ-O07: `docs/TRACEABILITY.md` §1 y §6.2 (Parcial). Está implementada, desplegada y probada; faltan el vector oficial de EAFIT y la confirmación de su oficina de marca (las dos condiciones pendientes de «Consecuencias»; dependencia n.º 8, §6.5).
+- Inventario del componente y de sus trazados: `docs/ASSETS.md` («EafitLogo»).

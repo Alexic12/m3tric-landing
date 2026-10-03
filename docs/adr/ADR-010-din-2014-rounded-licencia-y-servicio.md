@@ -24,7 +24,7 @@ Hechos de licenciamiento (recogidos en `docs/SPEC-UNIFICACION.md` §6 el 2026-10
 
 **DEC-54.**
 
-1. **Hoy, Barlow en los dos sitios y sin Google Fonts.** Landing: `next/font/google` en build, pesos 300/400/500/700/800 (ADR-001). Plataforma: `@fontsource/barlow`, pesos 400/500/700/800 y subconjunto `latin`, importado en `src/main.tsx` después de `maplibre-gl/dist/maplibre-gl.css` y antes de `index.css`; se eliminan de `index.html` los `preconnect` y la hoja de Google Fonts. Ambos sitios usan la pila `"DIN 2014 Rounded", Barlow, system-ui, sans-serif`: sin la fuente, cae en Barlow.
+1. **Hoy, Barlow en los dos sitios y sin Google Fonts.** Landing: `next/font/google` en build, pesos 300/400/500/700/800 (ADR-001). Plataforma: `@fontsource/barlow`, pesos 300/400/500/700/800 y subconjunto `latin`, importado en `src/main.tsx` después de `maplibre-gl/dist/maplibre-gl.css` y antes de `index.css`; se eliminan de `index.html` los `preconnect` y la hoja de Google Fonts. Ambos sitios usan la pila `"DIN 2014 Rounded", Barlow, system-ui, sans-serif`: sin la fuente, cae en Barlow.
 2. **DIN 2014 Rounded se integra cuando exista licencia web y sus archivos nunca entran a git.** Se sirven bajo `/fonts/*` desde un bucket privado compartido por las dos distribuciones, con el `@font-face` activado por configuración. Así se cumple el manual sin violar la licencia y sin abrir peticiones a terceros (CSP `font-src 'self'`).
 
 ### Diseño de servicio (listo para ejecutar con la licencia; no se despliega antes)

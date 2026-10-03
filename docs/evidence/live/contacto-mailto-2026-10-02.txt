@@ -1,0 +1,7 @@
+# Comprobación en vivo del correo de contacto (REQ-O08)
+# Fecha (UTC): 2026-10-02 16:07:27Z · ejecutada por el Tech Lead
+# Comando: curl -sS -o page.html -w 'http=%{http_code}' https://d21guxd9tjai7a.cloudfront.net/ ; grep -o 'name="m3tric:release" content="[^"]*"' page.html ; grep -o 'mailto:[^"\]*' page.html | sort | uniq -c
+
+http=200
+name="m3tric:release" content="deploy-11-cd7d8b9"
+   6 mailto:amarula2@eafit.edu.co?subject=Contacto%20desde%20el%20sitio%20M3TRIC

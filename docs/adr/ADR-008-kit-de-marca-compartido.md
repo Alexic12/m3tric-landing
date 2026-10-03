@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Aceptada — en implementación (2026-10-02) |
+| Estado | Aceptada — implementada y verificada (2026-10-02); aceptación del owner de la apariencia de la plataforma pendiente (REQ-U01) |
 | Fecha | 2026-10-02 |
 | Alcance | `brand/`, `scripts/brand-build.mjs`, `scripts/brand-kit.test.mjs` y `.gitattributes` (esta landing); `scripts/brand-sync.mjs` y `src/brand/` en la plataforma (`m3tric-platform/frontend`, repositorio privado) |
 
@@ -75,8 +75,10 @@ REQ-U01 · REQ-U02 · REQ-U05 · REQ-B01 · REQ-B02
 
 ## Evidencia
 
-Pendiente — se completa con el despliegue.
+Implementada, desplegada y verificada (2026-10-02).
 
-- Implementación en el árbol de la landing: `brand/`, `scripts/brand-build.mjs`, `scripts/brand-kit.test.mjs` (60 pruebas), `.gitattributes` y `src/components/brand/Logo.tsx` (importa `brand/logo/paths.json`). Todavía no hay un run de CI archivado que la evidencie.
+- **Landing:** `brand/`, `scripts/brand-build.mjs`, `scripts/brand-kit.test.mjs` (60 pruebas dentro de la suite unitaria, 208/208), `.gitattributes` y `src/components/brand/Logo.tsx` (importa `brand/logo/paths.json`). El kit se incorporó en `deploy-8-605dacb` y su serie de colores de gráficos se reordenó en `deploy-9-79d4f45` (CHANGELOG 3.2.1); smoke 10/10 en ambos. El sitio no cambia: `brand/` no se publica.
+- **Plataforma:** la copia del kit con sha256 (`src/brand/manifest.json`, `scripts/brand-sync.mjs`) y `src/brand/brand.test.ts` se desplegaron con el PR #190 (`1c8e17d`; vitest 1180/1180 en 72 archivos), verificado por el Tech Lead el 2026-10-02.
+- **En vivo:** los valores del kit se midieron en la plataforma desplegada: anillos de foco `#004124` y `#74C69D` y niveles de alerta `#FFD166`, `#F77F00` y `#D62828` sobre la hoja de estilos real (`docs/evidence/platform-brand/QA-REPORT.md` §4.3 y §4.7).
 - Decisión registrada en `docs/SPEC-UNIFICACION.md` §2 (DEC-53) y, para la plataforma, en `docs/platform-live-dashboard/07-decisiones-owner.md` (entrada del 2026-10-02, repositorio privado).
-- Estado de REQ-U01 y REQ-U02: `docs/TRACEABILITY.md` §7.
+- Estado de REQ-U01 y REQ-U02: `docs/TRACEABILITY.md` §6.2 y §7 (ambos Parcial). El kit y su despliegue están verificados; faltan la aceptación explícita del owner de la apariencia de la plataforma desplegada (REQ-U01) y la validación de marca del favicon derivado `m3tric-mark.svg` (REQ-U02, cliente n.º 5).

@@ -1,0 +1,138 @@
+{
+  "name": "live-device-1440",
+  "viewport": "1440",
+  "url": "https://d3pz2gipvkcx1b.cloudfront.net/live",
+  "timestamp": "2026-10-02T15:04:28.274Z",
+  "testEngine": {
+    "name": "axe-core",
+    "version": "4.13.0"
+  },
+  "tags": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa"
+  ],
+  "summary": {
+    "violationRules": 1,
+    "violationNodes": 2,
+    "byImpact": {
+      "serious": 2
+    },
+    "seriousOrCriticalRules": 1,
+    "passes": 29,
+    "incompleteRules": 1,
+    "inapplicable": 33
+  },
+  "violations": [
+    {
+      "id": "role-img-alt",
+      "impact": "serious",
+      "help": "[role=\"img\"] and [role=\"image\"] elements must have alternative text",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/role-img-alt?application=playwright",
+      "wcag": [
+        "wcag2a",
+        "wcag111"
+      ],
+      "nodes": [
+        {
+          "target": [
+            "div[_echarts_instance_=\"ec_1790953461553\"]"
+          ],
+          "html": "<div class=\"echarts-for-react \" _echarts_instance_=\"ec_1790953461553\" size-sensor-id=\"1\" role=\"img\" style=\"height: 320px; width: 100%; user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); position: relative;\">",
+          "summary": "Fix any of the following:\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute"
+        },
+        {
+          "target": [
+            "div[_echarts_instance_=\"ec_1790953461554\"]"
+          ],
+          "html": "<div class=\"echarts-for-react \" _echarts_instance_=\"ec_1790953461554\" size-sensor-id=\"2\" role=\"img\" style=\"height: 320px; width: 100%; user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); position: relative;\">",
+          "summary": "Fix any of the following:\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute"
+        }
+      ]
+    }
+  ],
+  "incomplete": [
+    {
+      "id": "th-has-data-cells",
+      "impact": "serious",
+      "help": "Table headers in a data table must refer to data cells",
+      "nodeCount": 1,
+      "nodes": [
+        {
+          "target": [
+            "#inclinometria > .live-table-wrap[role=\"region\"] > table"
+          ],
+          "html": "<table class=\"live-summary-table\"><caption>Alternativa textual de las gráficas de inclinometría</caption><thead><tr><th>Serie</th><th>Muestras</th><th>Mín.</th><th>Máx.</th><th>Rango</th></tr></thead><tbody></tbody></table>",
+          "summary": "Fix all of the following:\n  Table data cells are missing or empty"
+        }
+      ]
+    }
+  ],
+  "passes": [
+    "aria-allowed-attr",
+    "aria-conditional-attr",
+    "aria-deprecated-role",
+    "aria-hidden-body",
+    "aria-hidden-focus",
+    "aria-prohibited-attr",
+    "aria-required-attr",
+    "aria-roles",
+    "aria-valid-attr-value",
+    "aria-valid-attr",
+    "avoid-inline-spacing",
+    "button-name",
+    "bypass",
+    "color-contrast",
+    "definition-list",
+    "dlitem",
+    "document-title",
+    "duplicate-id-aria",
+    "form-field-multiple-labels",
+    "html-has-lang",
+    "html-lang-valid",
+    "label",
+    "link-name",
+    "meta-viewport",
+    "nested-interactive",
+    "role-img-alt",
+    "svg-img-alt",
+    "td-headers-attr",
+    "th-has-data-cells"
+  ],
+  "inapplicable": [
+    "area-alt",
+    "aria-braille-equivalent",
+    "aria-command-name",
+    "aria-input-field-name",
+    "aria-meter-name",
+    "aria-progressbar-name",
+    "aria-required-children",
+    "aria-required-parent",
+    "aria-tab-name",
+    "aria-toggle-field-name",
+    "aria-tooltip-name",
+    "autocomplete-valid",
+    "blink",
+    "frame-focusable-content",
+    "frame-title-unique",
+    "frame-title",
+    "html-xml-lang-mismatch",
+    "image-alt",
+    "input-button-name",
+    "input-image-alt",
+    "link-in-text-block",
+    "list",
+    "listitem",
+    "marquee",
+    "meta-refresh",
+    "object-alt",
+    "scrollable-region-focusable",
+    "select-name",
+    "server-side-image-map",
+    "summary-name",
+    "valid-lang",
+    "video-caption",
+    "no-autoplay-audio"
+  ]
+}

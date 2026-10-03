@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Aceptada — en implementación (2026-10-02); DEC-56 pendiente de confirmación del owner (aplicada por defecto) |
+| Estado | Aceptada — implementada y verificada (2026-10-02); aceptación del owner pendiente: DEC-56 (aplicada por defecto) y el copy en español del inicio de sesión |
 | Fecha | 2026-10-02 |
 | Alcance | Idioma de la interfaz de la plataforma (`m3tric-platform/frontend`, repositorio privado): textos, enumeraciones visibles, fechas y números, título de pestaña y atributo `lang` |
 
@@ -45,7 +45,10 @@ REQ-U03 · REQ-U05
 
 ## Evidencia
 
-Pendiente — se completa con el despliegue.
+Implementada, desplegada y verificada (2026-10-02); DEC-56 y el copy del inicio de sesión siguen pendientes de aprobación del owner.
 
+- **Plataforma** (PR #190, `1c8e17d`): `src/lib/labels.ts`, `src/lib/format.ts` y la prueba guardián `src/test/spanish-ui.test.ts`, dentro del vitest de la plataforma (1180/1180 en 72 archivos), verificado por el Tech Lead el 2026-10-02.
+- **En vivo** (`docs/evidence/platform-brand/QA-REPORT.md` §4.1 y §5): `lang="es-CO"` y título «M3TRIC | Plataforma» en 20 de 20 vistas (V01, V02); contraseña incorrecta → «Usuario o contraseña incorrectos.» (V10, mapeo de los mensajes de Cognito); 0 palabras inglesas de la lista en 28 superficies —20 vistas, 6 cajones de navegación y 2 tutoriales— frente a 38 coincidencias en el «antes» (V11). Humo HTTP del despliegue (Tech Lead): `lang` `es-CO` y la API responde 400 «Solicitud inválida.», con las tildes corregidas en 2 respuestas de la pasarela.
+- **Alcance de lo verificado:** la prueba guardián y el escaneo en vivo tienen el alcance acotado que declaran las Consecuencias; la QA recorrió la navegación y las páginas principales con un solo navegador (Chromium) y sin lector de pantalla.
 - Decisión registrada en `docs/SPEC-UNIFICACION.md` §2 (DEC-55 y DEC-56) y, para la plataforma, en `docs/platform-live-dashboard/07-decisiones-owner.md` (entrada del 2026-10-02, repositorio privado).
-- Estado de REQ-U03 y su brecha (confirmación de DEC-56): `docs/TRACEABILITY.md` §6.2 y §7.
+- Estado de REQ-U03: `docs/TRACEABILITY.md` §6.2 y §7 (Parcial). El español está verificado; faltan la confirmación de DEC-56 y la aprobación del copy del inicio de sesión.
