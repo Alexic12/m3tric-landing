@@ -153,7 +153,7 @@ src/
 ├── content/
 │   └── landing.ts            # Todo el copy del sitio — fuente única
 ├── components/
-│   ├── brand/                # Logo (importa brand/logo/paths.json), TripleBar, NodeNetwork
+│   ├── brand/                # Logo (importa brand/logo/paths.json), TripleBar, NodeNetwork, EafitLogo (co-marca de EAFIT, ADR-011)
 │   ├── ui/                   # Button, SectionHeading, StatusBadge, Reveal
 │   ├── layout/               # Header, Footer, SkipLink, HydrationMarker
 │   ├── sections/             # Hero, Benefits, UseCases, HowItWorks, Scales,
@@ -169,7 +169,7 @@ scripts/
 └── deploy/                   # publish.sh, smoke.mjs, manifest.mjs, upload-manifest.sh
 infra/                        # App CDK (bin/, lib/, config/, test/)
 tests/
-├── e2e/                      # Playwright: content, links, responsive, visual, interaction, resilience, a11y, three
+├── e2e/                      # Playwright: content, links, cta, responsive, visual, interaction, resilience, a11y, three
 └── helpers/                  # env, page, lighthouse, contrast, serve-gzip
 .github/workflows/            # ci, deploy, publish, rollback
 docs/                         # SPEC, SPEC-UNIFICACION, TRACEABILITY, OPERACION, CONTENIDOS, ASSETS, adr/, evidence/
@@ -193,11 +193,11 @@ docs/                         # SPEC, SPEC-UNIFICACION, TRACEABILITY, OPERACION,
 | `docs/SPEC.md` | Especificación end-to-end (v3), con los IDs de requisito |
 | `docs/SPEC-UNIFICACION.md` | Identidad compartida landing ↔ plataforma: requisitos REQ-U, decisiones DEC-53..58, kit, sistema visual, español, tipografía, pruebas y despliegue |
 | `docs/TRACEABILITY.md` | Matriz requisito → spec → implementación → verificación → evidencia, y brechas abiertas |
-| `docs/adr/` | Decisiones de arquitectura ADR-001 a ADR-010 |
+| `docs/adr/` | Decisiones de arquitectura ADR-001 a ADR-011 |
 | `docs/OPERACION.md` | Pipeline de publicación, bootstrap, rollback, verificación, caché, cabeceras, costos y resolución de problemas |
 | `docs/CONTENIDOS.md` | Cómo actualizar textos, imágenes, contacto y marca |
 | `docs/ASSETS.md` | Inventario de activos, dependencias y licencias |
-| `docs/evidence/` | Capturas, informes de QA, axe, Lighthouse, matrices; `live/` con la QA contra CloudFront |
+| `docs/evidence/` | Capturas, informes de QA, axe, Lighthouse, matrices; `live/` con la QA contra CloudFront; `platform-brand/` con la evidencia de la plataforma (antes y después, QA en vivo y Lighthouse; su `README.md` explica cada carpeta) |
 | `docs/evidence/live/security-hardening.md` | Auditoría de seguridad, migración, simulación de políticas IAM, cabeceras del borde, gobernanza de GitHub y riesgos residuales |
 | `brand/README.md` | Kit de marca: contenido, uso, sincronización con la plataforma y cómo actualizarlo |
 | `infra/README.md` | Infraestructura como código: stacks, seguridad, costos |

@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Versión | 3.4 · 2026-10-02 (§3.3 y §3.4 remiten a ADR-010 y al kit `brand/`, DEC-53; §14 y §15 incluyen SPEC-UNIFICACION y ADR-008..010; sin otros cambios) · 3.2 · 2026-10-01 (§10, §11 y §12 actualizados al diseño endurecido tras la auditoría de seguridad: sintetizador con credenciales del CLI, rol de ejecución acotado, `sub` OIDC por rama y workflow, jobs sin token) (v2: 2026-09-30, en el historial de git como `docs/SPEC-landing-v2.md`) |
+| Versión | 3.5 · 2026-10-02 (§0.1 incorpora REQ-O07, co-marca de EAFIT, y REQ-O08, correo de contacto; sin otros cambios) · 3.4 · 2026-10-02 (§3.3 y §3.4 remiten a ADR-010 y al kit `brand/`, DEC-53; §14 y §15 incluyen SPEC-UNIFICACION y ADR-008..010; sin otros cambios) · 3.2 · 2026-10-01 (§10, §11 y §12 actualizados al diseño endurecido tras la auditoría de seguridad: sintetizador con credenciales del CLI, rol de ejecución acotado, `sub` OIDC por rama y workflow, jobs sin token) (v2: 2026-09-30, en el historial de git como `docs/SPEC-landing-v2.md`) |
 | Alcance | Producto/UX, marca, frontend, calidad, infraestructura como código, CI/CD, publicación en AWS y trazabilidad |
 | Fuentes de verdad | `docs/20260428_Manual de marca - Metric.pptx` (raíz del workspace) · `docs/entregables/Anexo_1_Alcance_Tecnico_Landing_AWS_M3TRIC_2026-09-23.pdf` · `README.md` raíz del workspace (capacidades vs. límites) · instrucciones del owner (sesiones 2026-09-30 y 2026-10-01) |
 | Precedencia ante conflicto | Anexo 1 (qué se entrega) > instrucciones del owner > Manual de marca (cómo se ve y suena) > README (qué se puede afirmar) > esta spec |
@@ -24,6 +24,8 @@ Todo requisito tiene un ID. La matriz `docs/TRACEABILITY.md` enlaza cada ID con 
 | REQ-O04 | Profundidad técnica más abajo, con diseño de nivel *enterprise* | 2026-10-01 |
 | REQ-O05 | Spec completa, trazable end to end, todo documentado | 2026-10-01 |
 | REQ-O06 | Despliegue mediante IaC usando GitHub Actions hasta tener una URL de CloudFront funcional | 2026-10-01 |
+| REQ-O07 | Co-marca de la Universidad EAFIT en la barra superior, a la derecha del logo M3TRIC y en el azul institucional (ADR-011) | 2026-10-02 |
+| REQ-O08 | Correo de contacto aprobado por el owner, publicado como `mailto:` en Contacto y en el pie de página mediante la variable `CONTACT_EMAIL` del environment | 2026-10-02 |
 
 ### 0.2 Contractuales (Anexo 1 §5, actividades 1–16)
 REQ-C01 brief y estructura · REQ-C02 UX/UI responsive alineado a identidad · REQ-C03 arquitectura de información y navegación · REQ-C04 frontend funcional con recursos visuales e interactivos · REQ-C05 secciones (propuesta de valor, plataforma, escalas M1/M2/M3, productos, capacidades, tecnología, casos de uso, contacto, CTA) · REQ-C06 conexión por URL a la plataforma · REQ-C07 SEO técnico · REQ-C08 accesibilidad WCAG 2.1 AA · REQ-C09 optimización de rendimiento · REQ-C10 pruebas de calidad documentadas · REQ-C11 Chrome, Edge, Firefox, Safari · REQ-C12 hasta dos rondas de ajustes · REQ-C13 configuración de despliegue y versión publicada · REQ-C14 código y activos · REQ-C15 manual técnico y guía de contenidos · REQ-C16 entrega final.

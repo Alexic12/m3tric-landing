@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Versión | 1.1 · 2026-10-02 (alineada con el kit construido: `paths.json` como fuente del logo, manifiesto sin `sourceCommit`, pesos 300–800, guías neutras) |
+| Versión | 1.2 · 2026-10-02 (cierre: estados finales de REQ-U01..U05 en §11, resultado medido y seguimientos en §14; §4.2 corregida a los cinco pesos de Barlow que carga la plataforma) · 1.1 · 2026-10-02 (alineada con el kit construido: `paths.json` como fuente del logo, manifiesto sin `sourceCommit`, pesos 300–800, guías neutras) |
 | Alcance | Un solo sistema visual para la landing pública (`Alexic12/m3tric-landing`, público) y la plataforma (`Alexic12/M3TRIC_Platform › m3tric-platform/frontend`, privado): paleta, tipografía, logo, componentes, idioma, pruebas, despliegue y trazabilidad |
 | Fuente de verdad visual | Manual de identidad M3TRIC (abril 2026) interpretado en `docs/SPEC.md` §3 y materializado en `brand/` (este repo) |
 | Precedencia | Instrucciones del owner (2026-10-02) > Manual de marca > `docs/SPEC.md` > esta spec > decisiones previas de UI de la plataforma (`docs/enterprise-agro/25-ui-decision-record.md`, que no fijaba paleta ni tipografía) |
@@ -109,13 +109,13 @@ Prohibido como texto: `#74C69D` sobre blanco/beige (2.04:1). `src/test/contrast.
 - **Mapa:** marcadores y capas con la paleta; paneles flotantes sólidos.
 - **Login (`LoginPage.tsx`):** dos columnas; izquierda `#004124` con fotografía aérea del kit + velo ≥ 70 % + `NodeNetwork` ligero + logo reverse + tagline del manual («Entender el territorio para anticipar el riesgo.», Bold + Light); derecha panel blanco plano con el formulario. Sin degradados. Imagen con `width/height`, `loading="eager"`.
 - **Logo:** `src/brand/BrandLogo.tsx` (SVG en línea con los `path` del kit; `role="img"`, `aria-label="M3TRIC"`; variantes `color|reverse|mono-dark|mono-light`). Reemplaza el texto en `MainLayout` (l. 109-113), `LoginPage` (l. 134), navegación móvil y `.live-brand`.
-- **Tipografía:** `@fontsource/barlow` 400/500/700/800 (latin) importado en `main.tsx` **después** de `maplibre-gl.css` y antes de `index.css`; `fontFamily.sans = ["DIN 2014 Rounded", "Barlow", "system-ui", "sans-serif"]`; `mono` = pila de sistema; se eliminan `preconnect` y `<link>` de Google Fonts en `index.html`. Escala: títulos de página 28–36 px / 800; secciones 20–22 / 700; cuerpo 15–16 / 400; meta 12–13.
+- **Tipografía:** `@fontsource/barlow` 300/400/500/700/800 (latin) importado en `main.tsx` **después** de `maplibre-gl.css` y antes de `index.css`; `fontFamily.sans = ["DIN 2014 Rounded", "Barlow", "system-ui", "sans-serif"]`; `mono` = pila de sistema; se eliminan `preconnect` y `<link>` de Google Fonts en `index.html`. Escala: títulos de página 28–36 px / 800; secciones 20–22 / 700; cuerpo 15–16 / 400; meta 12–13.
 - **Iconos:** lucide, trazo 1.5 (igual que la landing).
 - **Movimiento:** transiciones ≤ 200 ms de color/sombra; respeto a `prefers-reduced-motion`.
 
 ### 4.3 Accesibilidad y rendimiento
 - AA en todos los pares de texto (prueba de contraste); foco visible en cada control; objetivos ≥ 44 px; `lang="es-CO"`.
-- Presupuesto vigente `LCP < 2000 ms` en `/login` y `/map` (`npm run perf:budget`, local): se re-mide tras el cambio; quitar Google Fonts elimina una conexión a terceros en la ruta crítica.
+- Presupuesto vigente `LCP < 2000 ms` en `/login` y `/map` (`npm run perf:budget`, local): se re-mide tras el cambio; quitar Google Fonts elimina una conexión a terceros en la ruta crítica. Resultado de la medición: §14.4.
 - Sin peticiones a terceros desde la interfaz (verificado en vivo).
 
 ---
@@ -164,7 +164,7 @@ Costo: < USD 1/mes. Decisión del owner: comprar la licencia (recomendado: Fonts
 | Logo y shell | `src/brand/BrandLogo.tsx`, `components/layout/MainLayout.tsx`, `pages/LoginPage.tsx` (restyle + español), `.live-*` en `index.css`, `PlatformLivePage` shell | U2 |
 | Español | `src/lib/labels.ts`, `src/lib/format.ts`, los archivos de §5, `src/test/spanish-ui.test.ts`, pruebas afectadas | U3 |
 | Contraste | `src/test/contrast.test.ts` con tokens nuevos | U2 |
-| Docs | `docs/enterprise-agro/26-identidad-compartida.md` (spec local + evidencia), `docs/platform-live-dashboard/07-decisiones-owner.md` (DEC-53..58), `docs/brand/evidence/` (capturas antes/después en WebP, < 5 MB) | U4/U5 |
+| Docs | `docs/enterprise-agro/26-identidad-compartida.md` (spec local + evidencia), `docs/platform-live-dashboard/07-decisiones-owner.md` (DEC-53..58), evidencia archivada en la landing, `docs/evidence/platform-brand/` (capturas antes/después, QA en vivo y Lighthouse; sin copia en la plataforma, §14) | U4/U5 |
 
 Restricciones conocidas: orden de imports `maplibre-gl.css` → `index.css` en `main.tsx` es **load-bearing** (no mover); el capturador de rollback exige que todo `*.svg`/`*.json` citado por el JS servido exista; no se tocan backend, API ni auth.
 
@@ -192,18 +192,92 @@ Restricciones conocidas: orden de imports `maplibre-gl.css` → `index.css` en `
 
 ## 11. Trazabilidad (resumen; detalle en `docs/TRACEABILITY.md` y `26-identidad-compartida.md`)
 
-| REQ | Implementación | Verificación | Evidencia |
-|---|---|---|---|
-| U01 | `brand/`, `tailwind.config.js`, `index.css`, componentes | `brand.test.ts`, `contrast.test.ts`, capturas | QA-REPORT + after/ |
-| U02 | `BrandLogo.tsx`, `MainLayout`, `LoginPage`, `.live-brand` | `brand.test.ts` (paths = kit), capturas, smoke (`role="img"` M3TRIC) | after/ |
-| U03 | §5 | `spanish-ui.test.ts`, pruebas actualizadas, smoke (`lang`, scan de inglés) | QA-REPORT |
-| U04 | Barlow en ambos; slot DIN (§6) | smoke (fuente computada; sin terceros) | QA-REPORT; licencia = dependencia del owner |
-| U05 | esta spec, ADR-008..010, DEC-53..58, matriz | revisión | ambos repos |
+| REQ | Implementación | Verificación | Evidencia | Estado (2026-10-02) |
+|---|---|---|---|---|
+| U01 | `brand/`, `tailwind.config.js`, `index.css`, componentes | `brand.test.ts`, `contrast.test.ts`, capturas | `docs/evidence/platform-brand/QA-REPORT.md` §4.1, §4.3, §4.6, §4.7 y §5; `after/` frente a `before/`. Falta la aceptación explícita del owner de la apariencia de la plataforma desplegada (§12) | Parcial |
+| U02 | `BrandLogo.tsx`, `MainLayout`, `LoginPage`, `.live-brand` | `brand.test.ts` (paths = kit), capturas, smoke (`role="img"` M3TRIC) | QA-REPORT §4.1 (V07), §4.3; `after/login-*.webp`. Favicon derivado: validación de marca pendiente (n.º 5) | Parcial |
+| U03 | §5 | `spanish-ui.test.ts`, pruebas actualizadas, smoke (`lang`, scan de inglés) | QA-REPORT §4.1 (V01, V02, V10, V11) y §5. Pendientes del owner: confirmar DEC-56 y aprobar el copy del inicio de sesión (§12) | Parcial |
+| U04 | Barlow en ambos; slot DIN (§6) | smoke (fuente computada; sin terceros) | QA-REPORT §4.1 (V03 a V06) y §4.2 (V13); licencia = dependencia del owner | Parcial |
+| U05 | esta spec, ADR-008..010, DEC-53..63, matriz | revisión | ambos repos; `docs/TRACEABILITY.md` §7. El Tech Lead revisó la documentación de ambos el 2026-10-02; no incluye la revisión independiente | Verificado |
+
+Criterio y condiciones de cada estado: `docs/TRACEABILITY.md` §6.2, §6.3 y §7. Un requisito con un componente subjetivo (copy, marca, apariencia) queda Parcial hasta la aprobación que le falta.
 
 ---
 
 ## 12. Dependencias del owner
-1. Licencia web de DIN 2014 Rounded (compra) → activa §6. 2. Confirmar «M3TRIC \| Plataforma» como nombre en español de la pestaña (DEC-56). 3. Aprobación del copy en español del inicio de sesión. 4. Validación de marca del favicon (ya pendiente).
+1. Licencia web de DIN 2014 Rounded (compra) → activa §6. 2. Confirmar «M3TRIC \| Plataforma» como nombre en español de la pestaña (DEC-56). 3. Aprobación del copy en español del inicio de sesión. 4. Validación de marca del favicon (ya pendiente). 5. Aceptación explícita de la apariencia de la plataforma desplegada, tras revisarla (REQ-U01).
 
 ## 13. Unidades de trabajo y orden
 U1 kit en la landing (sonnet) ‖ U3 español en la plataforma (sonnet) → U2 restyle + logo + fuente en la plataforma (sonnet, sobre U1) → gate visual del Tech Lead → U4 QA local (vitest, lint, build, perf) → PRs + merges → despliegues (landing GHA; plataforma ceremonia) → U4 QA en vivo → U5 docs/trazabilidad en ambos repos.
+
+---
+
+## 14. Resultado (2026-10-02)
+
+Cierre del programa. El estado de cada requisito está en §11 y en `docs/TRACEABILITY.md` §7: REQ-U05 es Verificado; REQ-U01 a U04 quedan en Parcial porque cada uno espera una aprobación del owner, la validación de marca del cliente o la licencia de DIN 2014 Rounded (lista al final de esta sección). Lo medido sobre la plataforma proviene de la QA en vivo contra el despliegue real (`docs/evidence/platform-brand/QA-REPORT.md`; `docs/evidence/platform-brand/README.md` explica la evidencia). Las cifras de PR, plan, change set, stack, humo HTTP y totales de pruebas las verificó el Tech Lead el 2026-10-02 contra GitHub y AWS y no tienen salida cruda archivada en este repositorio.
+
+### 14.1 Despliegue
+
+| Repositorio | Resultado |
+|---|---|
+| Landing | Kit de marca incorporado en `deploy-8-605dacb` (el sitio no cambia: `brand/` no se publica); serie de colores de gráficos del kit en `deploy-9-79d4f45`; variable `CONTACT_EMAIL` del environment en `deploy-10-79d4f45` (mismo commit que `deploy-9`); co-marca de EAFIT en `deploy-11-cd7d8b9` (ADR-011). Smoke 10/10 en los cuatro |
+| Plataforma | PR #190, squash en `main` `1c8e17d4e4aa79f90747fdd70110612f0da059e2`, con CI en verde (IaC, Lambdas Python, Plataforma web, «Qué cambió» y Repository hygiene). Plan run `37019712510`: 115 checksums verificados y bundle de rollback capturado. 4 assets publicados: frontend `9ba89048…`, Lambda `platform-admin` `9835a826…`, Lambda `platform-live` `53bdb980…` y plantilla `8de1eb01…`. Change set `identidad-compartida-1c8e17d`: 229 entradas, 0 reemplazos; diferencias reales: el asset del frontend, el código de 11 Lambdas (2 zips), el `ReleaseId` (`platform-live-1c8e17d…`), la rotación del deployment del API y las tildes de 2 respuestas de la pasarela. Stack `m3tric-staging-PlatformPreviewStack` en UPDATE_COMPLETE, sin eventos fallidos |
+| Humo HTTP de la plataforma | `lang` `es-CO`; título «M3TRIC \| Plataforma»; 0 peticiones a Google Fonts; 5 `woff2` de Barlow servidos (200, unos 22 KB cada uno, `content-type: binary/octet-stream`); icono idéntico al de la landing; API 400 «Solicitud inválida.»; configuración del mapa 200 |
+
+### 14.2 QA en vivo de la plataforma
+
+Chromium 153.0.8010.12, Playwright 1.63.0, 20 vistas (inicio de sesión, ocho rutas y el detalle de `/live`, a 1440 y 390 px). Usuario temporal de Cognito, eliminado al terminar.
+
+| Medida | Antes | Después |
+|---|---|---|
+| Elementos con degradado | 44 (en 9 rutas) | 0 en las 20 vistas |
+| Elementos con `backdrop-filter` | 25 | 0 |
+| Textos en inglés (misma expresión regular) | 38 | 0 en 28 superficies |
+| Tipografía del cuerpo | Inter, desde Google Fonts | Barlow propia (5 pesos); 0 peticiones a Google |
+| `lang` y título | `en` · «M3TRIC \| Geospatial Analytics Platform» | `es-CO` · «M3TRIC \| Plataforma» |
+| Barra lateral a 390 px | Fija de 288 px | Barra superior y cajón, correcto en 6 de 6 rutas |
+| Anillo de foco | No medido | `#004124` en el inicio de sesión; `#74C69D` en las 15 paradas de las dos barras laterales oscuras |
+| axe (WCAG 2.0 y 2.1, A y AA) | No medido | 0 reglas serious/critical en 5 de 6 vistas; 1 serious (`role-img-alt`) en el detalle de `/live` (QA-03, preexistente) |
+| Niveles de alerta | No medido | Atención `#FFD166` con tinta (13,38:1), Normal `#004124` con texto blanco, «Registrado» neutro; comprobados sobre la hoja de estilos real |
+| Errores de consola, `pageerror` y peticiones fallidas | 0 | 0 (salvo la prueba negativa de contraseña) |
+| Orígenes de red | No registrados | El propio, AWS Location (teselas), Cognito y el bucket de superposiciones |
+| Contraseña incorrecta | No medido | «Usuario o contraseña incorrectos.» |
+
+Hallazgos QA-01 a QA-12, con su dueño y siguiente acción: `docs/TRACEABILITY.md` §6.6. La QA no midió ninguna regresión introducida por la marca: QA-01 a QA-04 son preexistentes y de QA-05 no se pudo determinar si lo es. QA-02 (503 en `/api/live/*`) es de infraestructura y su causa raíz no está aislada.
+
+### 14.3 Pruebas
+
+- Landing: unitarias 208/208 (incluye las 60 de `scripts/brand-kit.test.mjs`); subconjunto de e2e en chromium 59/59, con la prueba de la co-marca de EAFIT (`content.spec.ts`).
+- Plataforma: vitest 1180/1180 (72 archivos; la definición de hecho de §0 pedía «810+»), pruebas de las Lambdas 262 y 472, tsc, lint y build en verde.
+
+### 14.4 Rendimiento (DEC-61)
+
+- La comparación antes/después se hizo con una sola versión de Lighthouse (12.8.2, vía `npx`, móvil simulado) sobre `/login`: LCP 2973 ms en el sitio en vivo antes del cambio (rendimiento 87) y 2909 ms con el código nuevo servido en local (FCP 2456 ms, rendimiento 89). Informes: `docs/evidence/platform-brand/lighthouse/login-antes-en-vivo.report.json` y `login-despues-local.report.json`. Los puntajes de rendimiento son los del resumen del Tech Lead (campo `categories.performance.score` de cada informe).
+- `npm run perf:budget` usa Lighthouse 13.4.1 y reportó 3,0 s en `/login` y 2,7 s en `/map`; sus cifras no se mezclan con las del 12.8.2.
+- El presupuesto de §4.3 (LCP < 2000 ms) no se cumple con ninguna de las dos mediciones; el cambio no lo empeora (2973 → 2909 ms). El «después» se midió en local: no se midió el LCP del sitio en vivo con el código nuevo (AT-UX-3 sigue abierto).
+
+### 14.5 Desviaciones respecto del diseño
+
+1. **Pesos de Barlow.** La plataforma carga cinco (300, 400, 500, 700 y 800), no cuatro; §4.2 se corrigió en la versión 1.2. ADR-010 todavía dice «400/500/700/800» para la plataforma.
+2. **CSP.** DEC-54 y ADR-010 citan `font-src 'self'`. La landing lo tiene; la plataforma no envía Content-Security-Policy (QA-06), así que «sin tipografía externa» se verificó por red y escaneo estático, no por política.
+3. **Tipo MIME de las fuentes.** Los `woff2` de la plataforma se sirven como `binary/octet-stream`; el smoke de DIN de §6 (punto 5) exige `font/woff2`.
+4. **Objetivos táctiles.** §4.2 y §4.3 piden 44 px como mínimo; se observó que `btn-ghost` y `live-window-selector` quedan por debajo (observación del Tech Lead; adenda a DEC-62 en la plataforma).
+5. **CSS muerto.** §4.2 prohíbe degradados y vidrio y en ejecución se cumple (0 elementos), pero el CSS publicado conserva utilidades de degradado y de `backdrop-filter` sin uso, nacidas de cadenas de prueba que Tailwind escanea (QA-08).
+6. **Arnés de la QA.** §9 prevé un script de Playwright; fue temporal y no se archivó (`QA-REPORT.md` §9). Se archivan sus datos crudos y su método; el seguimiento n.º 10 propone archivar un arnés repetible.
+
+### 14.6 Seguimientos
+
+| # | Seguimiento | Propietario | Origen |
+|---|---|---|---|
+| 1 | Servir los `woff2` con `content-type: font/woff2` | Plataforma | Humo HTTP; §14.5, punto 3 |
+| 2 | Excluir `*.test.*` del `content` de Tailwind para eliminar el CSS muerto de degradado y vidrio | Plataforma | QA-08 |
+| 3 | Enviar una CSP desde la política de cabeceras de CloudFront de la plataforma | Plataforma | QA-06 |
+| 4 | Carga diferida (lazy-load) de ECharts | Plataforma | AT-UX-3 |
+| 5 | Panel «Capas de imagen» del mapa como hoja inferior con botón de cierre por debajo de unos 1200 px | Plataforma | QA-01 |
+| 6 | Nombre accesible para los contenedores de ECharts con `role="img"` | Plataforma | QA-03 |
+| 7 | Nombres de lote visibles en «Lotes existentes» | Plataforma | QA-04 |
+| 8 | Capacidad de `live-api` y `live-trend` (concurrencia reservada 2, Lambda de 10 s, ráfaga de 5 en el stage) | Plataforma (infraestructura) | QA-02 |
+| 9 | Objetivos táctiles de `btn-ghost` y `live-window-selector` a 44 px | Plataforma | §14.5, punto 4 |
+| 10 | Archivar un arnés repetible de la QA en vivo (Playwright) en el repositorio de la plataforma | Plataforma | §14.5, punto 6; `QA-REPORT.md` §9 |
+
+Pendientes del Owner y del Cliente (no son seguimientos técnicos; cada uno mantiene en Parcial el requisito indicado): aceptación explícita de la apariencia de la plataforma desplegada tras una revisión visual (REQ-U01, §12); validación de marca del favicon (REQ-U02, dependencia n.º 5); confirmar el título «M3TRIC \| Plataforma» (DEC-56) y aprobar el copy en español del inicio de sesión (REQ-U03, §12); licencia web de DIN 2014 Rounded (REQ-U04, §6 y ADR-010); vector oficial de la Universidad EAFIT y confirmación de su oficina de marca (REQ-O07, ADR-011).

@@ -4,6 +4,30 @@ Todas las versiones de la landing de M3TRIC.
 
 ---
 
+## [3.3.1] - 2026-10-03 — Documentación
+
+Cierre de la trazabilidad de la identidad compartida con la plataforma. Solo documentación y evidencia: sin cambios de código ni visuales en el sitio.
+
+### Agregado
+- **Evidencia de la plataforma desplegada** en `docs/evidence/platform-brand/`: `QA-REPORT.md` (QA en vivo del PR #190, `1c8e17d`: 20 vistas a 1440 y 390 px, 36 verificaciones y los hallazgos QA-01 a QA-12), `after/` (53 archivos: datos crudos, informes axe y capturas) y `README.md`, que explica cada carpeta y cómo se produjo. Se suman a `before/` y `lighthouse/` (3.3.0).
+- `docs/SPEC-UNIFICACION.md` §14 «Resultado»: cifras del despliegue y de la QA, desviaciones respecto del diseño y seguimientos.
+- `docs/evidence/live/contacto-mailto-2026-10-02.txt`: comprobación en vivo del correo de contacto (REQ-O08), con el comando `curl` y su salida.
+- `docs/TRACEABILITY.md`: filas REQ-O07 (co-marca de EAFIT, ADR-011; Parcial) y REQ-O08 (correo de contacto; Verificado), la sección 6.6 con los hallazgos de la QA de la plataforma y, en la evidencia identificada, los releases `deploy-8` a `deploy-11`, el PR #190 y la comprobación en vivo del correo.
+
+### Cambiado
+- `docs/TRACEABILITY.md`: corte al 2026-10-02. REQ-U05 pasa de Preparado a Verificado; REQ-U01, U02, U03 y U04 pasan a Parcial: se midieron en vivo y cada uno espera la aceptación visual del owner, la validación de marca del favicon, la confirmación de DEC-56 y del copy del inicio de sesión, o la licencia de DIN 2014 Rounded. Resumen de 48 requisitos: 22 Verificado, 22 Parcial, 1 Preparado, 2 Pendiente y 1 Dependencia del cliente. REQ-A03 cita las pruebas e2e vigentes (`cta` e `interaction`) en lugar de la del botón «Hablar», retirado en 3.1.1 y 3.1.2. Se corrigen las referencias a `docs/SPEC.md` (v3.5) y a ADR-001..011.
+- `docs/SPEC.md` 3.5: §0.1 incorpora REQ-O07 (co-marca de EAFIT) y REQ-O08 (correo de contacto).
+- `docs/SPEC-UNIFICACION.md` 1.2: estados en §11 y §14; §12 suma la aceptación visual del owner; §4.2 corregida a los cinco pesos de Barlow que carga la plataforma (300 a 800).
+- ADR-008 y ADR-009: estado «Aceptada — implementada y verificada» con su evidencia y la aceptación del owner pendiente. ADR-011: sección de evidencia (release y prueba e2e). ADR-010: pesos de Barlow de la plataforma (300 a 800); su ejecución sigue esperando la licencia.
+- `README.md`: ADR-001 a ADR-011, `docs/evidence/platform-brand/`, `EafitLogo` en la estructura y la suite `cta`. `docs/ASSETS.md`: inventario de la co-marca de EAFIT (`EafitLogo.tsx` y `eafit-paths.json`).
+
+### Conocido / Pendiente
+- Owner y Cliente: aceptación explícita de la apariencia de la plataforma desplegada (REQ-U01); validación de marca del favicon (REQ-U02); confirmar el título «M3TRIC | Plataforma» (DEC-56) y aprobar el copy en español del inicio de sesión (REQ-U03); licencia web de DIN 2014 Rounded (REQ-U04); vector oficial de la Universidad EAFIT y confirmación de su oficina de marca (REQ-O07).
+- Plataforma (repositorio privado, propietario «Plataforma»): QA-01 a QA-05, QA-06 (sin CSP) y la medición del LCP en vivo (AT-UX-3). QA-01 y QA-02 son de severidad alta. Detalle y siguiente acción: `docs/TRACEABILITY.md` §6.6.
+- El script de la QA en vivo de la plataforma no se archivó (`docs/evidence/platform-brand/QA-REPORT.md` §9); el seguimiento n.º 10 de `docs/SPEC-UNIFICACION.md` §14.6 propone archivar un arnés repetible.
+
+---
+
 ## [3.3.0] - 2026-10-02
 
 ### Agregado
