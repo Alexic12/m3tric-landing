@@ -4,6 +4,32 @@ Todas las versiones de la landing de M3TRIC.
 
 ---
 
+## [3.4.1] - 2026-10-05 — Documentación
+
+Cierre de la tipografía (ADR-012): la landing quedó publicada y verificada en vivo con Nunito; la plataforma se desplegó con la misma fuente, se corrigió tras su QA en vivo y se verificó. REQ-B03 y REQ-U04 pasan a Verificado. Solo documentación y evidencia: sin cambios de código ni visuales en el sitio.
+
+### Agregado
+- `docs/evidence/platform-brand/nunito/` (escrita por la QA en vivo): `QA-NUNITO.md` (con la re-verificación en su §10), `findings.json` (con la clave `recheck`) y 34 capturas WebP; 36 archivos, 1,64 MB. Dos corridas de Chromium con usuarios temporales de Cognito, eliminados: la primera sobre `57681b2` (34 estados a 1440 y 390 px) y la re-verificación sobre `66acab7`. `docs/evidence/platform-brand/README.md` describe la carpeta.
+- `docs/SPEC-UNIFICACION.md` §14.7 «Resultado 2026-10-05 (tipografía)»: el release de la landing (`deploy-13-25fffc8`, run `37338733353`, CI 7/7), su verificación en vivo, los dos despliegues de la plataforma (PR #193 → `57681b2` y PR #194 → `66acab7`: plan, change set, `UPDATE_COMPLETE`, humo HTTP), los resultados de la QA en vivo y su re-verificación.
+- `docs/TRACEABILITY.md`: los hallazgos NU-01, NU-02, NU-06 y NU-07 en la sección 6.6 (más las observaciones NU-03 a NU-05 y el estado de QA-01, QA-02, QA-04, QA-05 y QA-12 tras la QA del 2026-10-05) y cuatro filas en la evidencia identificada (`deploy-13-25fffc8`, PR #193, PR #194 y `nunito/`).
+- `docs/adr/ADR-012-nunito-tipografia-unica.md`: la evidencia completa (release, verificación en vivo de la landing, despliegues de la plataforma, QA en vivo y re-verificación).
+
+### Cambiado
+- **Corrección de la pila de la plataforma** (ADR-012 §3 y `docs/SPEC-UNIFICACION.md` §4.2). Daban `Nunito, system-ui, sans-serif`. `@fontsource-variable/nunito` registra sus caras como «Nunito Variable» y un navegador solo descarga una cara para una familia que la página nombra, así que esa pila literal habría pintado con la fuente del sistema con el `font-family` computado aparentemente correcto. La pila desplegada es `fontFamily.sans = ["Nunito Variable", "Nunito", "system-ui", "sans-serif"]` y `body { font-family: 'Nunito Variable', var(--m3-font-sans) }`, con la del kit como cola; una guarda de `brand.test.ts` exige que la primera familia esté declarada por un `@font-face` y los gráficos (ECharts) usan `CHART_FONT_FAMILY` como `textStyle.fontFamily` raíz.
+- **Origen del kit en la plataforma** (ADR-012 §3). Hablaba del «commit fusionado»; el kit 1.1.0 se sincronizó desde `1dc8046`, el commit de la rama del PR #21 (la fusión es `25fffc8`), y es idéntico byte a byte al `brand/` de `deploy-13-25fffc8` (verificado por el Tech Lead).
+- **Pesos** (ADR-012). Afirmaba que el sistema no usa más pesos que 300, 400, 500, 700 y 800; la plataforma usa además el 600 (`font-semibold`, 73 usos), que con la fuente variable se pinta como SemiBold real y no como negrita.
+- ADR-012: estado «Aceptada — implementada y verificada en ambos sitios (2026-10-05)»; el punto 3 incorpora el PR #194 y el hook `useRepaintWhenFontReady`, y las consecuencias sobre el ancho de la fuente, los pesos, los terceros y el release de cada sitio pasan de la previsión a lo medido.
+- `docs/SPEC-UNIFICACION.md` 1.4: §0, §4.2, §6, §7, §8, §11 (REQ-U04: Verificado) y §14 (nota; §14.5 y §14.6: el `woff2` de Nunito de la plataforma también se sirve como `binary/octet-stream` y sin `Cache-Control`, y el seguimiento n.º 1 sigue abierto; n.º 11 hecho; n.º 12 y n.º 13 nuevos; §14.7).
+- `docs/TRACEABILITY.md`: **REQ-B03 y REQ-U04 pasan de Parcial a Verificado** (la decisión del owner reformuló el requisito y ambos sitios se verificaron en vivo; REQ-U01 no cambia). Resumen de la sección 5: 24 Verificado, 20 Parcial, 1 Preparado, 2 Pendiente y 1 Dependencia del cliente (48 requisitos). Ambas filas salen de las brechas por requisito (sección 6.2) y el aviso a la oficina de marca queda como pendiente del Owner que no condiciona el estado (sección 6.5).
+
+### Conocido / Pendiente
+- Abiertos en la plataforma (repositorio privado; propietario «Plataforma»), ajenos a la decisión de tipografía: NU-06 (media, infraestructura: `/api/live/trend` responde en 16,4–16,6 s; Lambda `live-trend` de 20 s con concurrencia reservada 2), NU-07 (baja: la ayuda de «Capas de imagen» de `/map` solo se alcanza por una caja de desplazamiento anidada de 140 px) y QA-01 (a 390 px: el panel recorta 34 px y el selector de escala queda fuera de la vista). Detalle y siguiente acción: `docs/TRACEABILITY.md` §6.6.
+- Seguimiento abierto: los `woff2` de la plataforma se sirven con `content-type: binary/octet-stream` y sin `Cache-Control`, no `font/woff2` (NU-05; `docs/SPEC-UNIFICACION.md` §14.6, n.º 1).
+- Owner: informar a la oficina de marca de la desviación respecto del manual (lámina 10; ADR-012). No condiciona el estado de REQ-B03 ni de REQ-U04.
+- Límites de la evidencia: la verificación en vivo de la landing y las cifras de PR, plan y change set de los dos despliegues de la plataforma las verificó el Tech Lead y no tienen salida cruda archivada; la QA de la plataforma sí está archivada (`docs/evidence/platform-brand/nunito/`), pero usó un solo navegador (Chromium), una emulación de Barlow como «tipografía anterior» y gráficos de `/live` sin series reales, y su arnés no se archivó (`QA-NUNITO.md` §6).
+
+---
+
 ## [3.4.0] - 2026-10-05 — Tipografía
 
 Nunito reemplaza a Barlow en toda la landing y se retira el espacio reservado para DIN 2014 Rounded (decisión del owner, 2026-10-05; ADR-010 retirada, ver ADR-012).

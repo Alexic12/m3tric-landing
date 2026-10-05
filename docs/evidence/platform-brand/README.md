@@ -1,6 +1,6 @@
 # Evidencia de la plataforma — unificación de marca (2026-10-02)
 
-Evidencia de los requisitos REQ-U01 a REQ-U05 (`docs/SPEC-UNIFICACION.md`), medida sobre la plataforma de staging (`https://d3pz2gipvkcx1b.cloudfront.net`, distribución `E3LBUHUINTWS0F`). La matriz que la cita es `docs/TRACEABILITY.md` §7; los hallazgos, con su dueño, están en §6.6.
+Evidencia de los requisitos REQ-U01 a REQ-U05 (`docs/SPEC-UNIFICACION.md`), medida sobre la plataforma de staging (`https://d3pz2gipvkcx1b.cloudfront.net`, distribución `E3LBUHUINTWS0F`). La matriz que la cita es `docs/TRACEABILITY.md` §7; los hallazgos, con su dueño, están en §6.6. Todo es del 2026-10-02, salvo `nunito/` (2026-10-05, tipografía).
 
 | Ruta | Qué contiene | Cómo se produjo |
 |---|---|---|
@@ -8,11 +8,13 @@ Evidencia de los requisitos REQ-U01 a REQ-U05 (`docs/SPEC-UNIFICACION.md`), medi
 | `after/` | 53 archivos (2,0 MB): `findings.json` (datos crudos y 72 comprobaciones con veredicto), seis informes axe (`axe-*.json`) y capturas WebP a 1440 y 390 px | Un solo Chromium 153.0.8010.12 (Playwright 1.63.0, axe-core 4.13.0), rutas en secuencia, con un usuario temporal de Cognito ya eliminado. Las URL se guardan sin cadena de consulta |
 | `before/` | 36 archivos: `findings.json` y 35 capturas WebP de la plataforma anterior a la unificación (Inter, degradados, `lang="en"`) | Mismo navegador y mismas ventanas (1440×900 y 390×844) que `after/`; `findings.json` registra `startedAt` 2026-10-02T03:34Z, antes del despliegue de las 14:34Z |
 | `lighthouse/` | `login-antes-en-vivo.report.json` y `login-despues-local.report.json` | Lighthouse 12.8.2 con `npx`, móvil simulado, sobre `/login`: el sitio en vivo antes del cambio (13:44Z) y el código nuevo servido en local en `http://127.0.0.1:4173/login` (13:43Z). Referencia: DEC-61 de la plataforma. `npm run perf:budget` de la plataforma usa Lighthouse 13.4.1, así que sus cifras no se mezclan con estas (`docs/SPEC-UNIFICACION.md` §14.4) |
+| `nunito/` | QA en vivo de la tipografía Nunito sobre la plataforma: `QA-NUNITO.md` (informe; la re-verificación está en su §10), `findings.json` (datos crudos y consolidados; la clave `recheck` es la re-verificación) y 34 capturas WebP. 36 archivos, 1,64 MB (1,57 MiB) | Dos corridas de Chromium 153.0.8010.12 (headless, Playwright 1.63.0) el 2026-10-05, cada una con un usuario temporal de Cognito ya eliminado y con su ausencia comprobada (`smoke-qa-nunito-1791223529` y `smoke-qa-nunito2-1791234189`). **Primera corrida**, sobre el release `57681b2` (PR #193): 34 estados a 1440 y 390 px (login, rutas del shell y de `/live`, tutorial, seis cajones y detalle de dispositivo); fuente computada, `document.fonts`, peticiones y hosts, fuente pintada con el protocolo de DevTools (CDP), censo de todos los nodos de texto, gráficos de ECharts y diseño frente a Barlow emulada; halló NU-01 y NU-02. **Re-verificación**, sobre `66acab7` (PR #194, que corrige ambos): solo `/map` e Inicio (`QA-NUNITO.md` §10). Las cifras de PR, plan y change set de las dos releases son del Tech Lead (`QA-NUNITO.md` §10.4); el arnés no se archivó (§6 del informe). Resultados: `docs/SPEC-UNIFICACION.md` §14.7 |
 
 ## Cómo leerla
 
 - `after/findings.json` agrupa `meta` (release, infraestructura y corridas), `views` (por ancho y ruta), `network`, `hosts`, `axe`, `checks`, `englishScan`, `incidents.liveApi503`, `staticScan` y `shots`.
 - Las cifras del despliegue (PR #190, plan, change set, stack y humo HTTP) las verificó el Tech Lead contra GitHub y AWS; no hay salida cruda de ellas en esta carpeta. El resumen está en `docs/SPEC-UNIFICACION.md` §14.1.
+- Las cifras de los dos despliegues del 2026-10-05 (PR #193 y PR #194: plan, change set y humo HTTP) y la verificación en vivo de la landing con Nunito (`live-font-check.mjs`) también las verificó el Tech Lead, y tampoco hay salida cruda de ellas en esta carpeta; la QA en vivo de la plataforma sí está archivada en `nunito/`. El resumen está en `docs/SPEC-UNIFICACION.md` §14.7.
 
 ## Límites
 
@@ -20,3 +22,4 @@ Evidencia de los requisitos REQ-U01 a REQ-U05 (`docs/SPEC-UNIFICACION.md`), medi
 - Un solo navegador (Chromium), sin lector de pantalla ni emulación táctil; el viewport de 390 px usa un agente de escritorio, igual que `before/`.
 - El detalle de `/live` (barra lateral, foco y axe) viene de la corrida de las 15:03Z; después `/api/live/*` respondió 503 (QA-02) y no pudo repetirse.
 - `lighthouse/` compara una medición en vivo con una local: no es una comparación entre iguales y no hay una medición en vivo del código nuevo.
+- `nunito/` (2026-10-05): un solo navegador (Chromium; el viewport de 390 px usa un agente de escritorio y no simula gestos táctiles), sin axe, Lighthouse ni lector de pantalla. La «tipografía anterior» es una emulación (Barlow superpuesta sobre el despliegue actual), no el despliegue anterior real. Los gráficos de `/live` se midieron sin series reales (los dos dispositivos estaban «Callado»; la leyenda y las marcas de eje, con series sintéticas inyectadas). El arnés (`qa-nunito.mjs` y los scripts auxiliares) no se archivó (`QA-NUNITO.md` §6 y §10.4).
