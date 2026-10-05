@@ -45,7 +45,7 @@ next-env.d.ts
 /playwright-report/
 /test-results/
 
-# fonts: licensed fonts never enter this public repo (ADR-010)
+# fonts: font files never enter this public repo (Nunito is fetched at build time; ADR-012)
 *.woff
 *.woff2
 *.ttf

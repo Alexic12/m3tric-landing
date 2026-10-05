@@ -25,7 +25,6 @@ const GEOMETRY_TOLERANCE = 0.005; // the kit rounds geometry to 2 decimals
 // a conscious edit here and not a side effect of editing the builder.
 const KIT_FILES = [
   "README.md",
-  "fonts/README.md",
   "images/aerial-tall-747.webp",
   "images/aerial-wide-1280.webp",
   "images/globe-1000.webp",
@@ -131,9 +130,9 @@ describe("palette: tokens.json vs src/app/globals.css", () => {
     assert.deepEqual([...declared.keys()].sort(), expected.sort());
   });
 
-  test("the font stack equals tokens.font.family (Barlow is the next/font variable in the landing)", () => {
+  test("the font stack equals tokens.font.family (Nunito is the next/font variable in the landing)", () => {
     const stack = grab(theme, /--font-sans\s*:\s*([^;]+);/, "--font-sans in @theme").trim();
-    assert.equal(stack.replace("var(--font-barlow)", "Barlow"), tokens.font.family);
+    assert.equal(stack.replace("var(--font-nunito)", "Nunito"), tokens.font.family);
   });
 });
 
@@ -272,7 +271,7 @@ describe("tokens.css", () => {
       "--m3-ink: #0B0F0D;",
       "--m3-muted: #4B5563;",
       "--m3-beige: #F6F2EA;",
-      '--m3-font-sans: "DIN 2014 Rounded", Barlow, system-ui, sans-serif;',
+      "--m3-font-sans: Nunito, system-ui, sans-serif;",
       "--m3-radius-card: 1.5rem;",
     ]) {
       assert.ok(css.includes(`  ${line}\n`), `tokens.css lost ${line}`);
@@ -305,9 +304,13 @@ describe("tokens.json is internally consistent", () => {
     assert.deepEqual(tokens.levelLabel, { attention: "Atención", alert: "Alerta", critical: "Crítico" });
   });
 
-  test("the font stack names DIN 2014 Rounded first and Barlow as its fallback", () => {
-    assert.equal(tokens.font.fallback, "Barlow");
-    assert.ok(tokens.font.family.startsWith('"DIN 2014 Rounded", Barlow, '), tokens.font.family);
+  test("the font stack is Nunito with system fallbacks", () => {
+    assert.equal(tokens.font.family, "Nunito, system-ui, sans-serif");
+    assert.equal(tokens.font.name, "Nunito");
+    assert.equal(tokens.font.license, "SIL Open Font License 1.1");
+    assert.equal(tokens.font.variable, true);
+    assert.deepEqual(tokens.font.weights, [300, 400, 500, 700, 800]);
+    assert.equal("din" in tokens.font, false, "tokens.font.din was retired: the kit reserves no slot for a licensed font");
   });
 });
 
@@ -391,19 +394,15 @@ describe("line endings and binaries are pinned by .gitattributes (manifest.json 
   });
 });
 
-describe("licensed fonts stay out of the repository", () => {
+describe("font files never enter the repository (Nunito is fetched at build time)", () => {
   test("no font file anywhere under brand/", () => {
     assert.deepEqual(walk(BRAND).filter((path) => FONT_FILE.test(path)), []);
   });
 
-  test("brand/fonts holds only its README", () => {
-    assert.deepEqual(walk(join(BRAND, "fonts")), ["README.md"]);
-  });
-
   for (const ext of ["woff", "woff2", "ttf", "otf", "eot"]) {
     test(`.gitignore ignores *.${ext}`, () => {
-      const result = spawnSync("git", ["check-ignore", "-q", "--", `brand/fonts/DIN2014Rounded-Variable.${ext}`], { cwd: ROOT });
-      assert.equal(result.status, 0, `git check-ignore exited ${result.status}: .gitignore must list *.${ext} (licensed fonts never enter this public repo, ADR-010)`);
+      const result = spawnSync("git", ["check-ignore", "-q", "--", `brand/Nunito-Variable.${ext}`], { cwd: ROOT });
+      assert.equal(result.status, 0, `git check-ignore exited ${result.status}: .gitignore must list *.${ext} (font files never enter this public repo)`);
     });
   }
 });
@@ -515,18 +514,19 @@ describe("brand-build", () => {
     }
   });
 
-  test("a font file in brand/fonts stops the build with exit 1 before anything is written", () => {
+  test("a font file in brand/ stops the build with exit 1 before anything is written", () => {
     const repo = makeRepo();
     editTokens(repo, (t) => {
       t.color.yellow = "#FFD167"; // a real change: without the font, tokens.css and manifest.json would be rewritten
     });
-    writeFileSync(join(repo, "brand", "fonts", "DIN2014Rounded-Variable.woff2"), "not a real font");
+    mkdirSync(join(repo, "brand", "fonts"), { recursive: true });
+    writeFileSync(join(repo, "brand", "fonts", "Nunito-Variable.woff2"), "not a real font");
     const before = snapshot(join(repo, "brand"));
 
     const result = build([], repo);
     assert.equal(result.status, 1);
-    assert.match(result.stderr, /licensed font files must never enter this public repository/);
-    assert.match(result.stderr, /fonts\/DIN2014Rounded-Variable\.woff2/);
+    assert.match(result.stderr, /font files must never enter this public repository/);
+    assert.match(result.stderr, /fonts\/Nunito-Variable\.woff2/);
     assert.match(result.stderr, /Nothing was written/);
     assert.deepEqual(snapshot(join(repo, "brand")), before, "tokens.css and manifest.json must not have been rewritten");
     assert.ok(!read(repo, "brand", "tokens.css").includes("#FFD167"), "the stale tokens.css must still be the old one");
@@ -624,8 +624,9 @@ describe("brand-build", () => {
     writeFileSync(join(brand, ".DS_Store"), "x");
     assert.deepEqual(unexpectedFiles(brand, kit), []);
 
-    writeFileSync(join(brand, "fonts", "DIN2014Rounded-Variable.woff2"), "x");
-    assert.deepEqual(unexpectedFiles(brand, kit), ["fonts/DIN2014Rounded-Variable.woff2"]);
-    assert.throws(() => writeKit(kit, brand), /licensed font files must never enter this public repository/);
+    mkdirSync(join(brand, "fonts"), { recursive: true });
+    writeFileSync(join(brand, "fonts", "Nunito-Variable.woff2"), "x");
+    assert.deepEqual(unexpectedFiles(brand, kit), ["fonts/Nunito-Variable.woff2"]);
+    assert.throws(() => writeKit(kit, brand), /font files must never enter this public repository/);
   });
 });

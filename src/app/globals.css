@@ -15,7 +15,7 @@
   --color-m3-ink: #0b0f0d;
   --color-m3-muted: #4b5563;
 
-  --font-sans: "DIN 2014 Rounded", var(--font-barlow), system-ui, sans-serif;
+  --font-sans: var(--font-nunito), system-ui, sans-serif;
 }
 
 :root {

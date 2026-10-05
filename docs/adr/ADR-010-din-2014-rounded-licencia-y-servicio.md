@@ -2,9 +2,11 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Aceptada — en implementación (2026-10-02); la ejecución del diseño de servicio queda condicionada a la licencia |
+| Estado | Retirada — sustituida por ADR-012 (2026-10-05); el diseño de servicio no se ejecuta |
 | Fecha | 2026-10-02 |
 | Alcance | Tipografía de la landing y de la plataforma: pila CSS, carga de Barlow, espacio de DIN 2014 Rounded (`brand/fonts/`) y, cuando exista licencia, un bucket privado compartido servido bajo `/fonts/*` por las dos distribuciones de CloudFront |
+
+**Retirada (2026-10-05).** El owner decidió usar Nunito en ambos sitios y no licenciar DIN 2014 Rounded (ADR-012). Ni la bandera `NEXT_PUBLIC_BRAND_FONT` / `VITE_BRAND_FONT`, ni el bucket de fuentes, ni el comportamiento `/fonts/*` llegaron a implementarse, en el código ni en la infraestructura, de modo que no hay nada que desmontar. El texto que sigue se conserva como historia del diseño y no describe el estado vigente. Sus referencias a `docs/SPEC-UNIFICACION.md` §2 y §6 remiten al texto de la versión 1.2 (2026-10-02): en la versión 1.3, DEC-54 está revisada y §6 es una nota de retirada.
 
 ## Contexto
 
@@ -29,7 +31,7 @@ Hechos de licenciamiento (recogidos en `docs/SPEC-UNIFICACION.md` §6 el 2026-10
 
 ### Diseño de servicio (listo para ejecutar con la licencia; no se despliega antes)
 
-1. **Bucket privado de fuentes**, creado por `m3tric-staging-LandingSiteStack` con nombre generado por CloudFormation (prefijo `m3tric-staging-landingsitestack-*`) (Block Public Access, SSE-S3, OAC) con una política de bucket que autoriza por `AWS:SourceArn` a **ambas** distribuciones (identificadores en `docs/SPEC-UNIFICACION.md` §6).
+1. **Bucket privado de fuentes**, creado por `m3tric-staging-LandingSiteStack` con nombre generado por CloudFormation (prefijo `m3tric-staging-landingsitestack-*`) (Block Public Access, SSE-S3, OAC) con una política de bucket que autoriza por `AWS:SourceArn` a **ambas** distribuciones (landing `E1J2L9XZIAGQ7M`, plataforma `E3LBUHUINTWS0F`; constaban en `docs/SPEC-UNIFICACION.md` §6 hasta su versión 1.2).
 2. **Comportamiento `/fonts/*`** en las dos distribuciones hacia ese bucket: en la landing, por `infra/`; en la plataforma, por `PlatformPreviewStack` y su ceremonia de despliegue.
 3. Una persona con la licencia sube `DIN2014Rounded-Variable.woff2` (el archivo que espera el kit, `font.din.expectedFiles` en `brand/tokens.json`) a `s3://<bucket-de-fuentes>/din-2014-rounded/`. Si la licencia es por estilos sueltos, se sube un archivo por peso y se actualiza `expectedFiles`. El sistema usa los pesos 300, 400, 500, 700 y 800 (`font.weights`): conviene confirmar con el proveedor cuáles incluye la licencia, porque si falta alguno el navegador usa el más cercano.
 4. **`@font-face "DIN 2014 Rounded"`** con `src: url(/fonts/din-2014-rounded/…)` y `font-display: swap`, **emitido solo** cuando `NEXT_PUBLIC_BRAND_FONT=din` (landing) o `VITE_BRAND_FONT=din` (plataforma). Así ningún build cita un archivo inexistente: el capturador de rollback de la plataforma exige que todo recurso citado responda 200.
