@@ -4,6 +4,30 @@ Todas las versiones de la landing de M3TRIC.
 
 ---
 
+## [3.4.0] - 2026-10-05 — Tipografía
+
+Nunito reemplaza a Barlow en toda la landing y se retira el espacio reservado para DIN 2014 Rounded (decisión del owner, 2026-10-05; ADR-010 retirada, ver ADR-012).
+
+### Agregado
+- **Nunito** (SIL Open Font License 1.1, fuente variable) en toda la landing, descargada en el build con `next/font/google` y autohospedada. `src/app/layout.tsx` la declara sin `weight`, así que Next sirve un solo archivo variable para todos los pesos.
+
+### Cambiado
+- Pila `Nunito, system-ui, sans-serif` en el kit (`brand/tokens.json › font`, `brand/tokens.css › --m3-font-sans`) y en el CSS (`src/app/globals.css › --font-sans`, a partir de `--font-nunito`). `font` en `tokens.json` pasa a describir la fuente con `name`, `license`, `variable` y `weights`.
+- Pesos 300, 400, 500, 700 y 800 desde un solo archivo variable, en lugar de una instancia estática por peso.
+- Baselines visuales regeneradas (`tests/e2e/__snapshots__/visual.spec.ts/`, las cuatro capturas de chromium): cambian las formas de las letras y los saltos de línea (la página queda entre 67 y 150 px más alta) y, como las anteriores eran del 2026-10-01, ahora incluyen la co-marca de EAFIT de 3.3.0 en la barra superior.
+- **Medido en chromium antes y después (mismo script sobre la compilación de Barlow y la de Nunito):** la barra superior a 1440 px sigue en una línea (navegación 628 → 635 px, +1,1 %; botón 153 → 159 px) y a 1280 px no envuelve; el `h1` del hero conserva los mismos saltos de línea de 360 a 1440 px (4 líneas a 390 px) y solo a 320 px pasa de 5 a 6 líneas; la página a 390 px crece 1,3 % (15 711 → 15 921 px); ningún elemento desborda (`scrollWidth > clientWidth` solo en las etiquetas `.sr-only` de Contacto, igual que antes); fuentes servidas: 15 archivos `woff2` (150 KB, 5 precargas) → 5 archivos (137 KB, 1 precarga de 39 KB; solo el `latin` se descarga). Fuente computada del `h1`: `Nunito`.
+- `scripts/brand-kit.test.mjs` y `scripts/hygiene.test.mjs` sin referencias a Barlow ni a DIN; la guardia «ningún archivo de fuente entra al repositorio» se generaliza (`.gitignore`, `brand/` y `npm run hygiene`).
+- `README.md`: tipografía y licencias (Nunito) y ADR-001 a ADR-012. `brand/README.md`: sin la tipografía reservada ni su paso en el procedimiento de actualización.
+
+### Eliminado
+- **Barlow** y el espacio reservado para **DIN 2014 Rounded**: `font.fallback` y `font.din` de `brand/tokens.json`, y la carpeta `brand/fonts/` (su `README.md`, que también sale del inventario del kit y del manifiesto). ADR-010 queda retirada (ver ADR-012).
+- Se mantienen las reglas de `.gitignore` y `scripts/hygiene.sh` contra archivos de fuente: ninguno entra al repositorio, porque Nunito se descarga en el build.
+
+### Conocido / Pendiente
+- La plataforma (repositorio privado) adopta Nunito en su propio release; hasta entonces su tipografía no coincide con la del kit.
+
+---
+
 ## [3.3.1] - 2026-10-03 — Documentación
 
 Cierre de la trazabilidad de la identidad compartida con la plataforma. Solo documentación y evidencia: sin cambios de código ni visuales en el sitio.

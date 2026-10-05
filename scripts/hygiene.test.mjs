@@ -53,8 +53,8 @@ describe("hygiene.sh", () => {
     });
   }
 
-  // Licensed fonts never enter this public repository (ADR-010). Extensions match ignoring case: desktop fonts ship as .OTF.
-  for (const path of ["a/DIN.woff", "brand/fonts/DIN2014Rounded-Variable.woff2", "a/DIN.ttf", "a/DIN.otf", "a/DIN.eot", "a/DIN2014Rounded-Bold.OTF", "a/Din.Woff2"]) {
+  // Font files never enter this public repository (Nunito is fetched at build time). Extensions match ignoring case: desktop fonts ship as .OTF.
+  for (const path of ["a/Nunito.woff", "brand/Nunito-Variable.woff2", "a/Nunito.ttf", "a/Nunito.otf", "a/Nunito.eot", "a/Nunito-Bold.OTF", "a/Nunito.Woff2"]) {
     test(`tracked font file ${path} fails`, () => {
       const { code, stderr } = run({ [path]: "x" });
       assert.equal(code, 1);

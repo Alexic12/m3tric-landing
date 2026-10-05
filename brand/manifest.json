@@ -1,9 +1,8 @@
 {
-  "version": "1.0.0",
-  "generatedAt": "2026-10-02",
+  "version": "1.1.0",
+  "generatedAt": "2026-10-05",
   "files": {
-    "README.md": "600a2ef70760751b2504c6214553bcde64fd174172895b204dcb60cc0e3df8fa",
-    "fonts/README.md": "7f25177bbf0d5bbb15bd3dfd9aadc5f2c659f24e42a8eba01d54ea09757d9255",
+    "README.md": "11149b74eb435ae2ab6c9b90c1e8615d0ffbc8c55902757df365ff33d2f5146c",
     "images/aerial-tall-747.webp": "42a6a0df34224a1bbd38f43f4c88ddc36f1602aed3beeb6693d3d5c727b92a61",
     "images/aerial-wide-1280.webp": "6848ce8b1f3954fba8125098b89f6d5bbe59561428aa7d7065b9ed021370b5de",
     "images/globe-1000.webp": "441df934e9f866641e0e5be5d5d7d8567cb46f8c876ff8e7214c9162440b38f2",
@@ -14,7 +13,7 @@
     "logo/m3tric-mark.svg": "889fa9c0201ef0db668e595168dc6f9e8da81bb27f3e97b5f6f21c8723ca4109",
     "logo/paths.json": "27fe9b4054db236c75bc6e04ef90a5f3e0a594c2740612becd6f6770a08ce1f1",
     "motifs/triple-bar.svg": "9d86e6be2ab05ddaecbada44cb9effe811b4a9c4ec1e544b4c5c2b3302fd0b1f",
-    "tokens.css": "140bad57af5ef2225b77de41913f16a28914ead564c56f51e41fa05919018193",
-    "tokens.json": "c384e716c4d74e387ec7ed3310e773af7cfe825096b3d7cb8679433a74240aaf"
+    "tokens.css": "5cd695c9a782902b72864170aa9b1973754432c61b734102cf5f1a04ea62f7da",
+    "tokens.json": "540ba613d3ae1f403d03d8f4f2bc5d3af994483faf7830efb5999e6700256c87"
   }
 }

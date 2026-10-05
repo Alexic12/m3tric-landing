@@ -1,16 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { Barlow } from "next/font/google";
+import { Nunito } from "next/font/google";
 import { BRAND_GREEN_900 } from "@/config/brand";
 import { HydrationMarker } from "@/components/layout/HydrationMarker";
 import { faq } from "@/content/landing";
 import { siteConfig } from "@/config/site";
 import "./globals.css";
 
-const barlow = Barlow({
-  weight: ["300", "400", "500", "700", "800"],
+// No `weight`: Nunito is a variable font, so Next serves one file that covers every weight the design uses
+// (300 to 800) instead of one static instance per weight.
+const nunito = Nunito({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-barlow",
+  variable: "--font-nunito",
 });
 
 const TITLE = "M3TRIC | Lectura multiescala del territorio";
@@ -101,7 +102,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es-CO" className={barlow.variable} suppressHydrationWarning>
+    <html lang="es-CO" className={nunito.variable} suppressHydrationWarning>
       <head>
         {/* Enables the CSS-only reveal state before first paint. Without JS, or if hydration never happens
             (HydrationMarker sets data-hydrated), the failsafe drops the class and content stays visible. */}

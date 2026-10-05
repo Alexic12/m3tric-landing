@@ -22,8 +22,8 @@ if [ -d .github/workflows ]; then
   done < <(grep -rnE '^[[:space:]]*(-[[:space:]]*)?uses:' .github/workflows --include='*.yml' --include='*.yaml' || true)
 fi
 
-# 2. Forbidden tracked files. Font files are here because licensed fonts never enter this public repository (ADR-010).
-#    Matched ignoring case, like the file systems developers use: `.ENV.local`, `DIN2014Rounded.OTF`.
+# 2. Forbidden tracked files. Font files are here because font files never enter this public repository: Nunito is fetched at build time.
+#    Matched ignoring case, like the file systems developers use: `.ENV.local`, `Nunito.OTF`.
 forbidden='(^|/)\.env($|\.)|\.pem$|\.key$|(^|/)cdk\.out(/|$)|(^|/)node_modules(/|$)|^out/|(^|/)\.next(/|$)|\.(woff2?|ttf|otf|eot)$'
 while IFS= read -r path; do
   case "$path" in .env.example|*/.env.example) continue ;; esac

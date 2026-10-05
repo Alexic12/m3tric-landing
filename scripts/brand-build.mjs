@@ -2,10 +2,10 @@
 //   sources    brand/tokens.json, brand/logo/paths.json     hand-edited; every hex and every logo path lives only here
 //   derived    tokens.css, logo/m3tric-logo-{color,reverse,mono-dark,mono-light}.svg, motifs/triple-bar.svg, manifest.json
 //   mirrored   logo/m3tric-mark.svg <- src/app/icon.svg, images/*.webp <- public/images/*.webp (byte copies)
-//   authored   README.md, fonts/README.md (carried through so the manifest covers them)
+//   authored   README.md (carried through so the manifest covers it)
 // The kit is an explicit inventory: a file under brand/ that is not listed here fails the build before anything is
-// written. That is how a stray licensed font file is detected; keeping fonts out of this public repository is up to
-// .gitignore and scripts/hygiene.sh (see brand/fonts/README.md).
+// written. That is how a stray font file is detected; keeping fonts out of this public repository is up to
+// .gitignore and scripts/hygiene.sh (Nunito is fetched at build time by next/font, so no font file is ever committed).
 // Output is deterministic (sorted keys, LF, trailing newline) and the manifest date only moves when content does, so
 // re-running is a no-op; scripts/brand-kit.test.mjs proves it.
 //   node scripts/brand-build.mjs               build in place (brand/)
@@ -43,7 +43,7 @@ const MIRRORS = {
 };
 
 /** Hand-written files inside brand/: the two sources and the documentation. */
-const AUTHORED = ["README.md", "fonts/README.md", "logo/paths.json", "tokens.json"];
+const AUTHORED = ["README.md", "logo/paths.json", "tokens.json"];
 
 /** macOS litter. Gitignored, so never part of the kit. */
 const IGNORED = new Set([".DS_Store"]);
@@ -302,7 +302,7 @@ function assertNoUnexpectedFiles(dir, files) {
   if (unexpected.length === 0) return;
   const fonts = unexpected.filter((rel) => FONT_FILE.test(rel));
   throw new Error(
-    (fonts.length > 0 ? `licensed font files must never enter this public repository (ADR-010, brand/fonts/README.md): ${fonts.join(", ")}. ` : "") +
+    (fonts.length > 0 ? `font files must never enter this public repository (Nunito is fetched at build time): ${fonts.join(", ")}. ` : "") +
       `${dir} holds files that are not part of the kit: ${unexpected.join(", ")}. ` +
       "The kit is an explicit inventory: remove them, or register them in AUTHORED or MIRRORS (scripts/brand-build.mjs). Nothing was written.",
   );

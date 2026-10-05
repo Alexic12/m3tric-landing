@@ -218,9 +218,11 @@ Reglas de uso: `#74c69d` **no** se usa como texto sobre blanco (contraste 2,04) 
 
 ### Fuente
 
-La pila `"DIN 2014 Rounded", var(--font-barlow), system-ui, sans-serif` usa **Barlow** (OFL, autohospedada) como sustituto declarado (ADR-001). Hoy la tipografía efectiva es Barlow.
+La pila `Nunito, system-ui, sans-serif` usa **Nunito** (SIL Open Font License 1.1, Google Fonts), una fuente variable (peso 200–1000) que `next/font/google` descarga en el build y sirve desde el propio origen: sin petición a Google al visitar el sitio. El diseño usa los pesos 300, 400, 500, 700 y 800 (`font.weights` en `brand/tokens.json`). Es una decisión del owner del 2026-10-05 que se aparta conscientemente del manual, que prescribe DIN 2014 Rounded (ADR-012).
 
-**No agregue archivos de fuente a este repositorio** (`.woff`, `.woff2`, `.ttf`, `.otf`): es público y las licencias de las fuentes comerciales prohíben redistribuirlos (ADR-010). Si el cliente licencia DIN 2014 Rounded, los archivos se servirán bajo `/fonts/*` desde un bucket privado compartido con la plataforma y el `@font-face` se activará por configuración; la pila CSS no cambia. Ese diseño y su estado («pendiente de licencia»; todavía no está implementado) están en `docs/adr/ADR-010-din-2014-rounded-licencia-y-servicio.md` y `brand/fonts/README.md`. `npm run brand:build` y `scripts/brand-kit.test.mjs` fallan si aparece un archivo de fuente bajo `brand/`.
+**No agregue archivos de fuente a este repositorio** (`.woff`, `.woff2`, `.ttf`, `.otf`): Nunito no los necesita porque se descarga en el build, y `.gitignore` y `npm run hygiene` los rechazan. `npm run brand:build` y `scripts/brand-kit.test.mjs` también fallan si aparece un archivo de fuente bajo `brand/`.
+
+Para cambiar la tipografía, edite el bloque `font` de `brand/tokens.json`, ejecute `npm run brand:build` y repita la pila en `src/app/globals.css` y la declaración en `src/app/layout.tsx`; `scripts/brand-kit.test.mjs` falla si la pila no coincide con el kit.
 
 ---
 

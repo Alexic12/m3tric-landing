@@ -2,11 +2,13 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Aceptada |
+| Estado | Sustituida por ADR-012 (2026-10-05) |
 | Fecha | 2026-09-30 |
 | Alcance | Tipografía del sitio (`src/app/layout.tsx`, `src/app/globals.css`) |
 
-Ver también: ADR-010 (licencia y servicio de DIN 2014 Rounded). ADR-010 reemplaza el procedimiento con que cierra la sección «Decisión» de este ADR —agregar los `.woff2` con `next/font/local`—; el resto de este ADR sigue vigente.
+**Sustituida por ADR-012 (2026-10-05).** El owner eligió Nunito como tipografía única de la landing y la plataforma y dejó de licenciarse DIN 2014 Rounded. El texto que sigue se conserva como historia de la decisión del 2026-09-30 y ya no describe la implementación vigente.
+
+Ver también: ADR-010 (licencia y servicio de DIN 2014 Rounded; retirada por ADR-012). ADR-010 reemplazaba el procedimiento con que cierra la sección «Decisión» de este ADR —agregar los `.woff2` con `next/font/local`—.
 
 ## Contexto
 

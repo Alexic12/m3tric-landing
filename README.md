@@ -140,7 +140,7 @@ Variables del environment de GitHub `landing-staging`: `AWS_DEPLOY_ROLE_ARN`, `A
 ```
 src/
 ├── app/                      # Next.js App Router
-│   ├── layout.tsx            # Metadatos, Barlow, JSON-LD (Organization, WebSite, FAQPage), meta m3tric:release
+│   ├── layout.tsx            # Metadatos, Nunito, JSON-LD (Organization, WebSite, FAQPage), meta m3tric:release
 │   ├── page.tsx              # Ensamble de secciones
 │   ├── globals.css           # Tokens de color y tipografía, utilidades (@theme repite brand/tokens.json)
 │   ├── robots.ts             # robots.txt según perfil
@@ -193,7 +193,7 @@ docs/                         # SPEC, SPEC-UNIFICACION, TRACEABILITY, OPERACION,
 | `docs/SPEC.md` | Especificación end-to-end (v3), con los IDs de requisito |
 | `docs/SPEC-UNIFICACION.md` | Identidad compartida landing ↔ plataforma: requisitos REQ-U, decisiones DEC-53..58, kit, sistema visual, español, tipografía, pruebas y despliegue |
 | `docs/TRACEABILITY.md` | Matriz requisito → spec → implementación → verificación → evidencia, y brechas abiertas |
-| `docs/adr/` | Decisiones de arquitectura ADR-001 a ADR-011 |
+| `docs/adr/` | Decisiones de arquitectura ADR-001 a ADR-012 |
 | `docs/OPERACION.md` | Pipeline de publicación, bootstrap, rollback, verificación, caché, cabeceras, costos y resolución de problemas |
 | `docs/CONTENIDOS.md` | Cómo actualizar textos, imágenes, contacto y marca |
 | `docs/ASSETS.md` | Inventario de activos, dependencias y licencias |
@@ -205,7 +205,7 @@ docs/                         # SPEC, SPEC-UNIFICACION, TRACEABILITY, OPERACION,
 
 ## Licencias
 
-- **Barlow** (fuente) — [SIL Open Font Licence 1.1](https://github.com/jpt/barlow), autohospedada vía `next/font/google` en build (ADR-001)
+- **Nunito** (fuente variable) — [SIL Open Font Licence 1.1](https://github.com/googlefonts/nunito), autohospedada vía `next/font/google` en build (ADR-012)
 - **lucide-react** (iconografía) — [ISC](https://github.com/lucide-icons/lucide)
 - **three.js**, **@react-three/fiber** — [MIT](https://threejs.org/license)
 - **Next.js**, **React** — [MIT](https://opensource.org/licenses/MIT)

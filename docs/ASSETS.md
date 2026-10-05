@@ -134,7 +134,7 @@ Fuente única de la identidad visual que comparten la landing y la plataforma (A
 
 | Archivo | Clase | Origen | Licencia | Propósito |
 |---|---|---|---|---|
-| `tokens.json` | Fuente (escrito a mano) | Manual de identidad M3TRIC (abril 2026), interpretado en `docs/SPEC.md` §3 | Proyecto (autoría propia; los valores de marca son los del manual) | Única lista de hex del kit; además, niveles de alerta, tipografía (pila, pesos y estado de DIN), radios, foco, sombra, geometría de las tres barras y serie de gráficos |
+| `tokens.json` | Fuente (escrito a mano) | Manual de identidad M3TRIC (abril 2026), interpretado en `docs/SPEC.md` §3 | Proyecto (autoría propia; los colores son los del manual; la tipografía se aparta de él por decisión del owner, ADR-012) | Única lista de hex del kit; además, niveles de alerta, tipografía (Nunito: pila, nombre, licencia y pesos), radios, foco, sombra, geometría de las tres barras y serie de gráficos |
 | `logo/paths.json` | Fuente (escrito a mano) | Manual, lámina 8 (formas libres del wordmark) | Propiedad M3TRIC | Única fuente de los trazados del logo; no se redibuja |
 | `tokens.css` | Generado de `tokens.json` | — | Proyecto | Las mismas variables como `:root` (`--m3-*`) |
 | `logo/m3tric-logo-{color,reverse,mono-dark,mono-light}.svg` | Generado de `paths.json` | Manual, láminas 8 y 11 | Propiedad M3TRIC | Variantes del wordmark |
@@ -143,11 +143,11 @@ Fuente única de la identidad visual que comparten la landing y la plataforma (A
 | `logo/m3tric-mark.svg` | Copia byte a byte de `src/app/icon.svg` | Tres barras del logo sobre cuadrado `#004124` | Propiedad M3TRIC | Marca para favicon; pendiente de validación de marca (dependencia del cliente n.º 5) |
 | `images/aerial-wide-1280.webp`, `images/aerial-tall-747.webp` | Copia byte a byte de `public/images/` | Manual, lámina 12 | Propiedad M3TRIC | Fotografía del manual sin texto incrustado |
 | `images/globe-1000.webp` | Copia byte a byte de `public/images/` | Manual, lámina 3 | Propiedad M3TRIC | Fotografía del manual sin texto incrustado |
-| `README.md`, `fonts/README.md` | Escritos a mano | — | Proyecto | Documentación del kit; `fonts/README.md` reserva el espacio de DIN 2014 Rounded, **sin archivos de fuente** |
+| `README.md` | Escrito a mano | — | Proyecto | Documentación del kit |
 
 **Reglas:**
 
-- **Inventario explícito**: `scripts/brand-build.mjs` solo acepta los archivos de la tabla. Cualquier otro archivo bajo `brand/` hace fallar `npm run brand:build` y `scripts/brand-kit.test.mjs`; así no entran archivos de fuente con licencia (`.woff`, `.woff2`, `.ttf`, `.otf`, …) a un repositorio público (ADR-010).
+- **Inventario explícito**: `scripts/brand-build.mjs` solo acepta los archivos de la tabla. Cualquier otro archivo bajo `brand/` hace fallar `npm run brand:build` y `scripts/brand-kit.test.mjs`; así no entran archivos de fuente (`.woff`, `.woff2`, `.ttf`, `.otf`, …) a un repositorio público (ADR-012).
 - **No se publica en el sitio**: `brand/` vive en la raíz del repositorio y no pasa por `public/` ni por `out/`.
 - **Las copias no se editan**: `logo/m3tric-mark.svg` e `images/*.webp` se regeneran con `npm run brand:build` cuando cambia su origen, y las pruebas fallan si difieren.
 - **Fin de línea**: `.gitattributes` fija `brand/** text eol=lf`.
@@ -158,49 +158,37 @@ Fuente única de la identidad visual que comparten la landing y la plataforma (A
 
 ## Fuentes (`src/app/layout.tsx`, `next/font/google`)
 
-### Barlow (producción)
+### Nunito (producción)
 
 | Propiedad | Valor | Licencia |
 |---|---|---|
-| **Fuente** | Barlow (Google Fonts) | SIL Open Font License 1.1 |
-| **Pesos** | 300 (Light), 400, 500, 700, 800 | OFL 1.1 |
+| **Fuente** | Nunito (Google Fonts) | SIL Open Font License 1.1 |
+| **Tipo** | Variable (eje de peso 200–1000) | OFL 1.1 |
+| **Pesos usados** | 300 (Light), 400, 500, 700, 800 (`font.weights` en `brand/tokens.json`) | OFL 1.1 |
 | **Subsets** | Latin (latino, sin caracteres extendidos) | OFL 1.1 |
 | **Display** | `swap` — mostrar fallback mientras carga | CSS Font Loading API |
-| **Hospedaje** | Autohospedada en build (Next.js `next/font/google`) | Descargada en tiempo de build |
+| **Hospedaje** | Autohospedada en build (Next.js `next/font/google`) como una sola fuente variable; sin archivos de fuente en el repositorio | Descargada en tiempo de build |
+
+La elección es una decisión del owner del 2026-10-05 y una desviación consciente del manual de marca, que prescribe DIN 2014 Rounded (ADR-012, que sustituye a ADR-001 y a ADR-010).
 
 **Declaración** (`src/app/layout.tsx`):
 
 ```typescript
-import { Barlow } from "next/font/google";
+import { Nunito } from "next/font/google";
 
-const barlow = Barlow({
-  weight: ["300", "400", "500", "700", "800"],
+const nunito = Nunito({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-barlow",
+  variable: "--font-nunito",
 });
 ```
 
-**Pila en CSS** (`src/app/globals.css`):
+**Pila en CSS:** `--font-sans` (`src/app/globals.css`) equivale a `Nunito, system-ui, sans-serif`, la pila de `font.family` en `brand/tokens.json` (`--m3-font-sans` en `brand/tokens.css`); `scripts/brand-kit.test.mjs` falla si dejan de coincidir.
 
-```css
---font-sans: "DIN 2014 Rounded", var(--font-barlow), system-ui, sans-serif;
-```
+- Primera opción: Nunito (OFL 1.1, autohospedada)
+- Fallback: `system-ui` (fuente del sistema)
 
-- Intenta DIN 2014 Rounded (opcional, licencia comercial)
-- Fallback: Barlow (OFL, autohospedada)
-- Tercer fallback: `system-ui` (fuente del sistema)
-
-### DIN 2014 Rounded (opcional, cliente)
-
-| Propiedad | Valor | Nota |
-|---|---|---|
-| **Fuente** | DIN 2014 Rounded | Licencia comercial de Paratype (NO incluida en el repositorio ni en el sitio; ADR-010) |
-| **Tipo** | Tipografía corporativa de Metric | Definida en manual de marca §3.3 |
-| **Estado** | Pendiente de licencia | Hoy la tipografía efectiva es Barlow; `font.din.status` es `pending-license` en `brand/tokens.json` |
-| **Si se licencia** | Los `.woff2` **nunca se agregan al repositorio** (es público y las licencias de fuentes comerciales prohíben redistribuirlos). Se sirven bajo `/fonts/*` desde un bucket privado compartido con la plataforma y el `@font-face` se activa por configuración | Diseño en `docs/adr/ADR-010-din-2014-rounded-licencia-y-servicio.md` y `brand/fonts/README.md`; todavía no está implementado |
-
-**La pila CSS no cambia** si se licencia DIN 2014 Rounded: ya la nombra en primer lugar y, sin el archivo, cae en Barlow. `npm run brand:build` y `scripts/brand-kit.test.mjs` fallan si aparece un archivo de fuente bajo `brand/`.
+**Sin archivos de fuente en el repositorio:** `.gitignore` y `npm run hygiene` rechazan `.woff`, `.woff2`, `.ttf`, `.otf` y `.eot`; `npm run brand:build` y `scripts/brand-kit.test.mjs` los rechazan bajo `brand/`.
 
 ---
 
@@ -247,7 +235,7 @@ Permite uso comercial, modificación, distribución y uso privado. Requiere cons
 
 Permite uso comercial de la fuente, modificación (con restricción de nombres). Requiere mantener licencia.
 
-- Barlow (Google Fonts)
+- Nunito (Google Fonts)
 
 ### ISC (2024 OSI approved)
 
@@ -292,7 +280,7 @@ Permite modificación, distribución comercial. Requiere declaración de cambios
 ### Marca registrada
 
 - **M3TRIC** es marca registrada de Metric (cliente)
-- Logo, colores, tipografía y contenido son propiedad intelectual de Metric
+- Logo, colores y contenido son propiedad intelectual de Metric; la tipografía (Nunito) es de terceros y se usa bajo la licencia OFL 1.1 (sección «Fuentes»)
 - Uso restringido a este sitio web (bajo contrato Anexo 1)
 - Excepción: el wordmark de la **Universidad EAFIT** (`EafitLogo.tsx`) es de la universidad, no de Metric; se usa como co-marca por instrucción del owner y falta la confirmación de su oficina de marca (ADR-011)
 
@@ -368,5 +356,5 @@ Cuando actualices activos:
 - **Manual de marca**: `docs/20260428_Manual de marca - Metric.pptx` (láminas 1, 3, 8, 12)
 - **Spec técnica**: `docs/SPEC.md` (§3 marca, §7 arquitectura)
 - **Licencias OSI**: https://opensource.org/licenses
-- **Google Fonts Barlow**: https://fonts.google.com/specimen/Barlow
+- **Google Fonts Nunito**: https://fonts.google.com/specimen/Nunito
 - **Lucide React**: https://lucide.dev
