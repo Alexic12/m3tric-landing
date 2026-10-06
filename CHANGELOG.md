@@ -4,6 +4,25 @@ Todas las versiones de la landing de M3TRIC.
 
 ---
 
+## [3.4.2] - 2026-10-06 — Documentación
+
+Evidencia de la integración de «Análisis» en el shell de la plataforma (DEC-64; PR #196 → `4795cd2`) y cierre de QA-07. Solo documentación y evidencia: sin cambios de código ni visuales en el sitio de la landing.
+
+### Agregado
+- `docs/evidence/platform-brand/analisis/` (escrita por la QA en vivo): `QA-ANALISIS.md`, `findings.json` y 24 capturas WebP (538,2 KB). Una corrida de Chromium 153 el 2026-10-06 contra la release `4795cd2` de la plataforma, en cinco anchos y seis estados, con dos usuarios temporales de Cognito, eliminados y con su ausencia comprobada: 15 de 16 comprobaciones cumplen; C4 falla solo en `/live/raw` a 1024 px (AN-02). `docs/evidence/platform-brand/README.md` describe la carpeta.
+- `docs/TRACEABILITY.md` sección 6.6: los hallazgos AN-01, AN-02 y AN-03 (tabla), las observaciones AN-04 a AN-09 y el cierre de QA-07 (fila nueva).
+
+### Cambiado
+- **QA-07 cerrado** (2026-10-06). `/live` y `/live/raw` de la plataforma viven dentro de su shell (DEC-64; release `4795cd2`): «Mapa» y «Análisis» se alternan sin usar Atrás en 20 de 20 combinaciones y «Volver a Análisis» lleva a `/live` en los cinco anchos (`QA-ANALISIS.md` C3). Se corrige además la atribución original («diseño de DEC-18»): DEC-18 decide la autenticación, no el aspecto, y la ausencia del shell fue una no-modificación al aplicarla (HA-09, en el repositorio de la plataforma).
+- `docs/evidence/platform-brand/README.md`: fila `analisis/`, con sus límites, y la nota de las cifras del despliegue sin salida cruda archivada.
+- `docs/TRACEABILITY.md`: sección 6.6 (QA del 2026-10-06), acción L y el párrafo de brechas. **Ningún requisito cambia de estado**: los totales de la sección 5 no varían (24 Verificado, 20 Parcial, 1 Preparado, 2 Pendiente y 1 Dependencia del cliente; 48 requisitos).
+
+### Conocido / Pendiente
+- Abiertos en la plataforma (repositorio privado; propietario «Plataforma»): AN-01 y AN-02 corregidos el mismo día en la plataforma (release `c0be045`, PR #197; re-verificación en `analisis/QA-ANALISIS.md` §14); queda AN-01b (teclado, bajo; S-21). Hallazgo original AN-01 (media-baja: con el detalle desplazado, cerrar el cajón movía la página por debajo de 1024 px) y AN-02 (baja: tarjetas de `/live/raw` de 213,3 px a 1024 px), ambos introducidos por el cambio y **en corrección** (rama `fix/analisis-drawer-scroll-y-raw-grid`); la re-verificación está pendiente. AN-03 (baja, preexistente: la segunda fila de la leyenda de `LiveLineChart` cruza el primer tick del eje Y; S-19 de la plataforma). Siguen abiertos NU-06, NU-07 y QA-01 de 3.4.1. Detalle y siguiente acción: `docs/TRACEABILITY.md` §6.6.
+- Límites de la evidencia: la QA usó un solo navegador (Chromium) y series y posición sintéticas para el detalle, porque el dispositivo real está «Callado»; su arnés no se archivó (`QA-ANALISIS.md` §10). Las cifras de PR, plan y change set de `4795cd2` las verificó el Tech Lead y no tienen salida cruda archivada.
+
+---
+
 ## [3.4.1] - 2026-10-05 — Documentación
 
 Cierre de la tipografía (ADR-012): la landing quedó publicada y verificada en vivo con Nunito; la plataforma se desplegó con la misma fuente, se corrigió tras su QA en vivo y se verificó. REQ-B03 y REQ-U04 pasan a Verificado. Solo documentación y evidencia: sin cambios de código ni visuales en el sitio.
