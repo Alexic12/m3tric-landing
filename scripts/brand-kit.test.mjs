@@ -25,6 +25,7 @@ const GEOMETRY_TOLERANCE = 0.005; // the kit rounds geometry to 2 decimals
 // a conscious edit here and not a side effect of editing the builder.
 const KIT_FILES = [
   "README.md",
+  "documentos.md",
   "images/aerial-tall-747.webp",
   "images/aerial-wide-1280.webp",
   "images/globe-1000.webp",
@@ -67,6 +68,9 @@ const MANUAL_PALETTE = {
 
 // docs/SPEC-UNIFICACION.md 4.2: the greens plus neutrals. The warm colours are reserved for alert levels.
 const CHART_SERIES = ["#004124", "#2C694F", "#4B5563", "#74C69D", "#0B0F0D", "#B7E3C7"];
+
+// The disclaimer every document carries (brand/documentos.md section 8). Typed here on purpose: the document may not certify itself.
+const DOCUMENT_DISCLAIMER = "Vista informativa. No diagnostica estabilidad del terreno ni sustituye análisis geotécnico.";
 
 // sha256 of JSON.stringify([viewBox, body, bars]) of logo/paths.json. It equals the original inline strings of Logo.tsx at
 // 7f32145 (blob f5fb27b8). A literal, so redrawing the official wordmark is a deliberate edit here, never a side effect.
@@ -342,6 +346,10 @@ describe("kit inventory", () => {
     assert.deepEqual(walk(BRAND), KIT_FILES);
   });
 
+  test("the builder's inventory (AUTHORED, MIRRORS and what it generates) is exactly the kit", () => {
+    assert.deepEqual([...buildKit().keys()].sort(), KIT_FILES, "a file missing from AUTHORED or MIRRORS in scripts/brand-build.mjs never reaches the manifest");
+  });
+
   for (const [rel, source] of Object.entries(MIRROR_PAIRS)) {
     test(`brand/${rel} is a byte copy of ${source}`, () => {
       const copy = readFileSync(join(BRAND, rel));
@@ -356,6 +364,39 @@ describe("kit inventory", () => {
       assert.ok(text.endsWith("\n") && !text.endsWith("\n\n"), "must end with exactly one newline");
     });
   }
+});
+
+describe("documentos.md (brand rules for documents) keeps the kit's values", () => {
+  const doc = read(BRAND, "documentos.md");
+  const lines = doc.split("\n");
+  const hexes = new Set([...doc.matchAll(/#[0-9A-Fa-f]{6}\b/g)].map(([hex]) => hex.toUpperCase()));
+
+  test("exists and is not empty", () => {
+    assert.ok(statSync(join(BRAND, "documentos.md")).size > 0);
+    assert.ok(doc.trim().length > 0);
+  });
+
+  test("names every colour token next to its hex, so a hex that drifts or disappears is caught", () => {
+    for (const [name, hex] of Object.entries(tokens.color)) {
+      const named = lines.some((line) => line.includes(`\`${name}\``) && line.toUpperCase().includes(hex.toUpperCase()));
+      assert.ok(named, `documentos.md has no line that names \`${name}\` and ${hex}`);
+    }
+  });
+
+  test("cites no hex that is not a kit colour (a typo would pass the check above)", () => {
+    const known = new Set(Object.values(tokens.color).map((hex) => hex.toUpperCase()));
+    assert.ok(hexes.size > 0, "no hex parsed: the pattern or the document changed");
+    assert.deepEqual([...hexes].filter((hex) => !known.has(hex)), [], "these hex values are not in tokens.json: fix the document, or the kit if the colour is new");
+  });
+
+  test("lists the chart series in the order of tokens.chartSeries", () => {
+    const series = tokens.chartSeries.join(", ");
+    assert.ok(doc.toUpperCase().includes(series.toUpperCase()), `documentos.md must contain the series as written in tokens.json: ${series}`);
+  });
+
+  test("cites the disclaimer sentence verbatim", () => {
+    assert.ok(doc.includes(DOCUMENT_DISCLAIMER), `documentos.md must contain: ${DOCUMENT_DISCLAIMER}`);
+  });
 });
 
 describe("line endings and binaries are pinned by .gitattributes (manifest.json hashes raw bytes)", () => {

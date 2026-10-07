@@ -4,6 +4,22 @@ Todas las versiones de la landing de M3TRIC.
 
 ---
 
+## [3.5.0] - 2026-10-07 — Kit de marca 1.2: marca en documentos
+
+Referencia de marca para documentos (PDF, XLSX, CSV e impresos), autorizada por el owner el 2026-10-07. El sitio no cambia.
+
+### Agregado
+- `brand/documentos.md`: página y márgenes, logo por fondo y mínimos, motivo de tres barras, paleta en papel y niveles con forma, tipografía (Nunito embebida, escala para documentos, es-CO), tablas, gráficas, portada/cabecera/pie con el aviso informativo, XLSX, CSV y nombres de archivo, tono, lista de verificación y pendientes. El manual de marca no cubre documentos: este archivo es autoría de la sesión, no transcripción.
+- `scripts/brand-kit.test.mjs`: inventario del constructor contra `KIT_FILES` y cinco pruebas de `documentos.md` (existe; nombra cada color del kit con su hex; no cita hex ajenos; serie de gráficas en orden; aviso informativo literal).
+
+### Cambiado
+- Kit **1.2.0** (`brand/tokens.json`, `tokens.css`, `manifest.json` regenerados; `documentos.md` en el inventario de `scripts/brand-build.mjs`); `brand/README.md` y `docs/SPEC-UNIFICACION.md` §3 con el archivo nuevo. La plataforma lo sincroniza en su próximo release (`npm run brand:sync -- --commit <sha>`).
+
+### Conocido / Pendiente
+- Pendientes de `documentos.md` §13: motivo de tres barras en fila como archivo del kit, co-marca EAFIT en documentos (vector oficial pendiente), formas de nivel de la plataforma, Carta como tamaño por defecto, glifos de Nunito en el primer PDF real.
+
+---
+
 ## [3.4.2] - 2026-10-06 — Documentación
 
 Evidencia de la integración de «Análisis» en el shell de la plataforma (DEC-64; PR #196 → `4795cd2`) y cierre de QA-07. Solo documentación y evidencia: sin cambios de código ni visuales en el sitio de la landing.
