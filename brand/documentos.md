@@ -264,7 +264,7 @@ El PDF se genera en RGB, con el perfil sRGB incrustado. El kit entrega los color
 
 **Contenido del CSV**
 
-- UTF-8 con marca de orden de bytes (BOM), para que Excel lea bien las tildes. Separador coma, fin de línea CRLF y comillas dobles según RFC 4180.
+- UTF-8 **sin** marca de orden de bytes (BOM): el CSV es para herramientas de análisis y la BOM rompe lectores estrictos; quien necesite Excel usa el XLSX. Separador coma, fin de línea LF y comillas dobles según RFC 4180 (DEC-65, C-7).
 - Una fila por lectura (o por hora, según la resolución), ordenada por `timestamp_utc`, `station` y `variable`. Con resolución horaria, las columnas de mínimo, promedio, máximo y cantidad reemplazan a `value` y siguen la misma convención de nombres (por ejemplo `value_min`, `value_avg`, `value_max`, `samples`).
 - Punto decimal y sin separador de miles: es un archivo para máquinas.
 - `timestamp_utc` en ISO-8601 con `Z` y `timestamp_local` en ISO-8601 con su desfase. Ambos van siempre.
