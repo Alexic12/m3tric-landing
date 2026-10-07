@@ -4,6 +4,13 @@ Todas las versiones de la landing de M3TRIC.
 
 ---
 
+## [3.5.1] - 2026-10-07 — Kit 1.2.1
+
+### Cambiado
+- `brand/documentos.md` §10: el CSV se entrega en UTF-8 **sin** BOM y con fin de línea LF (decisión C-7 de la spec de Reportes de la plataforma, DEC-65); el XLSX es la vía para Excel. Kit 1.2.1 (`tokens.json`, `tokens.css`, `manifest.json` regenerados).
+
+---
+
 ## [3.5.0] - 2026-10-07 — Kit de marca 1.2: marca en documentos
 
 Referencia de marca para documentos (PDF, XLSX, CSV e impresos), autorizada por el owner el 2026-10-07. El sitio no cambia.
