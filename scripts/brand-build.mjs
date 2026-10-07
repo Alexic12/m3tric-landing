@@ -2,7 +2,7 @@
 //   sources    brand/tokens.json, brand/logo/paths.json     hand-edited; every hex and every logo path lives only here
 //   derived    tokens.css, logo/m3tric-logo-{color,reverse,mono-dark,mono-light}.svg, motifs/triple-bar.svg, manifest.json
 //   mirrored   logo/m3tric-mark.svg <- src/app/icon.svg, images/*.webp <- public/images/*.webp (byte copies)
-//   authored   README.md (carried through so the manifest covers it)
+//   authored   README.md, documentos.md (carried through so the manifest covers them)
 // The kit is an explicit inventory: a file under brand/ that is not listed here fails the build before anything is
 // written. That is how a stray font file is detected; keeping fonts out of this public repository is up to
 // .gitignore and scripts/hygiene.sh (Nunito is fetched at build time by next/font, so no font file is ever committed).
@@ -42,8 +42,8 @@ const MIRRORS = {
   "images/globe-1000.webp": "public/images/globe-1000.webp",
 };
 
-/** Hand-written files inside brand/: the two sources and the documentation. */
-const AUTHORED = ["README.md", "logo/paths.json", "tokens.json"];
+/** Hand-written files inside brand/: the two sources and the documentation (README.md, documentos.md). */
+const AUTHORED = ["README.md", "documentos.md", "logo/paths.json", "tokens.json"];
 
 /** macOS litter. Gitignored, so never part of the kit. */
 const IGNORED = new Set([".DS_Store"]);

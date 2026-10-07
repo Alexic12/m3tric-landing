@@ -59,6 +59,7 @@ Fuente: exploración del código el 2026-10-02 y capturas en vivo (`docs/evidenc
 ```
 brand/
   README.md                 — qué contiene, cómo se consume y cómo se sincroniza
+  documentos.md             — marca en documentos: página, logo, paleta en papel, tipografía, tablas, gráficas, XLSX/CSV (kit 1.2.0, 2026-10-07; autorizada por el owner)
   manifest.json             — { version, generatedAt, files: { ruta: sha256 } }  (generado: npm run brand:build; el commit de origen lo registra la plataforma al sincronizar)
   tokens.json               — paleta exacta del manual, tipografía (Nunito: pila, nombre, licencia, pesos), radios, foco, sombras, niveles
   tokens.css                — las mismas variables como :root (--m3-green-900 … --m3-red, --m3-ink, --m3-muted, --m3-beige, --m3-font-sans)
