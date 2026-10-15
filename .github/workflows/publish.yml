@@ -78,7 +78,7 @@ jobs:
             test -f "$f" || { echo "::error::$f missing at $(git rev-parse HEAD): cannot publish this ref"; exit 1; }
           done
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
@@ -167,7 +167,7 @@ jobs:
             || { echo "::error::out/ holds files the build job did not hash"; exit 1; }
 
       # smoke.mjs and manifest.mjs use Node built-ins only (no npm ci in this job).
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: ${{ env.NODE_VERSION }}
 
