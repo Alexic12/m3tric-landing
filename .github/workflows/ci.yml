@@ -164,3 +164,5 @@ jobs:
       - run: npm test
       # Synth needs no AWS access: gitSha must be 40 hex (GITHUB_SHA is) and the release id is a CI marker.
       - run: npx cdk synth --lookups=false -c env=staging -c gitSha="$GITHUB_SHA" -c releaseId="ci-$GITHUB_RUN_ID" --quiet
+      - name: Synth EAFIT site bootstrap without AWS access or release URLs
+        run: npx cdk synth --lookups=false -c env=staging -c deploymentProfile=eafit-staging -c gitSha="$GITHUB_SHA" -c releaseId="eafit-bootstrap-ci-$GITHUB_RUN_ID" --output cdk.out-eafit --quiet

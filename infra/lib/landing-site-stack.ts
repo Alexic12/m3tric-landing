@@ -3,6 +3,7 @@ import { CfnBudget } from 'aws-cdk-lib/aws-budgets';
 import {
   AllowedMethods,
   CachePolicy,
+  CfnOriginAccessControl,
   Distribution,
   HeadersFrameOption,
   HeadersReferrerPolicy,
@@ -19,7 +20,7 @@ import { Topic } from 'aws-cdk-lib/aws-sns';
 import type { Construct } from 'constructs';
 
 import type { LandingConfig } from './config';
-import { PARTITION, SITE_BUCKET_ID, budgetName, budgetTopicName, responseHeadersPolicyName } from './names';
+import { PARTITION, SITE_BUCKET_ID, budgetName, budgetTopicName, eafitLandingBucketName, responseHeadersPolicyName } from './names';
 
 // Edge security headers (SPEC §10.2). Next's static export inlines its bootstrap
 // scripts and styles, hence 'unsafe-inline'; everything else is same-origin only.
@@ -83,6 +84,7 @@ export class LandingSiteStack extends Stack {
     });
 
     this.logsBucket = new Bucket(this, 'LogsBucket', {
+      bucketName: config.account === '914800441297' ? eafitLandingBucketName('logs') : undefined,
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       encryption: BucketEncryption.S3_MANAGED,
       enforceSSL: true,
@@ -97,6 +99,7 @@ export class LandingSiteStack extends Stack {
     // The identity stack's publish policy matches this bucket by the name prefix
     // CloudFormation derives from this construct id (names.ts).
     this.siteBucket = new Bucket(this, SITE_BUCKET_ID, {
+      bucketName: config.account === '914800441297' ? eafitLandingBucketName('site') : undefined,
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       encryption: BucketEncryption.S3_MANAGED,
       enforceSSL: true,
@@ -242,5 +245,12 @@ export class LandingSiteStack extends Stack {
     new CfnOutput(this, 'DistributionId', { value: this.distribution.distributionId });
     new CfnOutput(this, 'DistributionDomainName', { value: this.distribution.distributionDomainName });
     new CfnOutput(this, 'SiteUrl', { value: `https://${this.distribution.distributionDomainName}` });
+    if (config.account === '914800441297') {
+      const oac = this.node.findAll().find((node): node is CfnOriginAccessControl => node instanceof CfnOriginAccessControl);
+      if (!oac) throw new Error('Landing CloudFront origin access control is required');
+      new CfnOutput(this, 'OriginAccessControlId', { value: oac.ref });
+      new CfnOutput(this, 'ResponseHeadersPolicyId', { value: responseHeadersPolicy.responseHeadersPolicyId });
+      new CfnOutput(this, 'LogsBucketName', { value: this.logsBucket.bucketName });
+    }
   }
 }

@@ -50,6 +50,10 @@ export function cdkAssetsBucketName(environment: string, account: string, region
   return `${landingNamePrefix(environment)}-cdk-assets-${account}-${region}`;
 }
 
+export function eafitLandingBucketName(kind: 'site' | 'logs'): string {
+  return `m3tric-staging-landing-${kind}-914800441297-us-east-2`;
+}
+
 export function responseHeadersPolicyName(environment: string): string {
   return `${landingNamePrefix(environment)}-security-headers`;
 }
