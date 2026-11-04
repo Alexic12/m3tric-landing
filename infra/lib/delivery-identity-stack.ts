@@ -24,6 +24,7 @@ import {
   cdkAssetsBucketName,
   cfnExecRoleName,
   deployRoleName,
+  eafitLandingBucketName,
   landingNamePrefix,
   s3BucketArn,
   siteStackBucketNamePrefix,
@@ -98,16 +99,23 @@ export class LandingDeliveryIdentityStack extends Stack {
       terminationProtection: true,
     });
 
-    const { account, region, environment } = config;
+    const { account, region, environment, siteCloudFront } = config;
+    if (config.bootstrapSiteOnly || !siteCloudFront) {
+      throw new Error('Delivery identity requires the observed site CloudFront IDs');
+    }
     this.deployRoleName = deployRoleName(environment);
 
     // The stack ID suffix is a UUID assigned by CloudFormation at creation, so the
     // resource can only be pinned up to the stack name.
     const siteStackArn = `arn:${PARTITION}:cloudformation:${region}:${account}:stack/${stackName(environment, SITE_STACK_ID)}/*`;
     const siteBucketsArn = s3BucketArn(`${siteStackBucketNamePrefix(environment)}*`);
-    const siteBucketArn = s3BucketArn(`${siteStackBucketNamePrefix(environment)}${SITE_BUCKET_ID.toLowerCase()}*`);
+    const eafit = account === '914800441297';
+    const siteBucketsArns = eafit ? ['site', 'logs'].map((kind) =>
+      s3BucketArn(eafitLandingBucketName(kind as 'site' | 'logs'))) : [siteBucketsArn];
+    const siteBucketArn = eafit ? s3BucketArn(eafitLandingBucketName('site'))
+      : s3BucketArn(`${siteStackBucketNamePrefix(environment)}${SITE_BUCKET_ID.toLowerCase()}*`);
     const cloudFront = (resource: string) => `arn:${PARTITION}:cloudfront::${account}:${resource}`;
-    const distributionArn = cloudFront(`distribution/${config.siteCloudFront.distributionId}`);
+    const distributionArn = cloudFront(`distribution/${siteCloudFront.distributionId}`);
     const topicsArn = `arn:${PARTITION}:sns:${region}:${account}:${landingNamePrefix(environment)}-*`;
     const budgetsArn = `arn:${PARTITION}:budgets::${account}:budget/${landingNamePrefix(environment)}-*`;
     const assetsBucketArn = s3BucketArn(cdkAssetsBucketName(environment, account, region));
@@ -192,7 +200,7 @@ export class LandingDeliveryIdentityStack extends Stack {
                 's3:GetMetricsConfiguration',
                 's3:GetReplicationConfiguration',
               ],
-              resources: [siteBucketsArn],
+              resources: siteBucketsArns,
             }),
             // Pinned to the IDs of the live resources (config.siteCloudFront): the
             // account hosts other projects' distributions and OACs. No Create*:
@@ -220,7 +228,7 @@ export class LandingDeliveryIdentityStack extends Stack {
                 'cloudfront:UpdateOriginAccessControl',
                 'cloudfront:DeleteOriginAccessControl',
               ],
-              resources: [cloudFront(`origin-access-control/${config.siteCloudFront.originAccessControlId}`)],
+              resources: [cloudFront(`origin-access-control/${siteCloudFront.originAccessControlId}`)],
             }),
             new PolicyStatement({
               sid: 'SiteResponseHeadersPolicy',
@@ -230,7 +238,7 @@ export class LandingDeliveryIdentityStack extends Stack {
                 'cloudfront:UpdateResponseHeadersPolicy',
                 'cloudfront:DeleteResponseHeadersPolicy',
               ],
-              resources: [cloudFront(`response-headers-policy/${config.siteCloudFront.responseHeadersPolicyId}`)],
+              resources: [cloudFront(`response-headers-policy/${siteCloudFront.responseHeadersPolicyId}`)],
             }),
             new PolicyStatement({
               sid: 'SiteBudgetTopic',
@@ -421,21 +429,25 @@ export class LandingDeliveryIdentityStack extends Stack {
       iam5(assetsObjectsArn),
       'cdk-assets writes the site template under a content-hash key that changes with every synth; limited to the site/ prefix of the dedicated landing assets bucket.',
     );
-    acknowledgeFinding(
-      this.deployRole,
-      iam5(siteBucketArn),
-      'The site bucket name ends in a random suffix CloudFormation assigns at creation; the prefix is the site stack name plus the SiteBucket logical id, which nothing else produces.',
-    );
+    if (!eafit) {
+      acknowledgeFinding(
+        this.deployRole,
+        iam5(siteBucketArn),
+        'The site bucket name ends in a random suffix CloudFormation assigns at creation; the prefix is the site stack name plus the SiteBucket logical id, which nothing else produces.',
+      );
+    }
     acknowledgeFinding(
       this.deployRole,
       iam5(`${siteBucketArn}/*`),
       '`aws s3 sync --delete` must read, write and delete arbitrary object keys of the export; limited to the site bucket of the landing stack.',
     );
-    acknowledgeFinding(
-      this.cfnExecRole,
-      iam5(siteBucketsArn),
-      'CloudFormation names the site and logs buckets <site stack name>-<logical id>-<random>; the prefix is the site stack name, so only that stack\'s buckets match.',
-    );
+    if (!eafit) {
+      acknowledgeFinding(
+        this.cfnExecRole,
+        iam5(siteBucketsArn),
+        'CloudFormation names the site and logs buckets <site stack name>-<logical id>-<random>; the prefix is the site stack name, so only that stack\'s buckets match.',
+      );
+    }
     acknowledgeFinding(
       this.cfnExecRole,
       iam5(topicsArn),

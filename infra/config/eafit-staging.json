@@ -1,0 +1,24 @@
+{
+  "account": "914800441297",
+  "region": "us-east-2",
+  "environment": "staging",
+  "tags": {
+    "Application": "m3tric",
+    "Component": "landing",
+    "Owner": "Alejandro Puerta",
+    "CostCenter": "EAFIT-M3TRIC",
+    "DataClassification": "public"
+  },
+  "github": {
+    "owner": "Alexic12",
+    "repo": "m3tric-landing",
+    "environment": "landing-eafit-staging"
+  },
+  "oidcProviderArn": "arn:aws:iam::914800441297:oidc-provider/token.actions.githubusercontent.com",
+  "cdkQualifier": "hnb659fds",
+  "budgetMonthlyUsd": 10,
+  "robotsNoindex": true,
+  "logRetentionDays": 90,
+  "noncurrentVersionDays": 90,
+  "bootstrapSiteOnly": true
+}

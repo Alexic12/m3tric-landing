@@ -79,7 +79,8 @@ export const LandingConfigSchema = z
     oidcProviderArn: z.string(),
     // Only the identity stack (deployed by a human) still uses the shared bootstrap.
     cdkQualifier: z.string().regex(/^[a-z0-9]{1,10}$/, 'cdkQualifier must be 1-10 lowercase alphanumerics'),
-    siteCloudFront: SiteCloudFrontSchema,
+    siteCloudFront: SiteCloudFrontSchema.optional(),
+    bootstrapSiteOnly: z.literal(true).optional(),
     budgetMonthlyUsd: z.number().positive().max(1000),
     robotsNoindex: z.boolean(),
     logRetentionDays: z.number().int().min(1).max(3650),
@@ -87,6 +88,25 @@ export const LandingConfigSchema = z
   })
   .strict()
   .superRefine((config, ctx) => {
+    if (config.account === '914800441297' && (config.region !== 'us-east-2' || config.environment !== 'staging')) {
+      ctx.addIssue({ code: 'custom', path: ['account'], message: 'EAFIT landing migration is pinned to staging in Ohio' });
+    }
+    if (config.account === '914800441297' && config.siteCloudFront
+        && (config.siteCloudFront.distributionId === 'E1J2L9XZIAGQ7M'
+          || config.siteCloudFront.originAccessControlId === 'E3QYZ9YDRZ4IZP'
+          || config.siteCloudFront.responseHeadersPolicyId === '952c4e4a-adb6-4ed4-b06a-dbc54cac2676')) {
+      ctx.addIssue({ code: 'custom', path: ['siteCloudFront'], message: 'EAFIT delivery must use its own observed CloudFront IDs' });
+    }
+    if (config.bootstrapSiteOnly) {
+      if (config.account !== '914800441297' || config.region !== 'us-east-2'
+          || config.environment !== 'staging' || config.siteCloudFront !== undefined) {
+        ctx.addIssue({ code: 'custom', path: ['bootstrapSiteOnly'],
+          message: 'Site bootstrap requires EAFIT staging in Ohio without existing CloudFront IDs' });
+      }
+    } else if (!config.siteCloudFront) {
+      ctx.addIssue({ code: 'custom', path: ['siteCloudFront'],
+        message: 'Steady delivery requires observed CloudFront resource IDs' });
+    }
     // Import only the account's own GitHub provider: a provider ARN from another
     // account or for another issuer would silently change who can assume the role.
     const expected = `arn:${PARTITION}:iam::${config.account}:oidc-provider/${GITHUB_OIDC_HOST}`;
@@ -134,6 +154,31 @@ export function loadLandingConfig(environment: EnvironmentName, directory = CONF
     throw new Error(`Configuration ${path} declares environment ${config.environment}, expected ${environment}`);
   }
   return config;
+}
+
+/** Explicit target selector; resource Environment remains staging in both accounts. */
+export function loadLandingDeploymentConfig(profile: string, environment: EnvironmentName,
+  directory = CONFIG_DIRECTORY): LandingConfig {
+  if (profile === 'flypark-staging') {
+    if (environment !== 'staging') throw new Error('Flypark profile requires staging');
+    const config = loadLandingConfig('staging', directory);
+    if (config.account !== '147997127433' || config.region !== 'us-east-2') {
+      throw new Error('Flypark deployment profile must select account 147997127433 in us-east-2');
+    }
+    return config;
+  }
+  if (profile !== 'eafit-staging' || environment !== 'staging') {
+    throw new Error('Unknown or mismatched landing deployment profile');
+  }
+  const config = parseLandingConfig(JSON.parse(readFileSync(join(directory, 'eafit-staging.json'), 'utf8')) as unknown);
+  if (config.account !== '914800441297' || config.region !== 'us-east-2' || config.environment !== environment) {
+    throw new Error('EAFIT deployment profile must select account 914800441297 in us-east-2');
+  }
+  return config;
+}
+
+export function readLandingDeploymentProfile(node: ContextReader): string | undefined {
+  return stringContext(node, 'deploymentProfile');
 }
 
 interface ContextReader {

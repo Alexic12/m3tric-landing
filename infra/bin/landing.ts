@@ -2,14 +2,17 @@
 
 import { App } from 'aws-cdk-lib';
 
-import { loadLandingConfig, readDeploymentContext } from '../lib/config';
-import { addNagChecks, buildLandingApp } from '../lib/landing-app';
+import { loadLandingConfig, loadLandingDeploymentConfig, readDeploymentContext, readLandingDeploymentProfile } from '../lib/config';
+import { addNagChecks, buildLandingApp, buildLandingBootstrapApp } from '../lib/landing-app';
 
 const app = new App();
 const deployment = readDeploymentContext(app.node);
-const config = loadLandingConfig(deployment.environment);
+const profile = readLandingDeploymentProfile(app.node);
+const config = profile === undefined ? loadLandingConfig(deployment.environment)
+  : loadLandingDeploymentConfig(profile, deployment.environment);
 
-buildLandingApp(app, config, deployment);
+if (config.bootstrapSiteOnly) buildLandingBootstrapApp(app, config, deployment);
+else buildLandingApp(app, config, deployment);
 addNagChecks(app);
 
 app.synth();
