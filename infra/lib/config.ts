@@ -81,6 +81,7 @@ export const LandingConfigSchema = z
     cdkQualifier: z.string().regex(/^[a-z0-9]{1,10}$/, 'cdkQualifier must be 1-10 lowercase alphanumerics'),
     siteCloudFront: SiteCloudFrontSchema.optional(),
     bootstrapSiteOnly: z.literal(true).optional(),
+    createOidcProvider: z.literal(true).optional(),
     budgetMonthlyUsd: z.number().positive().max(1000),
     robotsNoindex: z.boolean(),
     logRetentionDays: z.number().int().min(1).max(3650),
@@ -97,6 +98,11 @@ export const LandingConfigSchema = z
           || config.siteCloudFront.responseHeadersPolicyId === '952c4e4a-adb6-4ed4-b06a-dbc54cac2676')) {
       ctx.addIssue({ code: 'custom', path: ['siteCloudFront'], message: 'EAFIT delivery must use its own observed CloudFront IDs' });
     }
+    if (config.createOidcProvider && (config.account !== '914800441297' || config.region !== 'us-east-2'
+        || config.environment !== 'staging' || config.bootstrapSiteOnly)) {
+      ctx.addIssue({ code: 'custom', path: ['createOidcProvider'],
+        message: 'Creating the GitHub provider requires explicit EAFIT steady staging in Ohio' });
+    }
     if (config.bootstrapSiteOnly) {
       if (config.account !== '914800441297' || config.region !== 'us-east-2'
           || config.environment !== 'staging' || config.siteCloudFront !== undefined) {
@@ -107,7 +113,7 @@ export const LandingConfigSchema = z
       ctx.addIssue({ code: 'custom', path: ['siteCloudFront'],
         message: 'Steady delivery requires observed CloudFront resource IDs' });
     }
-    // Import only the account's own GitHub provider: a provider ARN from another
+    // Bind only the account's own GitHub provider: a provider ARN from another
     // account or for another issuer would silently change who can assume the role.
     const expected = `arn:${PARTITION}:iam::${config.account}:oidc-provider/${GITHUB_OIDC_HOST}`;
     if (config.oidcProviderArn !== expected) {

@@ -70,6 +70,10 @@ export function buildLandingApp(app: App, config: LandingConfig, deployment: Dep
     config,
   });
 
+  if (config.account === '914800441297') new CfnRule(site, 'ExpectedMigrationTarget', { assertions: [
+    { assert: Fn.conditionEquals(Aws.ACCOUNT_ID, config.account), assertDescription: 'EAFIT account is required' },
+    { assert: Fn.conditionEquals(Aws.REGION, config.region), assertDescription: 'Ohio region is required' },
+  ] });
   return { identity, site };
 }
 

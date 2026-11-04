@@ -13,11 +13,16 @@ import { SITE_STACK, TEST_DEPLOYMENT, newApp, rawStagingConfig } from './helpers
 function targetRaw(): Record<string, any> {
   return JSON.parse(readFileSync(join(__dirname, '../config/eafit-staging.json'), 'utf8'));
 }
+function bootstrapConfig() {
+  const input = targetRaw(); delete input.siteCloudFront; delete input.createOidcProvider;
+  input.bootstrapSiteOnly = true;
+  return parseLandingConfig(input);
+}
 
 describe('EAFIT landing migration bootstrap', () => {
   it('requires an explicit matching deployment profile and rejects source IDs and wrong targets', () => {
     expect(loadLandingDeploymentConfig('eafit-staging', 'staging')).toMatchObject({
-      account: '914800441297', region: 'us-east-2', bootstrapSiteOnly: true,
+      account: '914800441297', region: 'us-east-2', createOidcProvider: true,
     });
     expect(loadLandingDeploymentConfig('flypark-staging', 'staging').account).toBe('147997127433');
     for (const profile of ['unknown', '../staging']) {
@@ -28,7 +33,8 @@ describe('EAFIT landing migration bootstrap', () => {
       (input: Record<string, any>) => { input.account = '147997127433'; },
       (input: Record<string, any>) => { input.region = 'us-east-1'; },
       (input: Record<string, any>) => { input.siteCloudFront = rawStagingConfig().siteCloudFront; },
-      (input: Record<string, any>) => { delete input.bootstrapSiteOnly; },
+      (input: Record<string, any>) => { delete input.siteCloudFront; },
+      (input: Record<string, any>) => { input.bootstrapSiteOnly = true; },
     ]) {
       const input = targetRaw(); mutate(input);
       expect(() => parseLandingConfig(input)).toThrow();
@@ -37,7 +43,7 @@ describe('EAFIT landing migration bootstrap', () => {
 
   it('synthesizes one asset-free, target-bound site without an identity or bootstrap dependency', () => {
     const app = newApp();
-    const config = loadLandingDeploymentConfig('eafit-staging', 'staging');
+    const config = bootstrapConfig();
     const { site } = buildLandingBootstrapApp(app, config, TEST_DEPLOYMENT);
     const template = Template.fromStack(site).toJSON();
     const assembly = app.synth();
@@ -65,17 +71,36 @@ describe('EAFIT landing migration bootstrap', () => {
     expect(() => buildLandingApp(newApp(), config, TEST_DEPLOYMENT)).toThrow(/bootstrap app/);
   });
 
-  it('keeps future delivery policies pinned to target IDs and account-bound buckets', () => {
-    const input = targetRaw(); delete input.bootstrapSiteOnly;
-    input.siteCloudFront = { distributionId: 'EAAAA000000000', originAccessControlId: 'EBBBB111111111',
-      responseHeadersPolicyId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc' };
+  it('creates only the explicit target provider and retains the source import behavior', () => {
+    const config = parseLandingConfig(targetRaw());
+    const app = newApp();
+    const { identity } = buildLandingApp(app, config, TEST_DEPLOYMENT);
+    const template = Template.fromStack(identity);
+    template.resourceCountIs('AWS::IAM::OIDCProvider', 1);
+    template.hasResource('AWS::IAM::OIDCProvider', {
+      Properties: { Url: 'https://token.actions.githubusercontent.com', ClientIdList: ['sts.amazonaws.com'] },
+      DeletionPolicy: 'Retain', UpdateReplacePolicy: 'Retain',
+    });
+    const serialized = JSON.stringify(template.toJSON());
+    expect(serialized).not.toContain('Custom::');
+    expect(serialized).toContain('environment:landing-eafit-staging:ref:refs/heads/main:job_workflow_ref:');
+    expect(template.toJSON().Rules.ExpectedMigrationTarget.Assertions).toHaveLength(2);
+    const source = rawStagingConfig(); source.createOidcProvider = true;
+    expect(() => parseLandingConfig(source)).toThrow(/explicit EAFIT/);
+    const imported = targetRaw(); delete imported.createOidcProvider;
+    const importedStacks = buildLandingApp(newApp(), parseLandingConfig(imported), TEST_DEPLOYMENT);
+    Template.fromStack(importedStacks.identity).resourceCountIs('AWS::IAM::OIDCProvider', 0);
+  });
+
+  it('keeps steady delivery policies pinned to target IDs and account-bound buckets', () => {
+    const input = targetRaw();
     const config = parseLandingConfig(input);
     const app = newApp();
     const { identity } = buildLandingApp(app, config, TEST_DEPLOYMENT);
     const template = Template.fromStack(identity).toJSON();
     const serialized = JSON.stringify(template);
     expect(serialized).not.toContain('147997127433');
-    expect(serialized).toContain('arn:aws:cloudfront::914800441297:distribution/EAAAA000000000');
+    expect(serialized).toContain('arn:aws:cloudfront::914800441297:distribution/E1EXSNY8BIV6RS');
     expect(serialized).not.toContain('arn:aws:cloudfront::914800441297:distribution/*');
     expect(serialized).toContain(eafitLandingBucketName('site'));
     expect(serialized).toContain(eafitLandingBucketName('logs'));

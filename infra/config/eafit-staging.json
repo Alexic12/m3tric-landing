@@ -20,5 +20,10 @@
   "robotsNoindex": true,
   "logRetentionDays": 90,
   "noncurrentVersionDays": 90,
-  "bootstrapSiteOnly": true
+  "createOidcProvider": true,
+  "siteCloudFront": {
+    "distributionId": "E1EXSNY8BIV6RS",
+    "originAccessControlId": "EIJOMQQ84AY3W",
+    "responseHeadersPolicyId": "daf73893-9b7f-4f64-aec6-90416c428b86"
+  }
 }
