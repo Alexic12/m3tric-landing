@@ -1,14 +1,19 @@
-name: Deploy Flypark staging (manual during migration)
+name: Deploy staging (explicit manual account)
 
 on:
   workflow_dispatch:
     inputs:
       deployment_target:
-        description: Explicit source account; target delivery opens after migration acceptance
+        description: Explicit deployment account (source auto deployment remains paused)
         type: choice
         required: true
         options:
           - flypark-staging
+          - eafit-staging
+      platform_url:
+        description: Actual target platform HTTPS URL (required for EAFIT; source uses its environment variable)
+        type: string
+        required: false
       reason:
         description: Why this manual deploy
         type: string
@@ -20,7 +25,7 @@ permissions:
 # One deploy or rollback at a time, never cancelling one in flight (a cancelled CloudFormation/S3 pass leaves
 # a half-published site). A newer pending run replaces an older pending one: only the latest main matters.
 concurrency:
-  group: landing-staging
+  group: ${{ inputs.deployment_target == 'eafit-staging' && 'landing-eafit-staging' || 'landing-staging' }}
   cancel-in-progress: false
 
 env:
@@ -28,8 +33,31 @@ env:
   STACK_NAME: m3tric-staging-LandingSiteStack
 
 jobs:
+  select:
+    name: Validate explicit deployment target
+    runs-on: ubuntu-latest
+    outputs:
+      profile: ${{ steps.target.outputs.profile }}
+      account: ${{ steps.target.outputs.account }}
+      environment: ${{ steps.target.outputs.environment }}
+      region: ${{ steps.target.outputs.region }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Validate account selection and target platform URL
+        id: target
+        env:
+          DEPLOYMENT_TARGET: ${{ inputs.deployment_target }}
+          PLATFORM_URL: ${{ inputs.platform_url }}
+        run: node scripts/deploy/target.mjs >> "$GITHUB_OUTPUT"
+
   ci:
-    if: github.event_name == 'workflow_dispatch' && inputs.deployment_target == 'flypark-staging'
+    needs: select
+    if: github.event_name == 'workflow_dispatch'
     name: CI
     uses: ./.github/workflows/ci.yml
 
@@ -38,7 +66,7 @@ jobs:
   # to the deploy job as an artifact, plus a sha256 list of every file in it.
   synth:
     name: CDK synth
-    needs: ci
+    needs: [select, ci]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -71,7 +99,8 @@ jobs:
       - name: cdk synth
         env:
           RELEASE_ID: ${{ steps.meta.outputs.release_id }}
-        run: npx cdk synth --lookups=false -c env=staging -c deploymentProfile=flypark-staging -c gitSha="$GITHUB_SHA" -c releaseId="$RELEASE_ID" --quiet
+          DEPLOYMENT_PROFILE: ${{ needs.select.outputs.profile }}
+        run: npx cdk synth --lookups=false -c env=staging -c deploymentProfile="$DEPLOYMENT_PROFILE" -c gitSha="$GITHUB_SHA" -c releaseId="$RELEASE_ID" --quiet
 
       - name: Hash the cloud assembly
         id: sums
@@ -97,10 +126,10 @@ jobs:
   # executes as the scoped execution role (no IAM permissions). No shared bootstrap role is involved.
   infra:
     name: CDK deploy
-    needs: synth
+    needs: [select, synth]
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    environment: landing-staging
+    environment: ${{ needs.select.outputs.environment }}
     permissions:
       id-token: write
       contents: read
@@ -111,11 +140,14 @@ jobs:
       release_id: ${{ needs.synth.outputs.release_id }}
       # Environment variables are only readable in a job that declares the environment; the build job in
       # publish.yml deliberately does not, so they travel as inputs.
-      platform_url: ${{ vars.PLATFORM_URL }}
+      platform_url: ${{ needs.select.outputs.profile == 'eafit-staging' && inputs.platform_url || vars.PLATFORM_URL }}
       contact_email: ${{ vars.CONTACT_EMAIL }}
       contact_phone: ${{ vars.CONTACT_PHONE }}
     env:
       CFN_EXEC_ROLE_ARN: ${{ vars.AWS_CFN_EXEC_ROLE_ARN }}
+      DEPLOY_ROLE_ARN: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+      EXPECTED_ACCOUNT: ${{ needs.select.outputs.account }}
+      CONFIGURED_REGION: ${{ vars.AWS_REGION }}
     defaults:
       run:
         working-directory: infra
@@ -124,8 +156,9 @@ jobs:
         working-directory: .
         run: |
           set -euo pipefail
-          printf '%s' "$CFN_EXEC_ROLE_ARN" | grep -Eq '^arn:aws:iam::[0-9]{12}:role/m3tric/delivery/m3tric-staging-landing-cfn-exec$' \
-            || { echo "::error::vars.AWS_CFN_EXEC_ROLE_ARN must be the CfnExecRoleArn output of the identity stack"; exit 1; }
+          test "$CFN_EXEC_ROLE_ARN" = "arn:aws:iam::$EXPECTED_ACCOUNT:role/m3tric/delivery/m3tric-staging-landing-cfn-exec"
+          test "$DEPLOY_ROLE_ARN" = "arn:aws:iam::$EXPECTED_ACCOUNT:role/m3tric/delivery/m3tric-staging-landing-github-deploy"
+          test "$CONFIGURED_REGION" = 'us-east-2'
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -162,8 +195,12 @@ jobs:
       - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
           role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ needs.select.outputs.region }}
+          allowed-account-ids: ${{ needs.select.outputs.account }}
           role-session-name: landing-cdk-${{ github.run_id }}
+
+      - name: Verify the authenticated account
+        run: test "$(aws sts get-caller-identity --query Account --output text)" = "$EXPECTED_ACCOUNT"
 
       # --role-arn is mandatory: the deploy role may only create change sets that run as this role
       # (IAM condition cloudformation:RoleArn), and --method=change-set is the only path it can use.
@@ -188,12 +225,13 @@ jobs:
 
   publish:
     name: Publish
-    needs: infra
+    needs: [select, infra]
     permissions:
       id-token: write
       contents: read
     uses: ./.github/workflows/publish.yml
     with:
+      deployment_target: ${{ needs.select.outputs.profile }}
       ref: ${{ github.sha }}
       bucket: ${{ needs.infra.outputs.bucket }}
       distribution_id: ${{ needs.infra.outputs.distribution_id }}

@@ -2,7 +2,7 @@ name: Publish site
 
 # Reusable: builds the given ref with the staging profile, publishes it, invalidates, smokes and records
 # the manifest. Called by deploy.yml (after cdk deploy) and rollback.yml. No concurrency block here: the
-# callers serialize the whole run on the group landing-staging, and a nested group would deadlock.
+# callers serialize each account (source: landing-staging), and a nested group would deadlock.
 #
 # Two jobs on purpose (audit M1): `build` runs npm ci (lifecycle scripts) and the Next build with no
 # environment and no id-token permission, so no dependency can ever obtain the AWS role; `publish` holds
@@ -10,6 +10,10 @@ name: Publish site
 on:
   workflow_call:
     inputs:
+      deployment_target:
+        type: string
+        required: false
+        default: flypark-staging
       ref:
         description: Commit to build and publish
         type: string
@@ -52,7 +56,34 @@ env:
   STACK_NAME: m3tric-staging-LandingSiteStack
 
 jobs:
+  select:
+    name: Validate publish account and resources
+    runs-on: ubuntu-latest
+    outputs:
+      account: ${{ steps.target.outputs.account }}
+      environment: ${{ steps.target.outputs.environment }}
+      region: ${{ steps.target.outputs.region }}
+    steps:
+      # Pipeline checkout, not the older release ref used by a source rollback.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Validate exact destination
+        id: target
+        env:
+          DEPLOYMENT_TARGET: ${{ inputs.deployment_target }}
+          PLATFORM_URL: ${{ inputs.platform_url }}
+          BUCKET_NAME: ${{ inputs.bucket }}
+          DISTRIBUTION_ID: ${{ inputs.distribution_id }}
+          SITE_URL: ${{ inputs.site_url }}
+          VALIDATE_PUBLISH: 'true'
+        run: node scripts/deploy/target.mjs >> "$GITHUB_OUTPUT"
+
   build:
+    needs: select
     name: Build ${{ inputs.release_id }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -118,14 +149,17 @@ jobs:
 
   publish:
     name: Publish ${{ inputs.release_id }}
-    needs: build
+    needs: [select, build]
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    environment: landing-staging
+    environment: ${{ needs.select.outputs.environment }}
     permissions:
       id-token: write
       contents: read
     env:
+      EXPECTED_ACCOUNT: ${{ needs.select.outputs.account }}
+      DEPLOY_ROLE_ARN: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+      CONFIGURED_REGION: ${{ vars.AWS_REGION }}
       BUCKET_NAME: ${{ inputs.bucket }}
       DISTRIBUTION_ID: ${{ inputs.distribution_id }}
       SITE_URL: ${{ inputs.site_url }}
@@ -171,11 +205,21 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
+      - name: Validate environment delivery identity
+        run: |
+          set -euo pipefail
+          test "$DEPLOY_ROLE_ARN" = "arn:aws:iam::$EXPECTED_ACCOUNT:role/m3tric/delivery/m3tric-staging-landing-github-deploy"
+          test "$CONFIGURED_REGION" = 'us-east-2'
+
       - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
           role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ needs.select.outputs.region }}
+          allowed-account-ids: ${{ needs.select.outputs.account }}
           role-session-name: landing-publish-${{ github.run_id }}
+
+      - name: Verify the authenticated account
+        run: test "$(aws sts get-caller-identity --query Account --output text)" = "$EXPECTED_ACCOUNT"
 
       - name: Publish to S3 and invalidate CloudFront
         id: publish

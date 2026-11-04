@@ -1,5 +1,6 @@
-import { CfnOutput, Duration, RemovalPolicy, Stack, Validations, type StackProps } from 'aws-cdk-lib';
+import { Aws, CfnRule, Fn, CfnOutput, Duration, RemovalPolicy, Stack, Validations, type StackProps } from 'aws-cdk-lib';
 import {
+  CfnOIDCProvider,
   Effect,
   FederatedPrincipal,
   OpenIdConnectProvider,
@@ -285,13 +286,26 @@ export class LandingDeliveryIdentityStack extends Stack {
       },
     });
 
-    // Imported, never created: the account already has exactly one GitHub
-    // provider and IAM allows only one per issuer URL.
-    const provider = OpenIdConnectProvider.fromOpenIdConnectProviderArn(
-      this,
-      'GitHubOidcProvider',
-      config.oidcProviderArn,
-    );
+    // Opt-in creation is restricted by the config schema to the fresh EAFIT
+    // account. The global provider is retained: other repositories may adopt it.
+    // Source delivery continues importing its existing provider unchanged.
+    let providerArn: string;
+    if (config.createOidcProvider) {
+      const provider = new CfnOIDCProvider(this, 'GitHubOidcProvider', {
+        url: `https://${GITHUB_OIDC_HOST}`,
+        clientIdList: [GITHUB_OIDC_AUDIENCE],
+      });
+      provider.applyRemovalPolicy(RemovalPolicy.RETAIN);
+      providerArn = provider.ref;
+    } else {
+      providerArn = OpenIdConnectProvider.fromOpenIdConnectProviderArn(
+        this, 'GitHubOidcProvider', config.oidcProviderArn,
+      ).openIdConnectProviderArn;
+    }
+    if (eafit) new CfnRule(this, 'ExpectedMigrationTarget', { assertions: [
+      { assert: Fn.conditionEquals(Aws.ACCOUNT_ID, account), assertDescription: 'EAFIT account is required' },
+      { assert: Fn.conditionEquals(Aws.REGION, region), assertDescription: 'Ohio region is required' },
+    ] });
 
     const subjects = githubOidcSubjects(config.github);
 
@@ -301,7 +315,7 @@ export class LandingDeliveryIdentityStack extends Stack {
       maxSessionDuration: MAX_SESSION,
       description: `GitHub Actions (${config.github.owner}/${config.github.repo}, environment ${config.github.environment}, ${DELIVERY_REF}) deploys and publishes the M3TRIC landing`,
       assumedBy: new FederatedPrincipal(
-        provider.openIdConnectProviderArn,
+        providerArn,
         {
           StringEquals: {
             [`${GITHUB_OIDC_HOST}:aud`]: GITHUB_OIDC_AUDIENCE,
