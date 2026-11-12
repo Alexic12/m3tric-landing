@@ -59,6 +59,30 @@ export function stagingConfig(mutate?: (raw: Record<string, any>) => void): Land
   return parseLandingConfig(raw);
 }
 
+// Well-formed but fictitious: the real certificate is created by the domain stack.
+export const FIXTURE_CERTIFICATE_ARN =
+  'arn:aws:acm:us-east-1:914800441297:certificate/11111111-2222-3333-4444-555555555555';
+
+/** EAFIT staging config without a custom domain, whatever the file currently holds. */
+export function eafitConfig(mutate?: (raw: Record<string, any>) => void): LandingConfig {
+  const raw = JSON.parse(readFileSync(join(__dirname, '..', 'config', 'eafit-staging.json'), 'utf8')) as Record<string, any>;
+  delete raw.customDomain;
+  mutate?.(raw);
+  return parseLandingConfig(raw);
+}
+
+/** EAFIT staging config with the fixture domain (apex + one www redirect). */
+export function eafitDomainConfig(mutate?: (raw: Record<string, any>) => void): LandingConfig {
+  return eafitConfig((raw) => {
+    raw.customDomain = {
+      apexDomain: 'm3tric.io',
+      redirectDomains: ['www.m3tric.io'],
+      certificateArn: FIXTURE_CERTIFICATE_ARN,
+    };
+    mutate?.(raw);
+  });
+}
+
 export interface Synthesized {
   readonly app: App;
   readonly stacks: LandingStacks;

@@ -12,7 +12,7 @@ import {
 import { BlockPublicAccess, Bucket, BucketEncryption, ObjectOwnership } from 'aws-cdk-lib/aws-s3';
 import type { Construct } from 'constructs';
 
-import type { LandingConfig } from './config';
+import { redirectFunctionEnabled, type LandingConfig } from './config';
 import { acknowledgeFinding } from './nag';
 import {
   DEPLOY_ROLE_PATH,
@@ -30,6 +30,7 @@ import {
   s3BucketArn,
   siteStackBucketNamePrefix,
   stackName,
+  wwwRedirectFunctionName,
 } from './names';
 
 // GitHub's assume-role-with-web-identity session cannot exceed the role's maximum;
@@ -100,7 +101,7 @@ export class LandingDeliveryIdentityStack extends Stack {
       terminationProtection: true,
     });
 
-    const { account, region, environment, siteCloudFront } = config;
+    const { account, region, environment, siteCloudFront, customDomain } = config;
     if (config.bootstrapSiteOnly || !siteCloudFront) {
       throw new Error('Delivery identity requires the observed site CloudFront IDs');
     }
@@ -204,9 +205,9 @@ export class LandingDeliveryIdentityStack extends Stack {
               resources: siteBucketsArns,
             }),
             // Pinned to the IDs of the live resources (config.siteCloudFront): the
-            // account hosts other projects' distributions and OACs. No Create*:
-            // creating or replacing a CloudFront resource is a human change
-            // (infra/README.md, "Recrear el stack del sitio").
+            // account hosts other projects' distributions and OACs. No Create* (bar
+            // CreateFunction below): creating or replacing a CloudFront
+            // resource is a human change (infra/README.md, "Recrear el stack del sitio").
             new PolicyStatement({
               sid: 'SiteDistribution',
               effect: Effect.ALLOW,
@@ -273,6 +274,40 @@ export class LandingDeliveryIdentityStack extends Stack {
               ],
               resources: [budgetsArn],
             }),
+            // Only when the redirect function exists. CreateFunction supports no
+            // resource-level scoping; association still requires UpdateDistribution,
+            // which stays pinned to this distribution, so a stray function cannot be
+            // attached anywhere.
+            ...(redirectFunctionEnabled(config) ? [new PolicyStatement({
+              sid: 'SiteRedirectFunctionCreate',
+              effect: Effect.ALLOW,
+              actions: ['cloudfront:CreateFunction'],
+              resources: ['*'],
+            }),
+            // Remaining AWS::CloudFront::Function handler permissions, on the exact function.
+            new PolicyStatement({
+              sid: 'SiteRedirectFunction',
+              effect: Effect.ALLOW,
+              actions: [
+                'cloudfront:DescribeFunction',
+                'cloudfront:GetFunction',
+                'cloudfront:ListTagsForResource',
+                'cloudfront:UpdateFunction',
+                'cloudfront:PublishFunction',
+                'cloudfront:DeleteFunction',
+                'cloudfront:TagResource',
+                'cloudfront:UntagResource',
+              ],
+              resources: [cloudFront(`function/${wwwRedirectFunctionName(environment)}`)],
+            })] : []),
+            // The distribution references the viewer certificate by ARN; CloudFormation
+            // reads it when creating or updating the aliases.
+            ...(customDomain ? [new PolicyStatement({
+              sid: 'SiteCertificateRead',
+              effect: Effect.ALLOW,
+              actions: ['acm:DescribeCertificate'],
+              resources: [customDomain.certificateArn],
+            })] : []),
             // Defence in depth: nothing above grants these, and an explicit deny
             // also beats any policy someone attaches to this role later.
             new PolicyStatement({
@@ -472,6 +507,13 @@ export class LandingDeliveryIdentityStack extends Stack {
       iam5(budgetsArn),
       'The budget has a fixed name under the m3tric-<env>-landing- prefix, which no other project in the account uses.',
     );
+    if (redirectFunctionEnabled(config)) {
+      acknowledgeFinding(
+        this.cfnExecRole,
+        iam5('*'),
+        'cloudfront:CreateFunction supports no resource-level scoping (the function ARN does not exist before creation); the action is alone in its statement, and attaching a function anywhere still needs UpdateDistribution, which is pinned to the landing distribution.',
+      );
+    }
 
     new CfnOutput(this, 'RoleArn', {
       description: 'Role ARN for aws-actions/configure-aws-credentials (GitHub variable AWS_DEPLOY_ROLE_ARN)',

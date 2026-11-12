@@ -1,7 +1,11 @@
 import type { CfnElement } from 'aws-cdk-lib';
 import { describe, expect, it } from 'vitest';
 
+import { wwwRedirectFunctionCode } from '../lib/www-redirect-function';
 import {
+  FIXTURE_CERTIFICATE_ARN,
+  eafitConfig,
+  eafitDomainConfig,
   getAtt,
   objectsArn,
   onlyResource,
@@ -339,5 +343,109 @@ describe('LandingSiteStack outputs and coupling', () => {
     expect(JSON.stringify(site)).not.toContain('Fn::ImportValue');
     expect(stacks.site.dependencies).toEqual([]);
     expect(stacks.site.terminationProtection).toBe(false);
+  });
+});
+
+describe('LandingSiteStack without a custom domain (EAFIT, today)', () => {
+  const { site: eafitSite } = synthesize(eafitConfig());
+
+  it('keeps the default CloudFront certificate: no aliases, viewer certificate, function or SiteCertificate', () => {
+    const config = distributionConfig(eafitSite);
+    expect(config.Aliases).toBeUndefined();
+    expect(config.ViewerCertificate).toBeUndefined();
+    expect(config.DefaultCacheBehavior.FunctionAssociations).toBeUndefined();
+    expect(resourcesOfType(eafitSite, 'AWS::CloudFront::Function')).toEqual([]);
+    expect(JSON.stringify(eafitSite)).not.toContain('acm');
+  });
+
+  it('exposes the CloudFront host as SiteUrl', () => {
+    const [id] = onlyResource(eafitSite, 'AWS::CloudFront::Distribution');
+    expect(eafitSite.Outputs?.SiteUrl).toEqual({ Value: { 'Fn::Join': ['', ['https://', getAtt(id, 'DomainName')]] } });
+  });
+});
+
+describe('LandingSiteStack with a custom domain', () => {
+  const domain = synthesize(eafitDomainConfig());
+  const [fnId, fn] = onlyResource(domain.site, 'AWS::CloudFront::Function');
+  const [headersPolicyId] = onlyResource(domain.site, 'AWS::CloudFront::ResponseHeadersPolicy');
+
+  it('serves the apex and the redirect host with the pinned certificate, SNI and TLS 1.2 minimum', () => {
+    const config = distributionConfig(domain.site);
+    expect(config.Aliases).toEqual(['m3tric.io', 'www.m3tric.io']);
+    expect(config.ViewerCertificate).toEqual({
+      AcmCertificateArn: FIXTURE_CERTIFICATE_ARN,
+      MinimumProtocolVersion: 'TLSv1.2_2021',
+      SslSupportMethod: 'sni-only',
+    });
+  });
+
+  it('changes nothing else in the distribution configuration', () => {
+    const { Aliases, ViewerCertificate, ...rest } = distributionConfig(domain.site);
+    const { FunctionAssociations, ...behavior } = rest.DefaultCacheBehavior as Record<string, any>;
+    const baseline = distributionConfig(synthesize(eafitConfig()).site);
+    expect(Aliases).toBeDefined();
+    expect(ViewerCertificate).toBeDefined();
+    expect(FunctionAssociations).toBeDefined();
+    expect({ ...rest, DefaultCacheBehavior: behavior }).toEqual(baseline);
+  });
+
+  it('associates the redirect function with viewer-request on the default behavior only', () => {
+    const config = distributionConfig(domain.site);
+    expect(config.DefaultCacheBehavior.FunctionAssociations).toEqual([
+      { EventType: 'viewer-request', FunctionARN: getAtt(fnId, 'FunctionARN') },
+    ]);
+    expect(config.CacheBehaviors).toBeUndefined();
+    expect(config.DefaultCacheBehavior.ResponseHeadersPolicyId).toEqual({ Ref: headersPolicyId });
+  });
+
+  it('creates one published cloudfront-js-2.0 function with the exact name and the generated source', () => {
+    expect(withoutTags(fn.Properties)).toEqual({
+      Name: 'm3tric-staging-landing-www-redirect',
+      AutoPublish: true,
+      FunctionConfig: { Comment: 'Redirects www.m3tric.io to https://m3tric.io', Runtime: 'cloudfront-js-2.0' },
+      FunctionCode: wwwRedirectFunctionCode({
+        apexDomain: 'm3tric.io',
+        redirectDomains: ['www.m3tric.io'],
+        strictTransportSecurity: 'max-age=63072000; includeSubDomains',
+      }),
+    });
+  });
+
+  it('sends the same HSTS value from the function as the response headers policy does', () => {
+    const { StrictTransportSecurity } = responseHeadersConfig(domain.site).SecurityHeadersConfig;
+    expect(`max-age=${StrictTransportSecurity.AccessControlMaxAgeSec}; includeSubDomains`).toBe(
+      /var STRICT_TRANSPORT_SECURITY = "([^"]+)"/.exec(fn.Properties?.FunctionCode as string)?.[1],
+    );
+    expect(StrictTransportSecurity.IncludeSubdomains).toBe(true);
+  });
+
+  it('adds exactly one resource, the function, to the reviewed types', () => {
+    expect([...new Set(Object.values(domain.site.Resources).map((resource) => resource.Type))].sort()).toEqual([
+      'AWS::Budgets::Budget',
+      'AWS::CloudFront::Distribution',
+      'AWS::CloudFront::Function',
+      'AWS::CloudFront::OriginAccessControl',
+      'AWS::CloudFront::ResponseHeadersPolicy',
+      'AWS::S3::Bucket',
+      'AWS::S3::BucketPolicy',
+      'AWS::SNS::Topic',
+      'AWS::SNS::TopicPolicy',
+    ]);
+    expect(resourcesOfType(domain.site, 'AWS::CloudFront::Function')).toHaveLength(1);
+  });
+
+  it('outputs the apex as SiteUrl and keeps the other outputs', () => {
+    expect(domain.site.Outputs?.SiteUrl).toEqual({ Value: 'https://m3tric.io' });
+    expect(Object.keys(domain.site.Outputs ?? {})).toEqual(
+      Object.keys(synthesize(eafitConfig()).site.Outputs ?? {}),
+    );
+  });
+
+  it('creates no function (and associates none) when there are no redirect domains', () => {
+    const apexOnly = synthesize(eafitDomainConfig((raw) => (raw.customDomain.redirectDomains = []))).site;
+    const config = distributionConfig(apexOnly);
+    expect(config.Aliases).toEqual(['m3tric.io']);
+    expect(config.DefaultCacheBehavior.FunctionAssociations).toBeUndefined();
+    expect(resourcesOfType(apexOnly, 'AWS::CloudFront::Function')).toEqual([]);
   });
 });

@@ -14,7 +14,7 @@ function targetRaw(): Record<string, any> {
   return JSON.parse(readFileSync(join(__dirname, '../config/eafit-staging.json'), 'utf8'));
 }
 function bootstrapConfig() {
-  const input = targetRaw(); delete input.siteCloudFront; delete input.createOidcProvider;
+  const input = targetRaw(); delete input.siteCloudFront; delete input.createOidcProvider; delete input.customDomain;
   input.bootstrapSiteOnly = true;
   return parseLandingConfig(input);
 }

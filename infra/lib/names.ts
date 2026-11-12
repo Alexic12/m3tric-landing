@@ -58,6 +58,10 @@ export function responseHeadersPolicyName(environment: string): string {
   return `${landingNamePrefix(environment)}-security-headers`;
 }
 
+export function wwwRedirectFunctionName(environment: string): string {
+  return `${landingNamePrefix(environment)}-www-redirect`;
+}
+
 export function budgetName(environment: string): string {
   return `${landingNamePrefix(environment)}-monthly`;
 }

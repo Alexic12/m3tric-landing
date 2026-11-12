@@ -10,7 +10,7 @@ const TARGETS = {
     account: '914800441297', environment: 'landing-eafit-staging', region: 'us-east-2',
     distribution: 'E1EXSNY8BIV6RS',
     bucket: 'm3tric-staging-landing-site-914800441297-us-east-2',
-    site: 'https://d34991vs3lv2po.cloudfront.net',
+    site: 'https://m3tric.io',
   },
 };
 
