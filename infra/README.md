@@ -88,7 +88,7 @@ de terminación activada.
     - S3 (crear/borrar, etiquetas, cifrado, BPA, ownership, versionado, ciclo de vida, logging, ACL de
       bucket, política de bucket + lecturas del handler) sobre `arn:aws:s3:::m3tric-staging-landingsitestack-*`.
     - CloudFront **fijado por ID** (`config.siteCloudFront`): distribución `E1J2L9XZIAGQ7M`, OAC
-      `E3QYZ9YDRZ4IZP`, política de cabeceras `952c4e4a-adb6-4ed4-b06a-dbc54cac2676`. Sin `Create*`.
+      `E3QYZ9YDRZ4IZP`, política de cabeceras `952c4e4a-adb6-4ed4-b06a-dbc54cac2676`. Sin `Create*`, salvo `cloudfront:CreateFunction` cuando la configuración tiene `customDomain` con redirección (la acción no admite recurso; ADR-013).
     - SNS sobre `arn:aws:sns:us-east-2:147997127433:m3tric-staging-landing-*`; Budgets sobre
       `arn:aws:budgets::147997127433:budget/m3tric-staging-landing-*`.
     - **Deny** explícito de `iam:*`, `sts:AssumeRole`, `organizations:*` y `cloudformation:*`.
@@ -152,6 +152,32 @@ identidad concede permisos sobre el del sitio **por nombre**: el prefijo de nomb
 (`<nombre del stack>-<id lógico>-…`, en minúsculas) y los IDs de CloudFront de
 `config/staging.json`. La prueba `landing-site-stack.test.ts › «keeps the physical-name prefix…»`
 falla si se renombra el stack o el constructo `SiteBucket`.
+
+### Stack de dominio (m3tric-DomainStack, us-east-1)
+
+Stack separado de la landing y de la plataforma (`infra/bin/domain.ts`, `infra/lib/domain-stack.ts`,
+configuración en `infra/config/domain-eafit.json`; diseño en `docs/SPEC-DOMINIO.md` §6.2). Contiene:
+
+- Un certificado ACM para `m3tric.io`, `www.m3tric.io` y `platform.m3tric.io`, validado por DNS en la
+  zona de Route 53 del dominio. CloudFormation crea los CNAME de validación. `DeletionPolicy: Retain`.
+- Seis registros alias (A y AAAA para cada uno de los tres nombres) hacia las distribuciones de CloudFront.
+
+Se sintetiza solo como plantilla, sin bootstrap de CDK (us-east-1 no lo necesita):
+
+```bash
+cd infra && npm run synth:domain    # cdk synth ... -o cdk.out-domain
+```
+
+Lo despliega una persona con el perfil de operador; el workflow `deploy.yml` nunca lo sintetiza ni lo despliega:
+
+1. `create-change-set` en `us-east-1` con `--change-set-type CREATE` y la plantilla de `cdk.out-domain`.
+2. Revisar el change set completo: 1 `Certificate` y 6 `RecordSet`, todos `Add`, y nada más.
+3. `execute-change-set` y esperar `CREATE_COMPLETE`.
+4. `set-stack-policy`: Allow `Update:*`; Deny `Update:Replace` y `Update:Delete` sobre el certificado.
+5. `update-termination-protection --enable-termination-protection`.
+
+Añadir un nombre al certificado lo **reemplaza**, y la política del stack lo impide. Para hacerlo hace
+falta levantar la política temporalmente con una decisión fechada, y volver a aplicarla después.
 
 ## Cómo el workflow despliega el stack del sitio
 
@@ -450,7 +476,7 @@ exactamente esta tabla y que cada supresión oculte un hallazgo real.
 | `AwsSolutions-S1` | `CdkAssetsBucket` | Solo plantillas de la landing pública por 30 días; escritura limitada a un rol y un prefijo. |
 | `AwsSolutions-CFR1` (advertencia) | `Distribution` | Landing pública sin requisito de restricción geográfica. |
 | `AwsSolutions-CFR2` (advertencia) | `Distribution` | WAF fuera de alcance (Anexo 1 §13.2): sitio estático GET/HEAD sin formularios ni API. |
-| `AwsSolutions-CFR4` | `Distribution` | Sin dominio propio no se puede fijar TLS mínimo. Dominio + ACM es dependencia del cliente (REQ-A09). |
+| `AwsSolutions-CFR4` | `Distribution` | Solo aplica a configuraciones **sin** `customDomain`: sin dominio propio no se puede fijar TLS mínimo. La configuración de staging tiene dominio desde el 2026-11-12, así que la supresión no se aplica y la distribución fija `TLSv1.2_2021` (REQ-D04). |
 
 `AwsSolutions-S1` no aplica al LogsBucket (es destino de los logs de acceso del SiteBucket) y
 `AwsSolutions-SNS2` no forma parte del paquete AwsSolutions en cdk-nag 3.0.2.
@@ -480,8 +506,9 @@ Con tráfico de landing (miles de visitas/mes, pocos MB de sitio):
 2. **Destinatario de la alerta presupuestal**: el tema SNS queda sin suscripción (dependencia
    del cliente, SPEC §16.4):
    `aws sns subscribe --topic-arn arn:aws:sns:us-east-2:147997127433:m3tric-staging-landing-budget-alerts --protocol email --notification-endpoint <correo>`.
-3. **Dominio propio + ACM (us-east-1) + Route 53** (REQ-A09): habilita TLS 1.2+ mínimo y quita
-   la supresión CFR4.
+3. **Dominio propio + ACM (us-east-1) + Route 53** (REQ-A09): **hecho el 2026-11-12** (`m3tric.io`).
+   Dio TLS 1.2+ mínimo y quitó la supresión CFR4 en staging. Procedimiento del stack: sección
+   «Stack de dominio» de este documento.
 4. **Revisores obligatorios** en el environment de producción y aprobaciones en el ruleset de `main`.
 
 ## Rollback y retiro
