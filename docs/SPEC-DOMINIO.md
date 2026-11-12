@@ -3,7 +3,7 @@
 | Campo | Valor |
 |---|---|
 | Fecha | 2026-11-12 |
-| Estado | Aprobado por el owner (decisiones D1–D5); en implementación |
+| Estado | Desplegado 2026-11-12 (G0–G6 cerradas; G7 parcial: QA con sesión pendiente del owner) |
 | Alcance | Cuenta EAFIT `914800441297`. Landing (`us-east-2`), plataforma (`us-east-2`), certificado y DNS (`us-east-1` / global) |
 | Repos | `Alexic12/m3tric-landing` (este documento, stack de dominio, landing) y `Alexic12/M3TRIC_Platform` (plataforma) |
 | ADR | [ADR-013](adr/ADR-013-dominio-m3tric-io.md) |
@@ -80,11 +80,11 @@ El DNS vive en un stack aparte porque el plan de la plataforma prohíbe `AWS::Ro
 | ID | Requisito | Criterio de aceptación |
 |---|---|---|
 | REQ-D01 | `https://m3tric.io/` sirve la landing con certificado válido | `curl -sI https://m3tric.io/` → 200; certificado emitido por Amazon que cubre `m3tric.io`; mismos encabezados de seguridad que el host CloudFront (CSP, HSTS, nosniff, DENY, Referrer, Permissions, `X-Robots-Tag: noindex, nofollow`) |
-| REQ-D02 | `www.m3tric.io` redirige a la raíz | `curl -sI 'https://www.m3tric.io/a/b?x=1&y=%20z'` → `301`, `location: https://m3tric.io/a/b?x=1&y=%20z`; sin query → sin `?` |
+| REQ-D02 | `www.m3tric.io` redirige a la raíz | `curl -sI 'https://www.m3tric.io/a/b?x=1&y=%20z&flag'` → `301`, `location` con el mismo path, los mismos parámetros y valores, sin re-codificar; el orden entre claves distintas no está garantizado por CloudFront (medido: `?x=1&y=%20z&flag` → `?y=%20z&x=1&flag`); sin query → sin `?` |
 | REQ-D03 | `https://platform.m3tric.io/login` sirve la plataforma | 200; login real de un usuario de prueba temporal, panel, `/live`, mapa con teselas y reportes en navegador real |
 | REQ-D04 | TLS mínimo 1.2 en los hosts propios | `MinimumProtocolVersion = TLSv1.2_2021` en ambas distribuciones; `openssl s_client -tls1_1` contra cada host falla el handshake. Con esto se cierra la supresión cdk-nag `AwsSolutions-CFR4` de la landing |
 | REQ-D05 | Los hosts CloudFront actuales siguen funcionando (D4) | Landing 200 en `d34991vs3lv2po…`; plataforma: login, mapa (referer viejo) y preflight CORS de capas desde el origen viejo → 200 con `Access-Control-Allow-Origin` del origen viejo |
-| REQ-D06 | El mapa funciona en el host nuevo | `GET https://maps.geo.us-east-2.amazonaws.com/v2/styles/Standard/descriptor?key=…` con `Referer: https://platform.m3tric.io/` → 200 (y 403 con `Referer: https://evil.example/`) |
+| REQ-D06 | El mapa funciona en el host nuevo | Se mide sobre las **teselas** (`GET https://maps.geo.us-east-2.amazonaws.com/v2/tiles/...?key=…`), no sobre el descriptor de estilo: el descriptor responde 200 con cualquier referer (comportamiento de AWS, preexistente). Con `Referer: https://platform.m3tric.io/` → 200; con `Referer: https://d3p6d14kqnroeh.cloudfront.net/` → 200; con `Referer` de otro origen (p. ej. `https://m3tric.io/`, `https://platform.m3tric.io.evil.example/`) o sin `Referer` → 403 |
 | REQ-D07 | La subida de capas funciona en el host nuevo | Preflight `OPTIONS` al bucket de capas con `Origin: https://platform.m3tric.io` y `Access-Control-Request-Method: POST` → 200 con ese origen permitido. Un origen ajeno → 403 |
 | REQ-D08 | Los enlaces de la landing apuntan al dominio nuevo | `NEXT_PUBLIC_SITE_URL=https://m3tric.io` (canónico, sitemap, OG, JSON-LD) y cada «Abrir plataforma» = `https://platform.m3tric.io/login` (smoke, comprobación 9) |
 | REQ-D09 | La indexación no cambia (D3) | Smoke staging en `https://m3tric.io`: meta robots `noindex,nofollow`, `robots.txt` `Disallow: /`, `X-Robots-Tag` presente |
@@ -348,6 +348,12 @@ El stack vivo se ensambló (ceremonia M) con el contexto privado de migración d
    - `--role-arn` = el rol actual del stack;
    - nombre `dominio-platform-<sha7>`.
 6. **Inspección.** Lista paginada completa. Exactamente las 3 entradas de REQ-D10 (`Modify`, `Replacement: False`, `Scope` solo `Properties`) y ninguna otra. Se admiten reevaluaciones `Dynamic` de dependientes **solo** si `describe-change-set` las lista dentro de esas 3. Si aparece cualquier otra, se detiene y se elimina el change set.
+   - **Regla refinada (*Gate refinement*):** las reevaluaciones `Dynamic` de dependientes (`ChangeSource: ResourceAttribute`) se aceptan cuando:
+     - (a) `describe-change-set --include-property-values` lista exactamente los recursos previstos;
+     - (b) cada entrada extra es `Dynamic` con `ChangeSource` `ResourceAttribute`;
+     - (c) cualquier reemplazo condicional queda bloqueado por la política del stack (falla cerrado);
+     - (d) las comprobaciones posteriores (punto 8) confirman IDs físicos y código sin cambios.
+   - **Aplicada en G4 (2026-11-12):** sin `--include-property-values` la lista mostró 9 entradas (3 `DirectModification` y 6 `Dynamic`); con él, exactamente 3. Los eventos confirmaron que solo se actualizaron esos 3 recursos.
 7. **Ejecución** y espera de `UPDATE_COMPLETE`. La ejecución elimina el change set A pendiente (D1).
 8. **Comprobación posterior:**
    - 336 recursos con los mismos IDs físicos;
@@ -412,7 +418,7 @@ dig +short m3tric.io A; dig +short m3tric.io AAAA; dig +short platform.m3tric.io
 curl -sI https://m3tric.io/ ; curl -sI 'https://www.m3tric.io/a?x=1' ; curl -sI https://platform.m3tric.io/login
 openssl s_client -connect m3tric.io:443 -servername m3tric.io -tls1_1 </dev/null   # debe fallar
 openssl s_client -connect m3tric.io:443 -servername m3tric.io -tls1_2 </dev/null | openssl x509 -noout -subject -ext subjectAltName
-curl -s -o /dev/null -w '%{http_code}' -H 'Referer: https://platform.m3tric.io/' "https://maps.geo.us-east-2.amazonaws.com/v2/styles/Standard/descriptor?key=<key>"
+curl -s -o /dev/null -w '%{http_code}' -H 'Referer: https://platform.m3tric.io/' "https://maps.geo.us-east-2.amazonaws.com/v2/tiles/vector.basemap/3/2/3?key=<key>"   # teselas; el descriptor de estilo responde 200 con cualquier Referer
 curl -s -o /dev/null -w '%{http_code}' -X OPTIONS -H 'Origin: https://platform.m3tric.io' -H 'Access-Control-Request-Method: POST' https://<overlays-bucket>.s3.us-east-2.amazonaws.com/
 SITE_URL=https://m3tric.io PLATFORM_URL=https://platform.m3tric.io/login EXPECT_PROFILE=staging node scripts/deploy/smoke.mjs
 ```
@@ -475,3 +481,26 @@ En el host CloudFront viejo, lo mismo para el login y el mapa.
 6. Documentación obsoleta detectada (sin tocar aquí): `docs/OPERACION.md` §6, `docs/SPEC.md` §11.2 e `infra/README.md` describen un despliegue automático en push a `main` que ya no existe. `rollback.yml` no tiene ruta EAFIT.
 7. Alarma de CloudWatch sobre `AWS/CertificateManager` `DaysToExpiry` del certificado, por si la renovación administrada falla en silencio.
 8. HSTS: la landing envía `includeSubDomains` desde el apex (2 años). Todo subdominio futuro de `m3tric.io` debe servirse con HTTPS y certificado válido. Nunca añadir `preload` sin decisión explícita.
+
+## 13. Resultado del despliegue (2026-11-12)
+
+| Puerta | Resultado | Evidencia medida |
+|---|---|---|
+| G0 | Cerrada | Credencial de operador reemplazada; evidencia privada. |
+| G1 | Cerrada | PR #31 de la landing fusionado en `main` (`7ace7d9`): esta SPEC, ADR-013 y `m3tric-DomainStack`. |
+| G2 | Cerrada | `m3tric-DomainStack` (us-east-1) en `CREATE_COMPLETE` con un change set de 1 `Certificate` y 6 `RecordSet`, todos `Add`. Certificado `ISSUED` para `m3tric.io`, `www.m3tric.io` y `platform.m3tric.io`; validación DNS con éxito en los tres; política del stack y protección de terminación aplicadas; el DNS público resuelve A para los tres nombres. |
+| G3 | Cerrada | PR #250 de la plataforma fusionado en `main` (`d501f00`); PR #32 de la landing fusionado (`136224d`), tras rebase sobre #31. Tres pruebas que suponían «la configuración EAFIT no tiene dominio» se corrigieron quitando `customDomain` de forma explícita. |
+| G4 | Cerrada | Change set `dominio-platform-d501f00` ejecutado a las 17:18:16 UTC → `UPDATE_COMPLETE`. Base idéntica a la plantilla vigente (0 diferencias) más el delta en 5 rutas de 3 recursos. Lista del change set: 9 entradas sin valores y 3 con `--include-property-values` (regla refinada de §6.4.4, aplicada aquí por primera vez). Tras la ejecución: 336/336 IDs físicos iguales y 23/23 funciones con el mismo `CodeSha256`. La distribución tiene el alias `platform.m3tric.io`, el certificado y `TLSv1.2_2021`; el mapa y CORS de capas aceptan los dos hosts. |
+| G5 | Cerrada | Stack de identidad de la landing en `UPDATE_COMPLETE`. El rol de ejecución de CloudFormation gana solo lo necesario para la función de redirección (nombre exacto) y `acm:DescribeCertificate` (ARN exacto). El resto de cambios fueron solo de etiquetas. |
+| G6 | Cerrada | `deploy.yml` run `43269436122` (`eafit-staging`, `platform_url=https://platform.m3tric.io/login`), release `deploy-18-136224d`: éxito en todos los jobs, incluidos el deploy de CDK y la publicación con smoke sobre `https://m3tric.io`. |
+| G7 | Parcial | QA en navegador sin sesión completada en ambos hosts (capturas en `docs/evidence/dominio/`); la QA con sesión iniciada queda pendiente de una ejecución del owner con su cuenta. |
+
+Mediciones en vivo del 2026-11-12, con los comandos y la matriz completa en `docs/evidence/dominio/README.md`:
+
+- `https://m3tric.io/` → 200 con las cabeceras de seguridad de la landing y `X-Robots-Tag: noindex, nofollow`; `robots.txt` sigue con `Disallow: /`.
+- `www.m3tric.io` → 301 a `https://m3tric.io`, con ruta y query conservadas.
+- TLS 1.1 rechazado (alerta de versión de protocolo) en `m3tric.io`, `www.m3tric.io` y `platform.m3tric.io`.
+- Hosts `*.cloudfront.net` de la landing y de la plataforma: 200 (D4).
+- Teselas del mapa y preflight CORS de capas: según la matriz de la evidencia (REQ-D06 y REQ-D07).
+
+Pendiente tras este despliegue (§12): indexación, fecha de retiro de los hosts `*.cloudfront.net`, Lighthouse y suite en vivo con el perfil production (acción I de `docs/TRACEABILITY.md`), y el resto de los puntos de §12.

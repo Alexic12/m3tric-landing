@@ -4,6 +4,27 @@ Todas las versiones de la landing de M3TRIC.
 
 ---
 
+## [3.6.0] - 2026-11-12 — Dominio m3tric.io
+
+La landing se sirve en `https://m3tric.io` y la plataforma en `https://platform.m3tric.io`, con TLS 1.2 mínimo. Especificación: `docs/SPEC-DOMINIO.md` (ADR-013). Los hosts `*.cloudfront.net` siguen activos durante la transición y la landing sigue `noindex`.
+
+### Agregado
+- Dominio `m3tric.io` con certificado ACM en us-east-1 (`m3tric.io`, `www.m3tric.io` y `platform.m3tric.io`, validado por DNS) y registros alias en Route 53, en el stack nuevo `m3tric-DomainStack` (`infra/lib/domain-stack.ts`; lo despliega una persona, no el workflow).
+- Redirección 301 de `www.m3tric.io` a `https://m3tric.io`, con una función de CloudFront (`m3tric-staging-landing-www-redirect`) que conserva ruta y query.
+- `docs/evidence/dominio/README.md`: evidencia medida del despliegue.
+
+### Cambiado
+- TLS mínimo `TLSv1.2_2021` en las distribuciones de la landing y de la plataforma. La supresión `AwsSolutions-CFR4` ya no aplica a la configuración con dominio.
+- Destino de publicación `eafit-staging`: `https://m3tric.io`. `platform_url` de `deploy.yml`: `https://platform.m3tric.io/login`.
+- Permisos de `cfn-exec` de la landing acotados a lo necesario para la función de redirección y `acm:DescribeCertificate` sobre el certificado. Sin comodines de recurso, salvo `cloudfront:CreateFunction`, que no admite acotación por recurso.
+
+### Conocido / Pendiente
+- Indexación desactivada (D3); fecha de retiro de los hosts `*.cloudfront.net` pendiente (D4).
+- QA en navegador sin sesión completada en ambos hosts; la QA con sesión iniciada queda pendiente de una ejecución del owner.
+- Lighthouse y suite en vivo con el perfil production pendientes (`docs/TRACEABILITY.md`, acción I). Resto de pendientes: `docs/SPEC-DOMINIO.md` §12.
+
+---
+
 ## [3.5.1] - 2026-10-07 — Kit 1.2.1
 
 ### Cambiado
@@ -373,8 +394,8 @@ Rediseño centrado en lo que obtiene el usuario, infraestructura como código, C
 
 Decisiones que no bloquean el build de código, pero sí el release a producción:
 
-1. ⏳ URL oficial del login de la plataforma (`NEXT_PUBLIC_PLATFORM_URL`)
-2. ⏳ Dominio productivo (`NEXT_PUBLIC_SITE_URL`)
+1. ✅ URL oficial del login de la plataforma: `https://platform.m3tric.io/login` (2026-11-12, EAFIT)
+2. ✅ Dominio: `https://m3tric.io` (2026-11-12, EAFIT; la indexación sigue apagada, ver `docs/SPEC-DOMINIO.md`)
 3. ⏳ Correo (y opcional teléfono) de contacto aprobados
 4. ⏳ Validación de marca del favicon derivado (tres barras + cuadrado verde) — equipo de marca
 5. ⏳ Licencia web de DIN 2014 Rounded (opcional; hoy Barlow OFL) — legal

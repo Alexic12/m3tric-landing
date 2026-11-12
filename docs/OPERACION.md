@@ -13,6 +13,7 @@ Documentos relacionados: `docs/SPEC.md` (§9–§12), `infra/README.md` (detalle
 | Cuenta / región | `147997127433` · `us-east-2` (CloudFront es global) | `infra/config/staging.json` |
 | Entorno publicado | `staging` (URL provisional `*.cloudfront.net`, no indexable) | ADR-004 |
 | URL | `https://d21guxd9tjai7a.cloudfront.net` (release `deploy-3-7c618b7` al 2026-10-01, run `36920298884`) | `docs/evidence/live/security-hardening.md` |
+| Entorno vigente (EAFIT, desde 2026-11-12) | `https://m3tric.io` (www → apex), plataforma `https://platform.m3tric.io/login`; el resto de esta sección describe el entorno anterior | `docs/SPEC-DOMINIO.md` §13 |
 | Stack de identidad | `m3tric-staging-LandingDeliveryIdentityStack` — **ya desplegado** por una persona (migrado al modelo endurecido el 2026-10-01) | `infra/README.md` |
 | Rol de despliegue (GitHub, por OIDC) | `arn:aws:iam::147997127433:role/m3tric/delivery/m3tric-staging-landing-github-deploy` | `infra/lib/names.ts` |
 | Rol de ejecución de CloudFormation | `arn:aws:iam::147997127433:role/m3tric/delivery/m3tric-staging-landing-cfn-exec` (sin IAM; CloudFront fijado por ID) | `infra/lib/delivery-identity-stack.ts` |
@@ -347,7 +348,13 @@ aws sns subscribe --topic-arn arn:aws:sns:us-east-2:147997127433:m3tric-staging-
 Hoy el repositorio solo tiene configuración y workflows de **staging** (`infra/config/staging.json`; no existe `production.json`: `infra-config.test › «fails with a clear message when an environment has no configuration file»`; los workflows fijan `m3tric-staging-*` y `EXPECT_PROFILE: staging`). Pasar a producción requiere, en este orden:
 
 1. **Insumos del cliente** (`docs/SPEC.md` §16): dominio productivo; URL oficial del login; correo (y teléfono) de contacto aprobados; destinatario de la alerta presupuestal.
-2. **Dominio y TLS**: certificado ACM en `us-east-1`, zona y registros en Route 53 (apex y `www`), y alias en la distribución. Esto exige **cambios en `infra/`** (certificado, nombres de dominio, política mínima de TLS 1.2+ y retirar la supresión `AwsSolutions-CFR4`). No están implementados.
+2. **Dominio y TLS** (implementado en staging el 2026-11-12; ADR-013 y `docs/SPEC-DOMINIO.md`). Operación actual:
+   - **Hosts**: `https://m3tric.io` (landing), `https://www.m3tric.io` (301 a `https://m3tric.io`, conserva la ruta y la query) y `https://platform.m3tric.io` (plataforma). El `platform_url` de `deploy.yml` es `https://platform.m3tric.io/login`.
+   - **DNS y certificado**: la zona pública `m3tric.io` está en Route 53 de la cuenta de EAFIT. El stack `m3tric-DomainStack` (us-east-1) crea el certificado ACM, sus CNAME de validación y los registros alias; ambas distribuciones usan ese certificado con `TLSv1.2_2021`. Detalle en `infra/README.md`, «Stack de dominio».
+   - **Renovación**: ACM la gestiona mientras el certificado esté en uso. Los CNAME de validación deben permanecer en la zona. Un nombre nuevo en el certificado lo reemplaza y exige una decisión fechada.
+   - **Hosts antiguos**: los hosts `*.cloudfront.net` de la landing y de la plataforma siguen activos durante la transición (D4), incluidos el mapa y la subida de capas.
+   - **Reversión**: `docs/SPEC-DOMINIO.md` §10. La más rápida es borrar los registros alias del stack de dominio; los hosts CloudFront no se tocan.
+   - **Pendientes** (`docs/SPEC-DOMINIO.md` §12): indexación (perfil production, D3); fecha de retiro de los hosts `*.cloudfront.net`; endurecimiento del operador; higiene DNS sin correo (CAA, SPF y DMARC); alarma sobre `DaysToExpiry` del certificado; y HSTS con `includeSubDomains`, por lo que todo subdominio nuevo de `m3tric.io` debe servirse con HTTPS. Además, Lighthouse y la suite en vivo con el perfil production (`docs/TRACEABILITY.md`, acción I).
 3. **Configuración**: `infra/config/production.json` con `environment: "production"` y `robotsNoindex: false`.
 4. **Perfil de release**: `RELEASE_PROFILE=production` y `NEXT_PUBLIC_RELEASE_PROFILE=production`, `NEXT_PUBLIC_SITE_URL` = dominio oficial, `NEXT_PUBLIC_PLATFORM_URL` oficial y **`NEXT_PUBLIC_CONTACT_EMAIL` obligatorio** (el gate falla sin él). En producción el sitio es indexable y `robots.txt` anuncia el sitemap.
 5. **Workflows y environment propios**: parametrizar `deploy.yml`/`publish.yml` (hoy fijos a staging), crear un environment (`landing-production`) con **revisores obligatorios** y un rol de identidad propio con su `sub` exacto.
