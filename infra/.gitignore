@@ -1,5 +1,6 @@
 cdk.out/
 cdk.out.*/
+cdk.out-*/
 dist/
 node_modules/
 *.tsbuildinfo

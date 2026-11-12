@@ -14,7 +14,7 @@ export interface LandingStacks {
 // BootstraplessSynthesizer inherits default role ARNs in this CDK version.
 // This manual, asset-free creation emits only the template; inherited asset
 // methods still reject any future attempt to stage an asset through this path.
-class ManualSiteBootstrapSynthesizer extends BootstraplessSynthesizer {
+export class ManualSiteBootstrapSynthesizer extends BootstraplessSynthesizer {
   public override synthesize(session: ISynthesisSession): void {
     this.synthesizeTemplate(session);
     this.emitArtifact(session, {});
