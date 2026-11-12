@@ -12,6 +12,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json",
     "test": "vitest run --dir test --exclude='cdk.out/**' --exclude='dist/**'",
     "synth": "cdk synth --lookups=false -c env=staging -c gitSha=0000000000000000000000000000000000000000 -c releaseId=local-synth",
+    "synth:domain": "cdk synth --app \"ts-node --prefer-ts-exts bin/domain.ts\" -o cdk.out-domain",
     "cdk": "cdk"
   },
   "dependencies": {

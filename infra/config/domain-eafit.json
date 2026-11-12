@@ -1,0 +1,13 @@
+{
+  "account": "914800441297",
+  "region": "us-east-1",
+  "hostedZoneId": "Z03781402XLYZD0WZKSHK",
+  "zoneName": "m3tric.io",
+  "certificateDomains": ["m3tric.io", "www.m3tric.io", "platform.m3tric.io"],
+  "aliasRecords": [
+    { "name": "m3tric.io", "distributionDomainName": "d34991vs3lv2po.cloudfront.net" },
+    { "name": "www.m3tric.io", "distributionDomainName": "d34991vs3lv2po.cloudfront.net" },
+    { "name": "platform.m3tric.io", "distributionDomainName": "d3p6d14kqnroeh.cloudfront.net" }
+  ],
+  "tags": { "Application": "m3tric", "Component": "domain", "Owner": "Alejandro Puerta", "CostCenter": "EAFIT-M3TRIC" }
+}
