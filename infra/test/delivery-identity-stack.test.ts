@@ -5,6 +5,9 @@ import { githubOidcSubjects } from '../lib/delivery-identity-stack';
 import {
   IDENTITY_STACK,
   allowedActions,
+  FIXTURE_CERTIFICATE_ARN,
+  eafitConfig,
+  eafitDomainConfig,
   getAtt,
   onlyResource,
   resourcesOfType,
@@ -296,7 +299,7 @@ describe('CloudFormation execution role', () => {
     ]);
   });
 
-  it('never creates CloudFront resources and cannot reach the assets bucket or the shared bootstrap', () => {
+  it('never creates CloudFront resources (without a custom domain) and cannot reach the assets bucket or the shared bootstrap', () => {
     const actions = everyAction(execRoleId);
     expect(actions.filter((action) => /^cloudfront:Create/.test(action))).toEqual([]);
     const resources = JSON.stringify(inlinePolicy(execRoleId, 'LandingSiteResources'));
@@ -322,6 +325,106 @@ describe('CloudFormation execution role', () => {
     expect(policy).toContain(`origin-access-control/E1111111111111"`);
     expect(policy).toContain(`response-headers-policy/00000000-0000-4000-8000-000000000000"`);
     expect(policy).not.toContain('E1J2L9XZIAGQ7M');
+  });
+});
+
+describe('execution role with a custom domain', () => {
+  const EAFIT_ACCOUNT = '914800441297';
+  const FUNCTION_ARN = `arn:aws:cloudfront::${EAFIT_ACCOUNT}:function/m3tric-staging-landing-www-redirect`;
+  // CreateFunction supports no resource-level scoping (Service Authorization Reference).
+  const SITE_REDIRECT_FUNCTION_CREATE = {
+    Sid: 'SiteRedirectFunctionCreate',
+    Effect: 'Allow',
+    Action: 'cloudfront:CreateFunction',
+    Resource: '*',
+  };
+  const SITE_REDIRECT_FUNCTION = {
+    Sid: 'SiteRedirectFunction',
+    Effect: 'Allow',
+    Action: [
+      'cloudfront:DeleteFunction',
+      'cloudfront:DescribeFunction',
+      'cloudfront:GetFunction',
+      'cloudfront:ListTagsForResource',
+      'cloudfront:PublishFunction',
+      'cloudfront:TagResource',
+      'cloudfront:UntagResource',
+      'cloudfront:UpdateFunction',
+    ],
+    Resource: FUNCTION_ARN,
+  };
+  const SITE_CERTIFICATE_READ = {
+    Sid: 'SiteCertificateRead',
+    Effect: 'Allow',
+    Action: 'acm:DescribeCertificate',
+    Resource: FIXTURE_CERTIFICATE_ARN,
+  };
+
+  function execStatements(synthesized: ReturnType<typeof synthesize>): Array<Record<string, any>> {
+    const id = synthesized.stacks.identity.getLogicalId(synthesized.stacks.identity.cfnExecRole.node.defaultChild as CfnElement);
+    const policies = role(synthesized.identity, id).Properties?.Policies as Array<{ PolicyDocument: any }>;
+    return policies[0]!.PolicyDocument.Statement as Array<Record<string, any>>;
+  }
+
+  const withDomain = execStatements(synthesize(eafitDomainConfig()));
+  const withoutDomain = execStatements(synthesize(eafitConfig()));
+  const sids = (statements: Array<Record<string, any>>) => statements.map((statement) => statement.Sid);
+
+  it('adds exactly SiteRedirectFunctionCreate, SiteRedirectFunction and SiteCertificateRead, and nothing else', () => {
+    expect(withDomain.filter((statement) => !sids(withoutDomain).includes(statement.Sid))).toEqual([
+      SITE_REDIRECT_FUNCTION_CREATE,
+      SITE_REDIRECT_FUNCTION,
+      SITE_CERTIFICATE_READ,
+    ]);
+    expect(withDomain.filter((statement) => sids(withoutDomain).includes(statement.Sid))).toEqual(withoutDomain);
+  });
+
+  it('adds no statement without a custom domain', () => {
+    expect(sids(withoutDomain)).not.toContain('SiteRedirectFunction');
+    expect(sids(withoutDomain)).not.toContain('SiteRedirectFunctionCreate');
+    expect(sids(withoutDomain)).not.toContain('SiteCertificateRead');
+    expect(allowedActions(withoutDomain).filter((action) => /^(acm|cloudfront:\w*Function)/.test(action))).toEqual([]);
+  });
+
+  it('allows cloudfront:Create* only as CreateFunction, alone in one statement on Resource star', () => {
+    const creating = withDomain.filter((statement) =>
+      ([statement.Action].flat() as string[]).some((action) => /^cloudfront:Create/.test(action)),
+    );
+    expect(creating).toEqual([SITE_REDIRECT_FUNCTION_CREATE]);
+    expect(allowedActions(withDomain).filter((action) => /^cloudfront:Create/.test(action))).toEqual(['cloudfront:CreateFunction']);
+  });
+
+  it('has no Condition, no NotAction/NotResource and no wildcard in any new statement', () => {
+    for (const statement of [SITE_REDIRECT_FUNCTION_CREATE, SITE_REDIRECT_FUNCTION, SITE_CERTIFICATE_READ]) {
+      const actual = withDomain.find(({ Sid }) => Sid === statement.Sid)!;
+      expect(Object.keys(actual).sort()).toEqual(['Action', 'Effect', 'Resource', 'Sid']);
+    }
+    // The only wildcard resource is CreateFunction's (no resource-level scoping exists for it).
+    expect(withDomain.filter((statement) => statement.Effect === 'Allow' && JSON.stringify(statement.Resource).includes('*'))
+      .map(({ Sid }) => Sid).filter((sid) => sid !== 'SiteStackBuckets' && sid !== 'SiteBudgetTopic' && sid !== 'SiteBudget'))
+      .toEqual(['SiteRedirectFunctionCreate']);
+  });
+
+  it('still denies IAM, STS, Organizations and CloudFormation', () => {
+    expect(withDomain.filter((statement) => statement.Effect === 'Deny')).toEqual(
+      withoutDomain.filter((statement) => statement.Effect === 'Deny'),
+    );
+  });
+
+  it('omits the function statement, keeping the certificate read, when there are no redirect domains', () => {
+    const apexOnly = execStatements(synthesize(eafitDomainConfig((raw) => (raw.customDomain.redirectDomains = []))));
+    expect(sids(apexOnly)).not.toContain('SiteRedirectFunction');
+    expect(sids(apexOnly)).not.toContain('SiteRedirectFunctionCreate');
+    expect(apexOnly).toContainEqual(SITE_CERTIFICATE_READ);
+  });
+
+  it('leaves the GitHub deploy role unchanged', () => {
+    const deployPolicies = (config: ReturnType<typeof eafitConfig>) => {
+      const synthesized = synthesize(config);
+      const id = synthesized.stacks.identity.getLogicalId(synthesized.stacks.identity.deployRole.node.defaultChild as CfnElement);
+      return role(synthesized.identity, id).Properties;
+    };
+    expect(deployPolicies(eafitDomainConfig())).toEqual(deployPolicies(eafitConfig()));
   });
 });
 

@@ -10,7 +10,7 @@ import {
   readDeploymentContext,
   requiredTags,
 } from '../lib/config';
-import { TEST_DEPLOYMENT, rawStagingConfig, stagingConfig } from './helpers';
+import { FIXTURE_CERTIFICATE_ARN, TEST_DEPLOYMENT, eafitDomainConfig, rawStagingConfig, stagingConfig } from './helpers';
 
 function contextOf(values: Record<string, unknown>): { tryGetContext(key: string): unknown } {
   return { tryGetContext: (key: string) => values[key] };
@@ -117,6 +117,86 @@ describe('configuration schema (fail closed)', () => {
 
   it('round-trips the raw file through the public parser', () => {
     expect(parseLandingConfig(rawStagingConfig())).toEqual(loadLandingConfig('staging'));
+  });
+});
+
+describe('customDomain (SPEC-DOMINIO 6.3.1)', () => {
+  const rejects = (mutate: (raw: Record<string, any>) => void) => () => eafitDomainConfig(mutate);
+
+  it('is optional: the Flypark file has none and the EAFIT fixture parses', () => {
+    expect(loadLandingConfig('staging').customDomain).toBeUndefined();
+    expect(eafitDomainConfig().customDomain).toEqual({
+      apexDomain: 'm3tric.io',
+      redirectDomains: ['www.m3tric.io'],
+      certificateArn: FIXTURE_CERTIFICATE_ARN,
+    });
+  });
+
+  it('accepts an apex with no redirect domains', () => {
+    expect(eafitDomainConfig((raw) => (raw.customDomain.redirectDomains = [])).customDomain?.redirectDomains).toEqual([]);
+  });
+
+  it('rejects unknown keys', () => {
+    expect(rejects((raw) => (raw.customDomain.extra = true))).toThrow();
+  });
+
+  it('requires an ACM certificate ARN in us-east-1 and in the configured account', () => {
+    for (const arn of [
+      'arn:aws:acm:us-east-2:914800441297:certificate/11111111-2222-3333-4444-555555555555',
+      'arn:aws:acm:us-east-1:147997127433:certificate/11111111-2222-3333-4444-555555555555',
+      'arn:aws:acm:us-east-1:914800441297:certificate/*',
+      'arn:aws:acm:us-east-1:914800441297:certificate/11111111-2222-3333-4444-55555555555',
+      'arn:aws:acm:us-east-1:914800441297:certificate/11111111-2222-3333-4444-555555555555/x',
+      'arn:aws:iam::914800441297:role/x',
+      '',
+    ]) {
+      expect(rejects((raw) => (raw.customDomain.certificateArn = arn)), arn).toThrow();
+    }
+    expect(rejects((raw) => (raw.customDomain.certificateArn = FIXTURE_CERTIFICATE_ARN.replace('914800441297', '147997127433')))).toThrow(
+      /belong to the configured account/,
+    );
+  });
+
+  it('requires lower-case hostnames with at least two labels', () => {
+    for (const apexDomain of ['M3TRIC.io', 'm3tric', 'm3tric.io.', '*.m3tric.io', 'm3tric.io/x', '-m3tric.io', 'm3 tric.io', '']) {
+      expect(rejects((raw) => (raw.customDomain.apexDomain = apexDomain)), apexDomain).toThrow();
+    }
+    expect(rejects((raw) => (raw.customDomain.redirectDomains = ['WWW.m3tric.io']))).toThrow(/lower-case hostname/);
+  });
+
+  it('rejects hostnames longer than 253 characters', () => {
+    const label = 'a'.repeat(61);
+    const longest = [label, label, label, 'a'.repeat(63), 'io'].join('.'); // 61*3+63+2+4 dots = 252
+    const tooLong = [label, label, label, 'a'.repeat(63), 'aaaaa', 'io'].join('.'); // 258
+    expect(longest.length).toBeLessThanOrEqual(253);
+    expect(tooLong.length).toBeGreaterThan(253);
+    expect(eafitDomainConfig((raw) => { raw.customDomain.apexDomain = longest; raw.customDomain.redirectDomains = []; }).customDomain)
+      .toBeDefined();
+    expect(rejects((raw) => { raw.customDomain.apexDomain = tooLong; raw.customDomain.redirectDomains = []; })).toThrow(/lower-case hostname/);
+  });
+
+  it('accepts only direct subdomains of the apex as redirect domains, without duplicates', () => {
+    for (const redirectDomains of [
+      ['m3tric.io'],
+      ['m3tric.io.evil.example'],
+      ['wwwm3tric.io'],
+      ['a.b.m3tric.io'],
+      ['www.other.io'],
+      ['www.m3tric.io', 'www.m3tric.io'],
+    ]) {
+      expect(rejects((raw) => (raw.customDomain.redirectDomains = redirectDomains)), redirectDomains.join()).toThrow();
+    }
+  });
+
+  it('requires steady delivery: siteCloudFront present and never bootstrapSiteOnly', () => {
+    expect(rejects((raw) => delete raw.siteCloudFront)).toThrow(/steady delivery/);
+    expect(
+      rejects((raw) => {
+        delete raw.siteCloudFront;
+        delete raw.createOidcProvider;
+        raw.bootstrapSiteOnly = true;
+      }),
+    ).toThrow(/steady delivery/);
   });
 });
 

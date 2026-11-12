@@ -6,7 +6,7 @@ import { resolveTarget } from './target.mjs';
 const input = {
   ref: 'refs/heads/main', platformUrl: 'https://d123platform.cloudfront.net/login',
   bucket: 'm3tric-staging-landing-site-914800441297-us-east-2',
-  distribution: 'E1EXSNY8BIV6RS', site: 'https://d34991vs3lv2po.cloudfront.net',
+  distribution: 'E1EXSNY8BIV6RS', site: 'https://m3tric.io',
 };
 test('explicit profiles resolve isolated accounts and environments', () => {
   assert.deepEqual(resolveTarget('eafit-staging', input), {
@@ -26,6 +26,7 @@ test('unknown profiles, branches, missing URL and cross-account resources fail c
     { platformUrl: 'https://user@d123platform.cloudfront.net' }, { platformUrl: 'https://example.com/login' },
     { bucket: 'm3tric-staging-landing-site-147997127433-us-east-2' },
     { distribution: 'E1J2L9XZIAGQ7M' }, { site: 'https://foreign.cloudfront.net' },
+    { site: 'https://d34991vs3lv2po.cloudfront.net' }, { site: 'https://www.m3tric.io' },
   ]) assert.throws(() => resolveTarget('eafit-staging', { ...input, ...changed }));
   assert.throws(() => resolveTarget('flypark-staging', input));
 });

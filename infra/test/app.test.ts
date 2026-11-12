@@ -10,6 +10,8 @@ import { addNagChecks, buildLandingApp } from '../lib/landing-app';
 import {
   IDENTITY_STACK,
   SITE_STACK,
+  eafitConfig,
+  eafitDomainConfig,
   TEST_DEPLOYMENT,
   newApp,
   stagingConfig,
@@ -31,7 +33,13 @@ const EXPECTED_TAGS = [
 
 // Every resource type the app may contain, split by whether CloudFormation can
 // tag it. A new type fails this test until someone decides where it belongs.
-const TAGGED_TYPES = ['AWS::IAM::Role', 'AWS::S3::Bucket', 'AWS::CloudFront::Distribution', 'AWS::SNS::Topic'];
+const TAGGED_TYPES = [
+  'AWS::IAM::Role',
+  'AWS::S3::Bucket',
+  'AWS::CloudFront::Distribution',
+  'AWS::CloudFront::Function', // custom domain only
+  'AWS::SNS::Topic',
+];
 const BUDGET_TYPE = 'AWS::Budgets::Budget'; // tagged through ResourceTags (lower-case keys)
 const UNTAGGABLE_TYPES = [
   'AWS::S3::BucketPolicy',
@@ -238,5 +246,31 @@ describe('cdk-nag AwsSolutions', () => {
     new Bucket(new Stack(dirty, 'Control'), 'Bare');
     addNagChecks(dirty);
     expect(() => dirty.synth()).toThrow(/AwsSolutions-S1/);
+  });
+});
+
+describe('landing CDK app with a custom domain (EAFIT)', () => {
+  const plain = synthesize(eafitConfig());
+  const domain = synthesize(eafitDomainConfig());
+  const siteCfr4 = `${SITE_STACK}/Distribution :: AwsSolutions-CFR4`;
+  const ids = (found: Acknowledgement[]) => found.map(({ path, id }) => `${path} :: ${id}`).sort();
+
+  it('acknowledges CFR4 without a domain and swaps it for the CreateFunction IAM5 one with a domain', () => {
+    const withoutDomain = ids(acknowledgements(plain.app));
+    expect(withoutDomain).toContain(siteCfr4);
+    expect(ids(acknowledgements(domain.app))).toEqual(
+      [...withoutDomain.filter((entry) => entry !== siteCfr4), `${IDENTITY_STACK}/CfnExecRole :: AwsSolutions-IAM5[Resource::*]`].sort(),
+    );
+  });
+
+  it('reports zero unacknowledged findings, with no stale suppression left behind', () => {
+    expect(new AwsSolutionsChecks(undefined, { verbose: true }).validateScope(domain.app)).toEqual({ success: true, violations: [] });
+    expect(rawFindings(domain.app)).toEqual(ids(acknowledgements(domain.app)));
+  });
+
+  it('tags the redirect function with exactly the required set', () => {
+    const functions = Object.entries(domain.site.Resources).filter(([, resource]) => resource.Type === 'AWS::CloudFront::Function');
+    expect(functions).toHaveLength(1);
+    expect(functions[0]![1].Properties?.Tags).toEqual(EXPECTED_TAGS);
   });
 });

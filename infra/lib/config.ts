@@ -56,6 +56,32 @@ const SiteCloudFrontSchema = z
   })
   .strict();
 
+// Lower-case DNS hostnames with at least two labels. Interpolated into the
+// redirect function's source and into CloudFront aliases, so nothing looser than
+// plain LDH labels is accepted.
+const hostname = (label: string) =>
+  z
+    .string()
+    .regex(
+      /^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/,
+      `${label} must be a lower-case hostname with at least two labels`,
+    );
+
+// The viewer certificate of a CloudFront distribution must live in us-east-1.
+// The account is checked against config.account in the top-level refinement.
+const CustomDomainSchema = z
+  .object({
+    apexDomain: hostname('customDomain.apexDomain'),
+    redirectDomains: z.array(hostname('customDomain.redirectDomains')),
+    certificateArn: z
+      .string()
+      .regex(
+        /^arn:aws:acm:us-east-1:\d{12}:certificate\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+        'customDomain.certificateArn must be an ACM certificate ARN in us-east-1',
+      ),
+  })
+  .strict();
+
 export const LandingConfigSchema = z
   .object({
     account: z.string().regex(/^\d{12}$/, 'account must be a 12-digit AWS account ID'),
@@ -80,6 +106,7 @@ export const LandingConfigSchema = z
     // Only the identity stack (deployed by a human) still uses the shared bootstrap.
     cdkQualifier: z.string().regex(/^[a-z0-9]{1,10}$/, 'cdkQualifier must be 1-10 lowercase alphanumerics'),
     siteCloudFront: SiteCloudFrontSchema.optional(),
+    customDomain: CustomDomainSchema.optional(),
     bootstrapSiteOnly: z.literal(true).optional(),
     createOidcProvider: z.literal(true).optional(),
     budgetMonthlyUsd: z.number().positive().max(1000),
@@ -113,6 +140,28 @@ export const LandingConfigSchema = z
       ctx.addIssue({ code: 'custom', path: ['siteCloudFront'],
         message: 'Steady delivery requires observed CloudFront resource IDs' });
     }
+    if (config.customDomain) {
+      const { apexDomain, redirectDomains, certificateArn } = config.customDomain;
+      if (config.bootstrapSiteOnly || !config.siteCloudFront) {
+        ctx.addIssue({ code: 'custom', path: ['customDomain'],
+          message: 'customDomain requires steady delivery (siteCloudFront present, no bootstrapSiteOnly)' });
+      }
+      if (certificateArn.split(':')[4] !== config.account) {
+        ctx.addIssue({ code: 'custom', path: ['customDomain', 'certificateArn'],
+          message: 'customDomain.certificateArn must belong to the configured account' });
+      }
+      if (new Set(redirectDomains).size !== redirectDomains.length) {
+        ctx.addIssue({ code: 'custom', path: ['customDomain', 'redirectDomains'],
+          message: 'customDomain.redirectDomains must not contain duplicates' });
+      }
+      for (const domain of redirectDomains) {
+        const label = domain.slice(0, -(apexDomain.length + 1));
+        if (!domain.endsWith(`.${apexDomain}`) || label.includes('.')) {
+          ctx.addIssue({ code: 'custom', path: ['customDomain', 'redirectDomains'],
+            message: `customDomain.redirectDomains entry ${domain} must be a direct subdomain of ${apexDomain}` });
+        }
+      }
+    }
     // Bind only the account's own GitHub provider: a provider ARN from another
     // account or for another issuer would silently change who can assume the role.
     const expected = `arn:${PARTITION}:iam::${config.account}:oidc-provider/${GITHUB_OIDC_HOST}`;
@@ -126,6 +175,11 @@ export const LandingConfigSchema = z
   });
 
 export type LandingConfig = z.infer<typeof LandingConfigSchema>;
+
+/** The www redirect function exists iff a custom domain has redirect hosts; the site stack and the execution role both key off this. */
+export function redirectFunctionEnabled(config: LandingConfig): boolean {
+  return (config.customDomain?.redirectDomains.length ?? 0) > 0;
+}
 
 export const GitShaSchema = z
   .string()

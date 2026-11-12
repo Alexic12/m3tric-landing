@@ -5,22 +5,38 @@ import {
   CachePolicy,
   CfnOriginAccessControl,
   Distribution,
+  Function as CloudFrontFunction,
+  FunctionCode,
+  FunctionEventType,
+  FunctionRuntime,
   HeadersFrameOption,
   HeadersReferrerPolicy,
   HttpVersion,
   PriceClass,
   ResponseHeadersPolicy,
+  SSLMethod,
+  SecurityPolicyProtocol,
   ViewerProtocolPolicy,
   type ResponseCustomHeader,
 } from 'aws-cdk-lib/aws-cloudfront';
+import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { S3BucketOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { BlockPublicAccess, Bucket, BucketEncryption, ObjectOwnership } from 'aws-cdk-lib/aws-s3';
 import { Topic } from 'aws-cdk-lib/aws-sns';
 import type { Construct } from 'constructs';
 
-import type { LandingConfig } from './config';
-import { PARTITION, SITE_BUCKET_ID, budgetName, budgetTopicName, eafitLandingBucketName, responseHeadersPolicyName } from './names';
+import { redirectFunctionEnabled, type LandingConfig } from './config';
+import {
+  PARTITION,
+  SITE_BUCKET_ID,
+  budgetName,
+  budgetTopicName,
+  eafitLandingBucketName,
+  responseHeadersPolicyName,
+  wwwRedirectFunctionName,
+} from './names';
+import { wwwRedirectFunctionCode } from './www-redirect-function';
 
 // Edge security headers (SPEC §10.2). Next's static export inlines its bootstrap
 // scripts and styles, hence 'unsafe-inline'; everything else is same-origin only.
@@ -38,7 +54,9 @@ export const CONTENT_SECURITY_POLICY = [
 ].join('; ');
 export const PERMISSIONS_POLICY = 'camera=(), microphone=(), geolocation=(), payment=(), usb=()';
 export const ROBOTS_NOINDEX = 'noindex, nofollow';
-const HSTS_MAX_AGE = Duration.seconds(63_072_000); // two years
+const HSTS_MAX_AGE_SECONDS = 63_072_000; // two years
+// Same value the redirect function sends, which bypasses the response headers policy.
+export const STRICT_TRANSPORT_SECURITY = `max-age=${HSTS_MAX_AGE_SECONDS}; includeSubDomains`;
 
 // Origin headers that only describe the S3 implementation (audit finding L). The
 // last two are already stripped by CloudFront for S3 origins (not seen at the
@@ -130,7 +148,7 @@ export class LandingSiteStack extends Stack {
       comment: 'M3TRIC landing security headers (SPEC 10.2)',
       securityHeadersBehavior: {
         contentSecurityPolicy: { contentSecurityPolicy: CONTENT_SECURITY_POLICY, override: true },
-        strictTransportSecurity: { accessControlMaxAge: HSTS_MAX_AGE, includeSubdomains: true, override: true },
+        strictTransportSecurity: { accessControlMaxAge: Duration.seconds(HSTS_MAX_AGE_SECONDS), includeSubdomains: true, override: true },
         contentTypeOptions: { override: true },
         frameOptions: { frameOption: HeadersFrameOption.DENY, override: true },
         referrerPolicy: { referrerPolicy: HeadersReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN, override: true },
@@ -138,6 +156,20 @@ export class LandingSiteStack extends Stack {
       customHeadersBehavior: { customHeaders },
       removeHeaders: [...REMOVED_ORIGIN_HEADERS],
     });
+
+    const { customDomain } = config;
+    const wwwRedirect = customDomain && redirectFunctionEnabled(config)
+      ? new CloudFrontFunction(this, 'WwwRedirectFunction', {
+        functionName: wwwRedirectFunctionName(config.environment),
+        comment: `Redirects ${customDomain.redirectDomains.join(', ')} to https://${customDomain.apexDomain}`,
+        runtime: FunctionRuntime.JS_2_0,
+        code: FunctionCode.fromInline(wwwRedirectFunctionCode({
+          apexDomain: customDomain.apexDomain,
+          redirectDomains: customDomain.redirectDomains,
+          strictTransportSecurity: STRICT_TRANSPORT_SECURITY,
+        })),
+      })
+      : undefined;
 
     this.distribution = new Distribution(this, 'Distribution', {
       comment: `M3TRIC landing (${config.environment})`,
@@ -148,6 +180,12 @@ export class LandingSiteStack extends Stack {
       logBucket: this.logsBucket,
       logFilePrefix: CLOUDFRONT_LOG_PREFIX,
       logIncludesCookies: false,
+      ...(customDomain && {
+        domainNames: [customDomain.apexDomain, ...customDomain.redirectDomains],
+        certificate: Certificate.fromCertificateArn(this, 'SiteCertificate', customDomain.certificateArn),
+        minimumProtocolVersion: SecurityPolicyProtocol.TLS_V1_2_2021,
+        sslSupportMethod: SSLMethod.SNI,
+      }),
       errorResponses: NOT_FOUND_STATUSES.map((httpStatus) => ({
         httpStatus,
         responseHttpStatus: 404,
@@ -163,6 +201,9 @@ export class LandingSiteStack extends Stack {
         // per content type (SPEC 11.3).
         cachePolicy: CachePolicy.CACHING_OPTIMIZED,
         responseHeadersPolicy,
+        ...(wwwRedirect && {
+          functionAssociations: [{ function: wwwRedirect, eventType: FunctionEventType.VIEWER_REQUEST }],
+        }),
       },
     });
     Validations.of(this.distribution).acknowledge(
@@ -176,11 +217,12 @@ export class LandingSiteStack extends Stack {
         reason:
           'WAF is out of scope (Anexo 1 13.2): static, read-only GET/HEAD site with no forms, APIs or dynamic origin; cost would exceed the whole landing budget.',
       },
-      {
+      // With a custom domain the distribution pins TLSv1.2_2021, so the rule passes.
+      ...(customDomain ? [] : [{
         id: 'AwsSolutions-CFR4',
         reason:
-          'No custom domain yet: with the default *.cloudfront.net certificate CloudFront does not allow setting the minimum viewer TLS policy. Custom domain + ACM (us-east-1) + TLSv1.2_2021 is client dependency REQ-A09 (SPEC 16.1).',
-      },
+          'No custom domain yet: with the default *.cloudfront.net certificate CloudFront does not allow setting the minimum viewer TLS policy. Custom domain + ACM (us-east-1) + TLSv1.2_2021 is client dependency REQ-A09 (SPEC §16).',
+      }]),
     );
 
     // No SSE-KMS on purpose: Budgets cannot publish to a topic under the
@@ -244,7 +286,9 @@ export class LandingSiteStack extends Stack {
     new CfnOutput(this, 'SiteBucketName', { value: this.siteBucket.bucketName });
     new CfnOutput(this, 'DistributionId', { value: this.distribution.distributionId });
     new CfnOutput(this, 'DistributionDomainName', { value: this.distribution.distributionDomainName });
-    new CfnOutput(this, 'SiteUrl', { value: `https://${this.distribution.distributionDomainName}` });
+    new CfnOutput(this, 'SiteUrl', {
+      value: `https://${customDomain ? customDomain.apexDomain : this.distribution.distributionDomainName}`,
+    });
     if (config.account === '914800441297') {
       const oac = this.node.findAll().find((node): node is CfnOriginAccessControl => node instanceof CfnOriginAccessControl);
       if (!oac) throw new Error('Landing CloudFront origin access control is required');
